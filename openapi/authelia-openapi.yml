@@ -1,0 +1,154 @@
+openapi: 3.1.0
+info:
+  title: Authelia OpenID Connect 1.0 Endpoints
+  description: |
+    Best-effort OpenAPI 3.1 description of the public-facing HTTP endpoints exposed
+    by an Authelia deployment. Authelia is primarily a forward-auth/SSO portal for
+    reverse proxies; the most stable public surface is its OpenID Connect 1.0
+    Provider, plus the well-known discovery documents. Derived from public
+    documentation at https://www.authelia.com/reference/ and the OIDC integration
+    guide at https://www.authelia.com/integration/openid-connect/introduction/.
+  version: "1.0"
+  contact:
+    name: Authelia Reference Docs
+    url: https://www.authelia.com/reference/
+servers:
+  - url: https://{authelia_host}
+    description: Your Authelia deployment root URL
+    variables:
+      authelia_host:
+        default: auth.example.com
+        description: Hostname of your Authelia instance
+tags:
+  - name: OIDC
+    description: OpenID Connect 1.0 / OAuth 2.0 provider endpoints.
+  - name: Discovery
+    description: Well-known discovery endpoints.
+paths:
+  /.well-known/openid-configuration:
+    get:
+      tags: [Discovery]
+      summary: OpenID Connect discovery document
+      operationId: openidConfiguration
+      responses:
+        '200':
+          description: Discovery document returned
+  /.well-known/oauth-authorization-server:
+    get:
+      tags: [Discovery]
+      summary: OAuth 2.0 Authorization Server metadata
+      operationId: oauthAuthorizationServerMetadata
+      responses:
+        '200':
+          description: Metadata document returned
+  /jwks.json:
+    get:
+      tags: [OIDC]
+      summary: JSON Web Key Set
+      description: Public keys used to verify signatures of issued tokens.
+      operationId: jwks
+      responses:
+        '200':
+          description: JWKS document returned
+  /api/oidc/authorization:
+    get:
+      tags: [OIDC]
+      summary: Authorization endpoint
+      description: Initiates the authentication flow and handles authorization requests.
+      operationId: oidcAuthorization
+      responses:
+        '302':
+          description: Redirect to consent or relying party
+    post:
+      tags: [OIDC]
+      summary: Authorization endpoint (POST form)
+      operationId: oidcAuthorizationPost
+      responses:
+        '302':
+          description: Redirect to consent or relying party
+  /api/oidc/token:
+    post:
+      tags: [OIDC]
+      summary: Token endpoint
+      description: Issues access, ID and refresh tokens after code exchange.
+      operationId: oidcToken
+      responses:
+        '200':
+          description: Tokens returned
+  /api/oidc/userinfo:
+    get:
+      tags: [OIDC]
+      summary: UserInfo endpoint
+      description: Returns claims about the authenticated end user.
+      operationId: oidcUserinfo
+      responses:
+        '200':
+          description: UserInfo document returned
+    post:
+      tags: [OIDC]
+      summary: UserInfo endpoint (POST)
+      operationId: oidcUserinfoPost
+      responses:
+        '200':
+          description: UserInfo document returned
+  /api/oidc/introspection:
+    post:
+      tags: [OIDC]
+      summary: Token introspection
+      description: Validates and returns metadata about an issued token.
+      operationId: oidcIntrospection
+      responses:
+        '200':
+          description: Introspection response returned
+  /api/oidc/revocation:
+    post:
+      tags: [OIDC]
+      summary: Token revocation
+      description: Invalidates an issued token.
+      operationId: oidcRevocation
+      responses:
+        '200':
+          description: Token revoked
+  /api/oidc/device-authorization:
+    post:
+      tags: [OIDC]
+      summary: Device Authorization endpoint
+      description: OAuth 2.0 Device Authorization Grant for constrained devices.
+      operationId: oidcDeviceAuthorization
+      responses:
+        '200':
+          description: Device authorization response
+  /api/oidc/pushed-authorization-request:
+    post:
+      tags: [OIDC]
+      summary: Pushed Authorization Request (PAR)
+      description: Enables secure pre-registration of authorization requests.
+      operationId: oidcPushedAuthorizationRequest
+      responses:
+        '201':
+          description: Request object accepted
+components:
+  securitySchemes:
+    clientBasicAuth:
+      type: http
+      scheme: basic
+      description: RFC 6749 client_secret_basic for token, introspection and revocation endpoints.
+    bearerAuth:
+      type: http
+      scheme: bearer
+      description: Bearer access token for UserInfo and other protected endpoints.
+    oauth2:
+      type: oauth2
+      flows:
+        authorizationCode:
+          authorizationUrl: https://auth.example.com/api/oidc/authorization
+          tokenUrl: https://auth.example.com/api/oidc/token
+          scopes:
+            openid: OpenID Connect base scope
+            profile: Profile claims
+            email: Email claims
+            groups: Group memberships
+            offline_access: Refresh token
+security:
+  - oauth2: []
+  - bearerAuth: []
