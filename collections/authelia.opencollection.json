@@ -1,0 +1,170 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "Authelia OpenID Connect 1.0 Endpoints",
+    "version": "1.0"
+  },
+  "request": {
+    "auth": {
+      "type": "oauth2",
+      "flow": "authorization_code",
+      "authorizationUrl": "https://auth.example.com/api/oidc/authorization",
+      "accessTokenUrl": "https://auth.example.com/api/oidc/token",
+      "credentials": {
+        "clientId": "{{clientId}}",
+        "clientSecret": "{{clientSecret}}"
+      }
+    }
+  },
+  "items": [
+    {
+      "info": {
+        "name": "Discovery",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "OpenID Connect discovery document",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://{authelia_host}/.well-known/openid-configuration"
+          },
+          "docs": "OpenID Connect discovery document"
+        },
+        {
+          "info": {
+            "name": "OAuth 2.0 Authorization Server metadata",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://{authelia_host}/.well-known/oauth-authorization-server"
+          },
+          "docs": "OAuth 2.0 Authorization Server metadata"
+        }
+      ]
+    },
+    {
+      "info": {
+        "name": "OIDC",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "JSON Web Key Set",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://{authelia_host}/jwks.json"
+          },
+          "docs": "Public keys used to verify signatures of issued tokens."
+        },
+        {
+          "info": {
+            "name": "Authorization endpoint",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://{authelia_host}/api/oidc/authorization"
+          },
+          "docs": "Initiates the authentication flow and handles authorization requests."
+        },
+        {
+          "info": {
+            "name": "Authorization endpoint (POST form)",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://{authelia_host}/api/oidc/authorization"
+          },
+          "docs": "Authorization endpoint (POST form)"
+        },
+        {
+          "info": {
+            "name": "Token endpoint",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://{authelia_host}/api/oidc/token"
+          },
+          "docs": "Issues access, ID and refresh tokens after code exchange."
+        },
+        {
+          "info": {
+            "name": "UserInfo endpoint",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://{authelia_host}/api/oidc/userinfo"
+          },
+          "docs": "Returns claims about the authenticated end user."
+        },
+        {
+          "info": {
+            "name": "UserInfo endpoint (POST)",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://{authelia_host}/api/oidc/userinfo"
+          },
+          "docs": "UserInfo endpoint (POST)"
+        },
+        {
+          "info": {
+            "name": "Token introspection",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://{authelia_host}/api/oidc/introspection"
+          },
+          "docs": "Validates and returns metadata about an issued token."
+        },
+        {
+          "info": {
+            "name": "Token revocation",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://{authelia_host}/api/oidc/revocation"
+          },
+          "docs": "Invalidates an issued token."
+        },
+        {
+          "info": {
+            "name": "Device Authorization endpoint",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://{authelia_host}/api/oidc/device-authorization"
+          },
+          "docs": "OAuth 2.0 Device Authorization Grant for constrained devices."
+        },
+        {
+          "info": {
+            "name": "Pushed Authorization Request (PAR)",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://{authelia_host}/api/oidc/pushed-authorization-request"
+          },
+          "docs": "Enables secure pre-registration of authorization requests."
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}
