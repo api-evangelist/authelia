@@ -1,0 +1,41 @@
+generated: '2026-07-11'
+method: derived
+source: openapi/authelia-openapi.yml
+schemes:
+- name: oauth2
+  source: openapi/authelia-openapi.yml
+  flows:
+  - flow: authorizationCode
+    authorizationUrl: https://auth.example.com/api/oidc/authorization
+    tokenUrl: https://auth.example.com/api/oidc/token
+scopes:
+- scope: email
+  description: Email claims
+  flows:
+  - authorizationCode
+  sources:
+  - openapi/authelia-openapi.yml
+- scope: groups
+  description: Group memberships
+  flows:
+  - authorizationCode
+  sources:
+  - openapi/authelia-openapi.yml
+- scope: offline_access
+  description: Refresh token
+  flows:
+  - authorizationCode
+  sources:
+  - openapi/authelia-openapi.yml
+- scope: openid
+  description: OpenID Connect base scope
+  flows:
+  - authorizationCode
+  sources:
+  - openapi/authelia-openapi.yml
+- scope: profile
+  description: Profile claims
+  flows:
+  - authorizationCode
+  sources:
+  - openapi/authelia-openapi.yml
