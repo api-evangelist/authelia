@@ -53,6 +53,10 @@ apis:
   - type: Documentation
     url: https://www.authelia.com/configuration/identity-providers/openid-connect/provider/
 common:
+- type: DomainSecurity
+  url: security/authelia-domain-security.yml
+- type: Authentication
+  url: authentication/authelia-authentication.yml
 - type: OAuthScopes
   url: scopes/authelia-scopes.yml
 - type: Website

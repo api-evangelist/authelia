@@ -1,0 +1,31 @@
+generated: '2026-07-11'
+method: derived
+source: openapi/authelia-openapi.yml
+summary:
+  types:
+  - http
+  - oauth2
+  oauth2_flows:
+  - authorizationCode
+schemes:
+- name: clientBasicAuth
+  type: http
+  scheme: basic
+  description: RFC 6749 client_secret_basic for token, introspection and revocation endpoints.
+  sources:
+  - openapi/authelia-openapi.yml
+- name: bearerAuth
+  type: http
+  scheme: bearer
+  description: Bearer access token for UserInfo and other protected endpoints.
+  sources:
+  - openapi/authelia-openapi.yml
+- name: oauth2
+  type: oauth2
+  flows:
+  - flow: authorizationCode
+    authorizationUrl: https://auth.example.com/api/oidc/authorization
+    tokenUrl: https://auth.example.com/api/oidc/token
+    scopes: 5
+  sources:
+  - openapi/authelia-openapi.yml
