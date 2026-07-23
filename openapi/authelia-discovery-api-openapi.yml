@@ -1,0 +1,74 @@
+openapi: 3.1.0
+info:
+  title: Authelia OpenID Connect 1.0 Endpoints Discovery API
+  description: 'Best-effort OpenAPI 3.1 description of the public-facing HTTP endpoints exposed
+
+    by an Authelia deployment. Authelia is primarily a forward-auth/SSO portal for
+
+    reverse proxies; the most stable public surface is its OpenID Connect 1.0
+
+    Provider, plus the well-known discovery documents. Derived from public
+
+    documentation at https://www.authelia.com/reference/ and the OIDC integration
+
+    guide at https://www.authelia.com/integration/openid-connect/introduction/.
+
+    '
+  version: '1.0'
+  contact:
+    name: Authelia Reference Docs
+    url: https://www.authelia.com/reference/
+servers:
+- url: https://{authelia_host}
+  description: Your Authelia deployment root URL
+  variables:
+    authelia_host:
+      default: auth.example.com
+      description: Hostname of your Authelia instance
+security:
+- oauth2: []
+- bearerAuth: []
+tags:
+- name: Discovery
+  description: Well-known discovery endpoints.
+paths:
+  /.well-known/openid-configuration:
+    get:
+      tags:
+      - Discovery
+      summary: OpenID Connect discovery document
+      operationId: openidConfiguration
+      responses:
+        '200':
+          description: Discovery document returned
+  /.well-known/oauth-authorization-server:
+    get:
+      tags:
+      - Discovery
+      summary: OAuth 2.0 Authorization Server metadata
+      operationId: oauthAuthorizationServerMetadata
+      responses:
+        '200':
+          description: Metadata document returned
+components:
+  securitySchemes:
+    clientBasicAuth:
+      type: http
+      scheme: basic
+      description: RFC 6749 client_secret_basic for token, introspection and revocation endpoints.
+    bearerAuth:
+      type: http
+      scheme: bearer
+      description: Bearer access token for UserInfo and other protected endpoints.
+    oauth2:
+      type: oauth2
+      flows:
+        authorizationCode:
+          authorizationUrl: https://auth.example.com/api/oidc/authorization
+          tokenUrl: https://auth.example.com/api/oidc/token
+          scopes:
+            openid: OpenID Connect base scope
+            profile: Profile claims
+            email: Email claims
+            groups: Group memberships
+            offline_access: Refresh token
