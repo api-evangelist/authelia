@@ -3,7 +3,20 @@ name: Authelia
 description: |
   Authelia is an open source authentication and authorization server providing multi-factor authentication and single sign-on for applications behind a reverse proxy. It supports OpenID Connect 1.0, OAuth 2.0, TOTP, WebAuthn, and Duo Push as authentication methods. Authelia exposes a REST API documented with an OpenAPI specification and integrates with nginx, Traefik, Caddy, and other reverse proxies.
 type: Index
-image: https://kinlane-images.s3.amazonaws.com/shared/apis-json/apis-json-logo.jpg
+accessModel:
+  pricing: freemium
+  onboarding: self-serve
+  trial: false
+  try_now: true
+  public: false
+  label: Freemium · Self-serve signup
+  confidence: high
+  source:
+  - plans
+  - authentication
+  generated: '2026-07-22'
+  method: derived
+image: https://kinlane-images.s3.amazonaws.com/shared/apis-json/icons/authelia.png
 tags:
 - Authentication
 - Authorization
@@ -19,29 +32,11 @@ created: '2026-03-25'
 modified: '2026-04-19'
 specificationVersion: '0.19'
 apis:
-- aid: authelia:authelia-rest-api
-  name: Authelia REST API
-  description: |
-    The Authelia REST API provides endpoints for authentication flows including first-factor login, MFA challenges, password reset, session management, and authorization verification for reverse proxy integration.
-  humanURL: https://www.authelia.com/reference/
-  baseURL: https://your-authelia-instance.example.com/api
-  tags:
-  - Authentication
-  - Authorization
-  - MFA
-  - REST
-  - SSO
-  properties:
-  - type: Documentation
-    url: https://www.authelia.com/reference/
-  - type: OpenAPI
-    url: https://raw.githubusercontent.com/authelia/authelia/master/api/openapi.yml
-  - type: GitHubRepository
-    url: https://github.com/authelia/authelia
 - aid: authelia:authelia-oidc-provider
   name: Authelia OpenID Connect 1.0 Provider
-  description: |
-    Authelia acts as an OpenID Certified OpenID Connect 1.0 Provider supporting Authorization Code, Implicit, and Hybrid flows with PKCE, PAR, and various token endpoint authentication methods.
+  description: >
+    Authelia acts as an OpenID Certified OpenID Connect 1.0 Provider supporting Authorization Code, Implicit,
+    and Hybrid flows with PKCE, PAR, and various token endpoint authentication methods.
   humanURL: https://www.authelia.com/configuration/identity-providers/openid-connect/provider/
   baseURL: https://your-authelia-instance.example.com
   tags:
@@ -52,6 +47,34 @@ apis:
   properties:
   - type: Documentation
     url: https://www.authelia.com/configuration/identity-providers/openid-connect/provider/
+- aid: authelia:authelia-discovery-api
+  name: Authelia Discovery API
+  description: Well-known discovery endpoints.
+  humanURL: https://www.authelia.com/reference/
+  baseURL: https://your-authelia-instance.example.com/api
+  tags:
+  - Discovery
+  properties:
+  - type: OpenAPI
+    url: openapi/authelia-discovery-api-openapi.yml
+  - type: Documentation
+    url: https://www.authelia.com/reference/
+  - type: GitHubRepository
+    url: https://github.com/authelia/authelia
+- aid: authelia:authelia-oidc-api
+  name: Authelia OIDC API
+  description: OpenID Connect 1.0 / OAuth 2.0 provider endpoints.
+  humanURL: https://www.authelia.com/reference/
+  baseURL: https://your-authelia-instance.example.com/api
+  tags:
+  - OIDC
+  properties:
+  - type: OpenAPI
+    url: openapi/authelia-oidc-api-openapi.yml
+  - type: Documentation
+    url: https://www.authelia.com/reference/
+  - type: GitHubRepository
+    url: https://github.com/authelia/authelia
 common:
 - type: AgenticAccess
   url: agentic-access/authelia-agentic-access.yml
