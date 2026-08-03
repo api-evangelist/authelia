@@ -1,0 +1,16 @@
+{
+  "provider": "authelia",
+  "sources": [
+    "authelia-discovery-api-openapi.yml",
+    "authelia-oidc-api-openapi.yml"
+  ],
+  "outputs": [
+    "authelia-discovery-api-openapi.yml",
+    "authelia-oidc-api-openapi.yml"
+  ],
+  "archived": [],
+  "errors": [],
+  "warnings": [],
+  "notes": [],
+  "skipped": []
+}
