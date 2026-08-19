@@ -1,0 +1,52 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "Authelia OpenID Connect 1.0 Endpoints Discovery API",
+    "version": "1.0"
+  },
+  "request": {
+    "auth": {
+      "type": "oauth2",
+      "flow": "authorization_code",
+      "authorizationUrl": "https://auth.example.com/api/oidc/authorization",
+      "accessTokenUrl": "https://auth.example.com/api/oidc/token",
+      "credentials": {
+        "clientId": "{{clientId}}",
+        "clientSecret": "{{clientSecret}}"
+      }
+    }
+  },
+  "items": [
+    {
+      "info": {
+        "name": "Discovery",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "OpenID Connect discovery document",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://{authelia_host}/.well-known/openid-configuration"
+          },
+          "docs": "OpenID Connect discovery document"
+        },
+        {
+          "info": {
+            "name": "OAuth 2.0 Authorization Server metadata",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://{authelia_host}/.well-known/oauth-authorization-server"
+          },
+          "docs": "OAuth 2.0 Authorization Server metadata"
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}

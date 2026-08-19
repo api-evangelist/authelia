@@ -1,0 +1,224 @@
+{
+  "item": [
+    {
+      "id": "225817b5-c7fc-4078-9225-d22acc29891b",
+      "name": "Discovery",
+      "description": {
+        "content": "Well-known discovery endpoints.",
+        "type": "text/plain"
+      },
+      "item": [
+        {
+          "id": "a946b0d5-f19c-4c3a-b267-b1e3a574ccd5",
+          "name": "OpenID Connect discovery document",
+          "request": {
+            "name": "OpenID Connect discovery document",
+            "description": {},
+            "url": {
+              "path": [
+                ".well-known",
+                "openid-configuration"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": [
+                {
+                  "description": "Hostname of your Authelia instance",
+                  "type": "any",
+                  "value": "{{authelia_host}}",
+                  "key": "authelia_host"
+                }
+              ]
+            },
+            "method": "GET",
+            "auth": null
+          },
+          "response": [
+            {
+              "id": "9f6d22cf-bde5-4a14-91ec-1991abdead8a",
+              "name": "Discovery document returned",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    ".well-known",
+                    "openid-configuration"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "description": "Hostname of your Authelia instance",
+                      "type": "any",
+                      "value": "{{authelia_host}}",
+                      "key": "authelia_host"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: oauth2",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "<token>"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "text/plain"
+                }
+              ],
+              "body": "",
+              "cookie": [],
+              "_postman_previewlanguage": "text"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "49c310e2-77f3-4416-b477-93f44dfad3d9",
+          "name": "OAuth 2.0 Authorization Server metadata",
+          "request": {
+            "name": "OAuth 2.0 Authorization Server metadata",
+            "description": {},
+            "url": {
+              "path": [
+                ".well-known",
+                "oauth-authorization-server"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": [
+                {
+                  "description": "Hostname of your Authelia instance",
+                  "type": "any",
+                  "value": "{{authelia_host}}",
+                  "key": "authelia_host"
+                }
+              ]
+            },
+            "method": "GET",
+            "auth": null
+          },
+          "response": [
+            {
+              "id": "1d94e642-1806-4849-93b0-4de157b9331b",
+              "name": "Metadata document returned",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    ".well-known",
+                    "oauth-authorization-server"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "description": "Hostname of your Authelia instance",
+                      "type": "any",
+                      "value": "{{authelia_host}}",
+                      "key": "authelia_host"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: oauth2",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "<token>"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "text/plain"
+                }
+              ],
+              "body": "",
+              "cookie": [],
+              "_postman_previewlanguage": "text"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        }
+      ],
+      "event": []
+    }
+  ],
+  "event": [],
+  "variable": [
+    {
+      "description": {
+        "content": "Hostname of your Authelia instance",
+        "type": "text/plain"
+      },
+      "type": "any",
+      "value": "auth.example.com",
+      "key": "authelia_host"
+    },
+    {
+      "type": "string",
+      "value": "https://{{authelia_host}}",
+      "key": "baseUrl"
+    }
+  ],
+  "auth": {
+    "type": "oauth2",
+    "oauth2": [
+      {
+        "key": "scope",
+        "value": "openid profile email groups offline_access"
+      },
+      {
+        "key": "accessTokenUrl",
+        "value": "https://auth.example.com/api/oidc/token"
+      },
+      {
+        "key": "authUrl",
+        "value": "https://auth.example.com/api/oidc/authorization"
+      },
+      {
+        "key": "grant_type",
+        "value": "authorization_code"
+      }
+    ]
+  },
+  "info": {
+    "_postman_id": "121805eb-6e87-4fbb-aa8f-6d66a6fd340c",
+    "name": "Authelia OpenID Connect 1.0 Endpoints Discovery API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "description": {
+      "content": "Best-effort OpenAPI 3.1 description of the public-facing HTTP endpoints exposed\nby an Authelia deployment. Authelia is primarily a forward-auth/SSO portal for\nreverse proxies; the most stable public surface is its OpenID Connect 1.0\nProvider, plus the well-known discovery documents. Derived from public\ndocumentation at https://www.authelia.com/reference/ and the OIDC integration\nguide at https://www.authelia.com/integration/openid-connect/introduction/.\n\n\nContact Support:\n Name: Authelia Reference Docs",
+      "type": "text/plain"
+    }
+  }
+}

@@ -1,0 +1,912 @@
+{
+  "item": [
+    {
+      "id": "e8fb4f7c-bc5b-4dc5-9d40-e10ff898e90d",
+      "name": "OIDC",
+      "description": {
+        "content": "OpenID Connect 1.0 / OAuth 2.0 provider endpoints.",
+        "type": "text/plain"
+      },
+      "item": [
+        {
+          "id": "1b450f81-8779-4ceb-ba3b-0c3b26930551",
+          "name": "JSON Web Key Set",
+          "request": {
+            "name": "JSON Web Key Set",
+            "description": {
+              "content": "Public keys used to verify signatures of issued tokens.",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "jwks.json"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": [
+                {
+                  "description": "Hostname of your Authelia instance",
+                  "type": "any",
+                  "value": "{{authelia_host}}",
+                  "key": "authelia_host"
+                }
+              ]
+            },
+            "method": "GET",
+            "auth": null
+          },
+          "response": [
+            {
+              "id": "ecdcf29e-ae3b-4403-b5bf-a68a9aa211bc",
+              "name": "JWKS document returned",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "jwks.json"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "description": "Hostname of your Authelia instance",
+                      "type": "any",
+                      "value": "{{authelia_host}}",
+                      "key": "authelia_host"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: oauth2",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "<token>"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "text/plain"
+                }
+              ],
+              "body": "",
+              "cookie": [],
+              "_postman_previewlanguage": "text"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "3f8a7f32-2cb8-4428-9ce4-09532d75ea79",
+          "name": "Authorization endpoint",
+          "request": {
+            "name": "Authorization endpoint",
+            "description": {
+              "content": "Initiates the authentication flow and handles authorization requests.",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "api",
+                "oidc",
+                "authorization"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": [
+                {
+                  "description": "Hostname of your Authelia instance",
+                  "type": "any",
+                  "value": "{{authelia_host}}",
+                  "key": "authelia_host"
+                }
+              ]
+            },
+            "method": "GET",
+            "auth": null
+          },
+          "response": [
+            {
+              "id": "37255165-653a-41d9-a5f7-8717396ae7a5",
+              "name": "Redirect to consent or relying party",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "api",
+                    "oidc",
+                    "authorization"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "description": "Hostname of your Authelia instance",
+                      "type": "any",
+                      "value": "{{authelia_host}}",
+                      "key": "authelia_host"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: oauth2",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "<token>"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Found",
+              "code": 302,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "text/plain"
+                }
+              ],
+              "body": "",
+              "cookie": [],
+              "_postman_previewlanguage": "text"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "dbbc9e7d-bd30-4359-aaab-ae57779f7198",
+          "name": "Authorization endpoint (POST form)",
+          "request": {
+            "name": "Authorization endpoint (POST form)",
+            "description": {},
+            "url": {
+              "path": [
+                "api",
+                "oidc",
+                "authorization"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": [
+                {
+                  "description": "Hostname of your Authelia instance",
+                  "type": "any",
+                  "value": "{{authelia_host}}",
+                  "key": "authelia_host"
+                }
+              ]
+            },
+            "method": "POST",
+            "auth": null
+          },
+          "response": [
+            {
+              "id": "d530264a-01a5-48c4-864d-7c63eb551d37",
+              "name": "Redirect to consent or relying party",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "api",
+                    "oidc",
+                    "authorization"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "description": "Hostname of your Authelia instance",
+                      "type": "any",
+                      "value": "{{authelia_host}}",
+                      "key": "authelia_host"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: oauth2",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "<token>"
+                  }
+                ],
+                "method": "POST",
+                "body": {}
+              },
+              "status": "Found",
+              "code": 302,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "text/plain"
+                }
+              ],
+              "body": "",
+              "cookie": [],
+              "_postman_previewlanguage": "text"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "e7a57340-ffb6-4cd9-ab39-cf0048f13d05",
+          "name": "Token endpoint",
+          "request": {
+            "name": "Token endpoint",
+            "description": {
+              "content": "Issues access, ID and refresh tokens after code exchange.",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "api",
+                "oidc",
+                "token"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": [
+                {
+                  "description": "Hostname of your Authelia instance",
+                  "type": "any",
+                  "value": "{{authelia_host}}",
+                  "key": "authelia_host"
+                }
+              ]
+            },
+            "method": "POST",
+            "auth": null
+          },
+          "response": [
+            {
+              "id": "5e4747ca-aabb-495f-aa48-110c081e40c7",
+              "name": "Tokens returned",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "api",
+                    "oidc",
+                    "token"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "description": "Hostname of your Authelia instance",
+                      "type": "any",
+                      "value": "{{authelia_host}}",
+                      "key": "authelia_host"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: oauth2",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "<token>"
+                  }
+                ],
+                "method": "POST",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "text/plain"
+                }
+              ],
+              "body": "",
+              "cookie": [],
+              "_postman_previewlanguage": "text"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "5d422b6a-2beb-4e72-b356-90a883d48bba",
+          "name": "UserInfo endpoint",
+          "request": {
+            "name": "UserInfo endpoint",
+            "description": {
+              "content": "Returns claims about the authenticated end user.",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "api",
+                "oidc",
+                "userinfo"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": [
+                {
+                  "description": "Hostname of your Authelia instance",
+                  "type": "any",
+                  "value": "{{authelia_host}}",
+                  "key": "authelia_host"
+                }
+              ]
+            },
+            "method": "GET",
+            "auth": null
+          },
+          "response": [
+            {
+              "id": "bce83087-7e3f-49ac-b9fa-6d7e57ef946f",
+              "name": "UserInfo document returned",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "api",
+                    "oidc",
+                    "userinfo"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "description": "Hostname of your Authelia instance",
+                      "type": "any",
+                      "value": "{{authelia_host}}",
+                      "key": "authelia_host"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: oauth2",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "<token>"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "text/plain"
+                }
+              ],
+              "body": "",
+              "cookie": [],
+              "_postman_previewlanguage": "text"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "f17e69c9-a861-4b2c-869d-38a333b4c855",
+          "name": "UserInfo endpoint (POST)",
+          "request": {
+            "name": "UserInfo endpoint (POST)",
+            "description": {},
+            "url": {
+              "path": [
+                "api",
+                "oidc",
+                "userinfo"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": [
+                {
+                  "description": "Hostname of your Authelia instance",
+                  "type": "any",
+                  "value": "{{authelia_host}}",
+                  "key": "authelia_host"
+                }
+              ]
+            },
+            "method": "POST",
+            "auth": null
+          },
+          "response": [
+            {
+              "id": "7aca6cb5-89ed-4008-b7ae-57e8aa549e6e",
+              "name": "UserInfo document returned",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "api",
+                    "oidc",
+                    "userinfo"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "description": "Hostname of your Authelia instance",
+                      "type": "any",
+                      "value": "{{authelia_host}}",
+                      "key": "authelia_host"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: oauth2",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "<token>"
+                  }
+                ],
+                "method": "POST",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "text/plain"
+                }
+              ],
+              "body": "",
+              "cookie": [],
+              "_postman_previewlanguage": "text"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "a5c1b847-58f6-434d-8e76-f050be28e27d",
+          "name": "Token introspection",
+          "request": {
+            "name": "Token introspection",
+            "description": {
+              "content": "Validates and returns metadata about an issued token.",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "api",
+                "oidc",
+                "introspection"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": [
+                {
+                  "description": "Hostname of your Authelia instance",
+                  "type": "any",
+                  "value": "{{authelia_host}}",
+                  "key": "authelia_host"
+                }
+              ]
+            },
+            "method": "POST",
+            "auth": null
+          },
+          "response": [
+            {
+              "id": "186d0ddf-fc84-4cd4-a3e0-3f2780f652bc",
+              "name": "Introspection response returned",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "api",
+                    "oidc",
+                    "introspection"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "description": "Hostname of your Authelia instance",
+                      "type": "any",
+                      "value": "{{authelia_host}}",
+                      "key": "authelia_host"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: oauth2",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "<token>"
+                  }
+                ],
+                "method": "POST",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "text/plain"
+                }
+              ],
+              "body": "",
+              "cookie": [],
+              "_postman_previewlanguage": "text"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "e4d0e3c0-9a8c-4067-9a3a-b17f363047c6",
+          "name": "Token revocation",
+          "request": {
+            "name": "Token revocation",
+            "description": {
+              "content": "Invalidates an issued token.",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "api",
+                "oidc",
+                "revocation"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": [
+                {
+                  "description": "Hostname of your Authelia instance",
+                  "type": "any",
+                  "value": "{{authelia_host}}",
+                  "key": "authelia_host"
+                }
+              ]
+            },
+            "method": "POST",
+            "auth": null
+          },
+          "response": [
+            {
+              "id": "a8688097-a1d3-4ed7-93fa-0746c4b02f35",
+              "name": "Token revoked",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "api",
+                    "oidc",
+                    "revocation"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "description": "Hostname of your Authelia instance",
+                      "type": "any",
+                      "value": "{{authelia_host}}",
+                      "key": "authelia_host"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: oauth2",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "<token>"
+                  }
+                ],
+                "method": "POST",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "text/plain"
+                }
+              ],
+              "body": "",
+              "cookie": [],
+              "_postman_previewlanguage": "text"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "5638cb53-51a8-41a7-83b2-00584795d72b",
+          "name": "Device Authorization endpoint",
+          "request": {
+            "name": "Device Authorization endpoint",
+            "description": {
+              "content": "OAuth 2.0 Device Authorization Grant for constrained devices.",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "api",
+                "oidc",
+                "device-authorization"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": [
+                {
+                  "description": "Hostname of your Authelia instance",
+                  "type": "any",
+                  "value": "{{authelia_host}}",
+                  "key": "authelia_host"
+                }
+              ]
+            },
+            "method": "POST",
+            "auth": null
+          },
+          "response": [
+            {
+              "id": "441d3a13-b6ca-406b-847f-cb691bbf1728",
+              "name": "Device authorization response",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "api",
+                    "oidc",
+                    "device-authorization"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "description": "Hostname of your Authelia instance",
+                      "type": "any",
+                      "value": "{{authelia_host}}",
+                      "key": "authelia_host"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: oauth2",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "<token>"
+                  }
+                ],
+                "method": "POST",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "text/plain"
+                }
+              ],
+              "body": "",
+              "cookie": [],
+              "_postman_previewlanguage": "text"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "b283afee-9d11-45f0-aa12-8fdf5ed9c00c",
+          "name": "Pushed Authorization Request (PAR)",
+          "request": {
+            "name": "Pushed Authorization Request (PAR)",
+            "description": {
+              "content": "Enables secure pre-registration of authorization requests.",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "api",
+                "oidc",
+                "pushed-authorization-request"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": [
+                {
+                  "description": "Hostname of your Authelia instance",
+                  "type": "any",
+                  "value": "{{authelia_host}}",
+                  "key": "authelia_host"
+                }
+              ]
+            },
+            "method": "POST",
+            "auth": null
+          },
+          "response": [
+            {
+              "id": "d6bf5dc9-3590-42d6-ab76-036854b23e87",
+              "name": "Request object accepted",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "api",
+                    "oidc",
+                    "pushed-authorization-request"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "description": "Hostname of your Authelia instance",
+                      "type": "any",
+                      "value": "{{authelia_host}}",
+                      "key": "authelia_host"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: oauth2",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "<token>"
+                  }
+                ],
+                "method": "POST",
+                "body": {}
+              },
+              "status": "Created",
+              "code": 201,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "text/plain"
+                }
+              ],
+              "body": "",
+              "cookie": [],
+              "_postman_previewlanguage": "text"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        }
+      ],
+      "event": []
+    }
+  ],
+  "event": [],
+  "variable": [
+    {
+      "description": {
+        "content": "Hostname of your Authelia instance",
+        "type": "text/plain"
+      },
+      "type": "any",
+      "value": "auth.example.com",
+      "key": "authelia_host"
+    },
+    {
+      "type": "string",
+      "value": "https://{{authelia_host}}",
+      "key": "baseUrl"
+    }
+  ],
+  "auth": {
+    "type": "oauth2",
+    "oauth2": [
+      {
+        "key": "scope",
+        "value": "openid profile email groups offline_access"
+      },
+      {
+        "key": "accessTokenUrl",
+        "value": "https://auth.example.com/api/oidc/token"
+      },
+      {
+        "key": "authUrl",
+        "value": "https://auth.example.com/api/oidc/authorization"
+      },
+      {
+        "key": "grant_type",
+        "value": "authorization_code"
+      }
+    ]
+  },
+  "info": {
+    "_postman_id": "38ec13cf-b073-46d4-a250-1b8145e1d01d",
+    "name": "Authelia OpenID Connect 1.0 Endpoints Discovery OIDC API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "description": {
+      "content": "Best-effort OpenAPI 3.1 description of the public-facing HTTP endpoints exposed\nby an Authelia deployment. Authelia is primarily a forward-auth/SSO portal for\nreverse proxies; the most stable public surface is its OpenID Connect 1.0\nProvider, plus the well-known discovery documents. Derived from public\ndocumentation at https://www.authelia.com/reference/ and the OIDC integration\nguide at https://www.authelia.com/integration/openid-connect/introduction/.\n\n\nContact Support:\n Name: Authelia Reference Docs",
+      "type": "text/plain"
+    }
+  }
+}
