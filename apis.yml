@@ -22,6 +22,15 @@ tags:
 - Authorization
 - LDAP
 - MFA
+- Open-Source
+- OpenID Connect
+- Self-Hosted
+- SSO
+tags_raw:
+- Authentication
+- Authorization
+- LDAP
+- MFA
 - Open Source
 - OpenID Connect
 - Self-Hosted
@@ -40,6 +49,10 @@ apis:
   humanURL: https://www.authelia.com/configuration/identity-providers/openid-connect/provider/
   baseURL: https://your-authelia-instance.example.com
   tags:
+  - Authentication
+  - OIDC
+  - OpenID Connect
+  tags_raw:
   - Authentication
   - OAuth
   - OIDC
