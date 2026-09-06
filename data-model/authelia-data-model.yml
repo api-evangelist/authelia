@@ -1,0 +1,149 @@
+generated: '2026-09-06'
+method: derived
+source: >-
+  openapi/authelia-api-openapi.yml (first-party OpenAPI 3.2.0, 100 component schemas, 95 $ref edges),
+  enriched from https://www.authelia.com/schemas/latest/json-schema/user-database.json and
+  https://www.authelia.com/reference/guides/attributes/.
+description: >-
+  Entity graph for the Authelia API. Authelia is not a CRUD platform — it has no tenant, no account object
+  and no addressable resource collections. Its API surface is a state machine over ONE implicit root entity,
+  the authenticated Session, plus the credentials attached to a User and the OAuth 2.0 artifacts a
+  registered Client obtains. Nothing in the contract is addressable by a global identifier; the caller's
+  session cookie IS the selector. Only two path parameters exist in the whole contract.
+identifiers:
+  path_parameters:
+  - name: credentialID
+    entity: WebAuthnCredential
+    operations: [putSecondFactorWebAuthnCredential, deleteSecondFactorWebAuthnCredential]
+  - name: id
+    entity: SessionElevation
+    operations: [deleteUserSessionElevation]
+  opaque_user_identifier: >-
+    Authelia maintains a per-user opaque identifier used as the OIDC `sub` claim, administered only through
+    the CLI (`authelia storage user identifiers`) and exported under the published schema
+    https://www.authelia.com/schemas/latest/json-schema/exports.identifiers.json. It is never accepted as
+    an API path parameter.
+  no_prefixed_ids: >-
+    There are no Stripe-style prefixed resource ids. The only prefixed values are OAuth 2.0 tokens —
+    authelia_at_ (access), authelia_rt_ (refresh), authelia_ac_ (authorization code).
+entities:
+- name: User
+  description: >-
+    The authenticated subject. Resolved from the configured authentication backend (file, LDAP or Active
+    Directory) — Authelia stores no user record of its own beyond credentials and preferences.
+  schemas: [handlers.UserInfo, handlers.StateResponse]
+  operations: [getUserInfo, postUserInfo, postUserInfoSecondFactorMethod]
+  external_source: https://www.authelia.com/schemas/latest/json-schema/user-database.json
+  relationships:
+  - has_many: TOTPConfiguration
+    via: implicit (session subject)
+    cardinality: at most one in practice
+  - has_many: WebAuthnCredential
+    via: implicit (session subject)
+  - has_many: DuoDevice
+    via: implicit (session subject)
+  - has_one: Session
+    via: authelia_session cookie
+- name: Session
+  description: >-
+    The root entity of the portal API. Carries the authentication level (anonymous / 1FA / 2FA) that every
+    authorization decision reads. Created by first factor, upgraded by second factor, destroyed by logout.
+  schemas: [handlers.StateResponse, middlewares.Response.OK, middlewares.Response.KO]
+  operations: [getState, postFirstFactor, postFirstFactorReauthenticate, postFirstFactorPasskey, postLogout]
+  relationships:
+  - belongs_to: User
+    via: implicit (cookie subject)
+  - has_many: SessionElevation
+    via: session
+- name: SessionElevation
+  description: >-
+    A time-bounded elevation of an existing session, proven by a one-time code delivered to the user's
+    registered address, required before self-service credential management.
+  schemas: [handlers.ElevationStatus.Response, handlers.ElevationStart.Response]
+  operations: [getUserSessionElevation, postUserSessionElevation, putUserSessionElevation, deleteUserSessionElevation]
+  relationships:
+  - belongs_to: Session
+    via: implicit
+- name: TOTPConfiguration
+  description: A registered time-based one-time password configuration (RFC 6238).
+  schemas: [handlers.TOTPRegisterStartResponse]
+  operations: [getSecondFactorTOTPConfiguration, getSecondFactorTOTPRegistration, putSecondFactorTOTPRegistration,
+    postSecondFactorTOTPRegistration, deleteSecondFactorTOTPRegistration, postSecondFactorTOTP, deleteSecondFactorTOTP]
+  relationships:
+  - belongs_to: User
+    via: implicit (session subject)
+- name: WebAuthnCredential
+  description: A registered WebAuthn/FIDO2 credential, usable as a second factor or as a passkey first factor.
+  schemas: [webauthn.Credential, webauthn.CredentialsResponse, webauthn.PublicKeyCredentialAttestation,
+    webauthn.PublicKeyCredentialAssertion, webauthn.CredentialDescriptor, webauthn.Transports]
+  operations: [getSecondFactorWebAuthnCredentials, putSecondFactorWebAuthnCredentialRegistration,
+    postSecondFactorWebAuthnCredentialRegistration, deleteSecondFactorWebAuthnCredentialRegistration,
+    putSecondFactorWebAuthnCredential, deleteSecondFactorWebAuthnCredential]
+  key: credentialID
+  relationships:
+  - belongs_to: User
+    via: implicit (session subject)
+  - has_one: AuthenticatorResponse
+    via: $ref webauthn.PublicKeyCredential -> webauthn.AuthenticatorResponse
+- name: DuoDevice
+  description: A Duo Push enrolled device, listed from the Duo API rather than stored by Authelia.
+  schemas: [handlers.DuoDevicesResponse]
+  operations: [getSecondFactorDuoDevices, postSecondFactorDuoDevice, getSecondFactorDuo, postSecondFactorDuo]
+  relationships:
+  - belongs_to: User
+    via: implicit (session subject)
+- name: Client
+  description: >-
+    A registered OAuth 2.0 / OpenID Connect 1.0 relying party. Defined in the deployment configuration, NOT
+    creatable through the API — Authelia implements no dynamic client registration.
+  schemas: [openid.spec.ClientAuthMethod, openid.spec.GrantType, openid.spec.ResponseType, openid.spec.ResponseMode]
+  operations: [postOpenIDConnectToken, postOAuth2Introspection, postOAuth2Revocation, postOAuth2PushedAuthorizationRequest]
+  external_source: https://www.authelia.com/configuration/identity-providers/openid-connect/clients/
+  relationships:
+  - has_many: Token
+    via: token endpoint
+  - has_many: Consent
+    via: authorization endpoint
+- name: Consent
+  description: A user's grant of scopes and audiences to a Client, obtained through the consent endpoints.
+  operations: [getOpenIDConnectConsent, postOpenIDConnectConsent]
+  relationships:
+  - belongs_to: User
+    via: implicit
+  - belongs_to: Client
+    via: client_id
+- name: Token
+  description: >-
+    An OAuth 2.0 access, refresh or ID token. Introspectable (RFC 7662) and revocable (RFC 7009). Prefixed
+    authelia_at_ / authelia_rt_ / authelia_ac_.
+  schemas: [openid.spec.AccessResponse, openid.spec.IntrospectionResponse, openid.spec.ErrorResponseGeneric]
+  operations: [postOpenIDConnectToken, postOAuth2Introspection, postOAuth2Revocation]
+  relationships:
+  - belongs_to: Client
+    via: client_id
+  - belongs_to: User
+    via: sub claim (opaque user identifier)
+- name: ProviderMetadata
+  description: >-
+    The self-describing discovery documents. The largest schemas in the contract by $ref fan-out —
+    openid.spec.Metadata.OpenIDConfiguration and openid.spec.Metadata.OAuth2AuthorizationServer each
+    reference the JOSE algorithm, grant type, response type/mode, claim and scope enumerations.
+  schemas: [openid.spec.Metadata.OpenIDConfiguration, openid.spec.Metadata.OAuth2AuthorizationServer,
+    jose.spec.JWS, jose.spec.JWE.alg, jose.spec.JWE.enc, openid.implementation.Claims.Name,
+    openid.implementation.Scopes.Object]
+  operations: [getOpenIDConnectConfiguration, getOAuth2AuthorizationServerMetadata, getOpenIDConnectJSONWebKeySet]
+- name: AuthorizationDecision
+  description: >-
+    Not a stored entity — the per-request verdict returned to a reverse proxy by /api/authz/*. Modelled here
+    because it is the highest-volume "resource" in any Authelia deployment.
+  operations: [getAuthzForwardAuth, getAuthzExtAuthz, getAuthzAuthRequest, getAuthzLegacy]
+  relationships:
+  - belongs_to: Session
+    via: cookie or bearer token
+notes:
+- >-
+  95 $ref edges exist between the 100 component schemas; nearly all of them are composition edges
+  (allOf/oneOf) inside the WebAuthn and OpenID metadata trees rather than foreign-key style references,
+  which is why the entity graph above is derived from operation grouping and path parameters as well as
+  from $ref alone.
+- No subway/ render exists for this repo.

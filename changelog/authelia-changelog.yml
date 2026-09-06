@@ -1,0 +1,54 @@
+generated: '2026-09-06'
+method: searched
+source: https://github.com/authelia/authelia/releases (GitHub Releases API, read 2026-09-06)
+description: >-
+  Authelia's dated changelog is the GitHub Releases feed; every release carries conventional-commit grouped
+  notes, linked issues, contributor attribution and — where relevant — the GHSA security advisories the
+  release closes. Release notes for minor versions are additionally written up as long-form posts on the
+  Authelia blog (https://www.authelia.com/blog/).
+scheme: semver
+current_version: v4.39.22
+current_version_date: '2026-09-03'
+changelog_url: https://github.com/authelia/authelia/releases
+blog_release_notes: https://www.authelia.com/blog/4.39-release-notes/
+entries:
+- version: v4.39.22
+  date: '2026-09-03'
+  breaking: false
+  highlights:
+  - 'storage: access token JWT upgrade (#12958)'
+- version: v4.39.21
+  date: '2026-09-03'
+  breaking: false
+  highlights:
+  - 'api: missing and misleading endpoints corrected in the published OpenAPI contract (#12728)'
+  - 'authentication: stale user database aliases, pooled client skip and an unnecessary read lock fixed'
+  - 'authorization: deprecated wildcard consistency'
+- version: v4.39.20
+  date: '2026-05-26'
+  breaking: false
+  security: true
+  highlights:
+  - 'Security release. GHSA-j748-h363-wqj8: edge-case access control rule domain miss due to lack of canonicalization.'
+  - 'Security release. GHSA-hjj4-hfjm-fmrj: missing username canonicalization in Basic Auth when using LDAP.'
+  - 'authorization: case-insensitive domain matching'
+- version: v4.39.19
+  date: '2026-04-12'
+  breaking: false
+- version: v4.39.18
+  date: '2026-04-10'
+  breaking: false
+- version: v4.39.17
+  date: '2026-04-09'
+  breaking: false
+- version: v4.39.16
+  date: '2026-03-14'
+  breaking: false
+- version: v4.39.15
+  date: '2025-11-29'
+  breaking: false
+notes:
+- Window recorded is the 8 most recent releases as of 2026-09-06.
+- No breaking change has shipped in the observed window; the 4.39 minor line has been current throughout.
+- Security advisories are published as GitHub Security Advisories under
+  https://github.com/authelia/authelia/security/advisories and referenced from the release notes.

@@ -1,0 +1,474 @@
+# Authelia
+
+> Free Open-Source Software Modern IAM Solution
+
+- [Policies](https://www.authelia.com/policies/): 
+- [Configuration](https://www.authelia.com/configuration/): Configuration Documentation
+- [Contributing](https://www.authelia.com/contributing/): Contributing Docs
+- [Information](https://www.authelia.com/information/): Information about the project.
+- [Integration](https://www.authelia.com/integration/): Integration Docs
+- [Overview](https://www.authelia.com/overview/): Authelia Overview
+- [Reference](https://www.authelia.com/reference/): Authelia Reference
+- [Roadmap](https://www.authelia.com/roadmap/): Authelia Roadmap
+- [Blog](https://www.authelia.com/blog/): The Authelia Blog.
+
+## Policies
+
+
+
+- [Artificial Intelligence](https://www.authelia.com/policies/artificial-intelligence/): The Authelia Artificial Intelligence Policy which describes how Artificial Intelligence is used within Authelia.
+- [Governance Policy](https://www.authelia.com/policies/governance/): The Authelia Governance Policy which describes how the Authelia project is governed.
+- [Privacy Policy](https://www.authelia.com/policies/privacy/): We do not use cookies and we do not collect any personal data.
+- [Security Policy](https://www.authelia.com/policies/security/): The Authelia Security Policy which is essential reading for reporting security issues
+- [Versioning Policy](https://www.authelia.com/policies/versioning/): The Authelia Versioning Policy which is important reading for administrators
+- [Code of Conduct](https://www.authelia.com/policies/code-of-conduct/): The Code of Conduct that all community members must agree to abide by.
+
+## Configuration
+
+> Configuration Documentation
+
+- [Prologue](https://www.authelia.com/configuration/prologue/): Configuration Prologue
+- [Methods](https://www.authelia.com/configuration/methods/): Methods of Configuration
+- [First Factor](https://www.authelia.com/configuration/first-factor/): First Factor methods configuration
+- [Second Factor](https://www.authelia.com/configuration/second-factor/): Second Factor methods configuration
+- [Security](https://www.authelia.com/configuration/security/): Security Related Configuration
+- [Identity Validation](https://www.authelia.com/configuration/identity-validation/): Identity Validation Configuration
+- [Session](https://www.authelia.com/configuration/session/): Session Configuration
+- [Storage](https://www.authelia.com/configuration/storage/): Storage Configuration
+- [Notifications](https://www.authelia.com/configuration/notifications/): Notifications Configuration
+- [Telemetry](https://www.authelia.com/configuration/telemetry/): Telemetry Configuration
+- [Identity Providers](https://www.authelia.com/configuration/identity-providers/): Identity Providers Configuration
+- [Definitions](https://www.authelia.com/configuration/definitions/): Definitions Configuration
+- [Miscellaneous](https://www.authelia.com/configuration/miscellaneous/): Miscellaneous Configuration
+
+### Prologue
+
+> Configuration Prologue
+
+- [Prologue](https://www.authelia.com/configuration/prologue/introduction/): An introduction into configuring Authelia.
+- [Security Sensitive Values](https://www.authelia.com/configuration/prologue/security-sensitive-values/): An introduction into configuring Authelia's security sensitive values.
+- [Common](https://www.authelia.com/configuration/prologue/common/): Common configuration options and notations.
+- [Migration](https://www.authelia.com/configuration/prologue/migration/): Information regarding configuration migration.
+
+### Methods
+
+> Methods of Configuration
+
+- [Methods](https://www.authelia.com/configuration/methods/introduction/): Methods of Configuration.
+- [Files](https://www.authelia.com/configuration/methods/files/): Using the YAML File Configuration Method.
+- [Environment](https://www.authelia.com/configuration/methods/environment/): Using the Environment Variable Configuration Method.
+- [Secrets](https://www.authelia.com/configuration/methods/secrets/): Using the Secrets Configuration Method.
+
+### First Factor
+
+> First Factor methods configuration
+
+- [First Factor](https://www.authelia.com/configuration/first-factor/introduction/): Configuring Authelia First Factor Authentication.
+- [LDAP](https://www.authelia.com/configuration/first-factor/ldap/): Configuring LDAP
+- [File](https://www.authelia.com/configuration/first-factor/file/): File
+
+### Second Factor
+
+> Second Factor methods configuration
+
+- [Second Factor](https://www.authelia.com/configuration/second-factor/introduction/): Configuring Authelia Second Factor Authentication.
+- [Duo / Mobile Push](https://www.authelia.com/configuration/second-factor/duo/): Configuring the Duo Mobile Push Notification Second Factor Method.
+- [Time-based One-Time Password](https://www.authelia.com/configuration/second-factor/time-based-one-time-password/): Configuring the Time-based One-Time Password Second Factor Method.
+- [WebAuthn](https://www.authelia.com/configuration/second-factor/webauthn/): Configuring the WebAuthn Second Factor Method.
+
+### Security
+
+> Security Related Configuration
+
+- [Security](https://www.authelia.com/configuration/security/introduction/): Security Related Configuration
+- [Access Control](https://www.authelia.com/configuration/security/access-control/): Configuring the Access Control or RBAC settings.
+- [Regulation](https://www.authelia.com/configuration/security/regulation/): Regulation Configuration
+- [Password Policy](https://www.authelia.com/configuration/security/password-policy/): Password Policy Configuration
+
+### Identity Validation
+
+> Identity Validation Configuration
+
+- [Identity Validation](https://www.authelia.com/configuration/identity-validation/introduction/): Identity Validation Configuration
+- [Elevated Session](https://www.authelia.com/configuration/identity-validation/elevated-session/): Elevated Session Identity Validation Configuration
+- [Reset Password](https://www.authelia.com/configuration/identity-validation/reset-password/): Reset Password Identity Validation Configuration
+
+### Session
+
+> Session Configuration
+
+- [Session](https://www.authelia.com/configuration/session/introduction/): Session Configuration
+- [Redis](https://www.authelia.com/configuration/session/redis/): Redis Session Configuration
+
+### Storage
+
+> Storage Configuration
+
+- [Storage](https://www.authelia.com/configuration/storage/introduction/): Storage Configuration
+- [Migrations](https://www.authelia.com/configuration/storage/migrations/): Storage Migrations
+- [PostgreSQL](https://www.authelia.com/configuration/storage/postgres/): PostgreSQL Configuration
+- [SQLite3](https://www.authelia.com/configuration/storage/sqlite/): SQLite3 Configuration
+- [MySQL](https://www.authelia.com/configuration/storage/mysql/): MySQL Configuration
+
+### Notifications
+
+> Notifications Configuration
+
+- [Notifications](https://www.authelia.com/configuration/notifications/introduction/): Configuring the Notifications Settings.
+- [SMTP](https://www.authelia.com/configuration/notifications/smtp/): Configuring the SMTP Notifications Settings.
+- [File System](https://www.authelia.com/configuration/notifications/file/): Configuring the File Notifications Settings.
+
+### Telemetry
+
+> Telemetry Configuration
+
+- [Telemetry](https://www.authelia.com/configuration/telemetry/introduction/): Configuring the Telemetry settings
+- [Metrics](https://www.authelia.com/configuration/telemetry/metrics/): Configuring the Metrics Telemetry settings
+
+### Identity Providers
+
+> Identity Providers Configuration
+
+- [Identity Providers](https://www.authelia.com/configuration/identity-providers/introduction/): Identity Providers Configuration
+- [OpenID Connect 1.0](https://www.authelia.com/configuration/identity-providers/openid-connect/)
+
+### Definitions
+
+> Definitions Configuration
+
+- [User Attributes](https://www.authelia.com/configuration/definitions/user-attributes/): User Attributes Definitions Configuration
+- [Definitions](https://www.authelia.com/configuration/definitions/introduction/): Definitions Configuration
+- [Network](https://www.authelia.com/configuration/definitions/network/): Network Definitions Configuration
+
+### Miscellaneous
+
+> Miscellaneous Configuration
+
+- [Miscellaneous](https://www.authelia.com/configuration/miscellaneous/introduction/): Miscellaneous Configuration.
+- [Privacy Policy](https://www.authelia.com/configuration/miscellaneous/privacy-policy/): Privacy Policy Configuration.
+- [Server](https://www.authelia.com/configuration/miscellaneous/server/): Configuring the Server Settings.
+- [Server Endpoint Rate Limits](https://www.authelia.com/configuration/miscellaneous/server-endpoint-rate-limits/): Configuring the Server Authz Endpoint Settings.
+- [Server Authz Endpoints](https://www.authelia.com/configuration/miscellaneous/server-endpoints-authz/): Configuring the Server Authz Endpoint Settings.
+- [NTP](https://www.authelia.com/configuration/miscellaneous/ntp/): Configuring the NTP Settings.
+- [Log](https://www.authelia.com/configuration/miscellaneous/logging/): Configuring the Log Settings.
+
+## Contributing
+
+> Contributing Docs
+
+- [Prologue](https://www.authelia.com/contributing/prologue/): Contributing Prologue
+- [Development](https://www.authelia.com/contributing/development/): Contributing via Development
+- [Guidelines](https://www.authelia.com/contributing/guidelines/): Contributing Guidelines
+
+### Prologue
+
+> Contributing Prologue
+
+- [Prologue](https://www.authelia.com/contributing/prologue/introduction/): An introduction into contributing to the Authelia project.
+- [Financial](https://www.authelia.com/contributing/prologue/financial/): Information on contributing financially to the Authelia project.
+- [Documentation Contributions](https://www.authelia.com/contributing/prologue/documentation-contributions/): Information on contributing documentation to the Authelia project.
+- [Translations](https://www.authelia.com/contributing/prologue/translations/): Information on contributing translations to the Authelia project.
+
+### Development
+
+> Contributing via Development
+
+- [Development](https://www.authelia.com/contributing/development/introduction/): An introduction into contributing to the Authelia project via development.
+- [Environment](https://www.authelia.com/contributing/development/environment/): How to configure your development environment.
+- [Building and Testing](https://www.authelia.com/contributing/development/build-and-test/): Building and Testing Authelia.
+- [Integration Suites](https://www.authelia.com/contributing/development/integration-suites/): Integration Suites.
+
+### Guidelines
+
+> Contributing Guidelines
+
+- [Guidelines](https://www.authelia.com/contributing/guidelines/introduction/): An introduction into guidelines for contributing to the Authelia project.
+- [Database Schema](https://www.authelia.com/contributing/guidelines/database-schema/): Authelia Development Database Schema Guidelines
+- [Documentation](https://www.authelia.com/contributing/guidelines/documentation/): Authelia Development Documentation Guidelines
+- [Pull Request](https://www.authelia.com/contributing/guidelines/pull-request/): Authelia Development Pull Request Guidelines
+- [Testing](https://www.authelia.com/contributing/guidelines/testing/): Authelia Development Testing Guidelines
+- [Commit Message](https://www.authelia.com/contributing/guidelines/commit-message/): Authelia Development Commit Message Guidelines
+- [Accessibility](https://www.authelia.com/contributing/guidelines/accessibility/): Authelia Development Accessibility Guidelines
+- [Style](https://www.authelia.com/contributing/guidelines/style/): Authelia Development Style Guidelines
+
+## Information
+
+> Information about the project.
+
+- [About](https://www.authelia.com/information/about/): About Authelia and the Authelia Team
+- [Contact](https://www.authelia.com/information/contact/): Drop us an email.
+
+## Integration
+
+> Integration Docs
+
+- [Prologue](https://www.authelia.com/integration/prologue/): Integration Prologue
+- [Deployment](https://www.authelia.com/integration/deployment/): Deployment
+- [Proxies](https://www.authelia.com/integration/proxies/): Proxies Integration
+- [Trusted Header SSO](https://www.authelia.com/integration/trusted-header-sso/): Trusted Header SSO Integration
+- [Kubernetes](https://www.authelia.com/integration/kubernetes/): Kubernetes Integration
+- [Guides](https://www.authelia.com/integration/guides/): Guides
+- [OpenID Connect 1.0](https://www.authelia.com/integration/openid-connect/): OpenID Connect 1.0 Integration
+- [LDAP](https://www.authelia.com/integration/ldap/): LDAP Integration
+
+### Prologue
+
+> Integration Prologue
+
+- [Prologue](https://www.authelia.com/integration/prologue/introduction/): An introduction into integrating Authelia with a product.
+- [Get started](https://www.authelia.com/integration/prologue/get-started/): A getting started guide for Authelia.
+
+### Deployment
+
+> Deployment
+
+- [Deployment](https://www.authelia.com/integration/deployment/introduction/): An introduction into integrating Authelia with a product.
+- [Automation](https://www.authelia.com/integration/deployment/automation/): Automated Deployment of Authelia.
+- [Docker](https://www.authelia.com/integration/deployment/docker/): A guide on installing Authelia in Docker.
+- [Kubernetes](https://www.authelia.com/integration/deployment/kubernetes/): Test Description
+- [Bare-Metal](https://www.authelia.com/integration/deployment/bare-metal/): Deploying Authelia on Bare-Metal.
+
+### Proxies
+
+> Proxies Integration
+
+- [Proxies](https://www.authelia.com/integration/proxies/introduction/): An integration guide for Authelia and several supported reverse proxies
+- [Support](https://www.authelia.com/integration/proxies/support/): An support matrix for Authelia and several supported reverse proxies
+- [Forwarded Headers](https://www.authelia.com/integration/proxies/forwarded-headers/): An introduction into the importance of forwarded headers coming from trusted sources
+- [Caddy](https://www.authelia.com/integration/proxies/caddy/): An integration guide for Authelia and the Caddy reverse proxy
+- [Envoy](https://www.authelia.com/integration/proxies/envoy/): An integration guide for Authelia and the Envoy reverse proxy
+- [HAProxy](https://www.authelia.com/integration/proxies/haproxy/): An integration guide for Authelia and the HAProxy reverse proxy
+- [NGINX](https://www.authelia.com/integration/proxies/nginx/): An integration guide for Authelia and the NGINX reverse proxy
+- [SWAG](https://www.authelia.com/integration/proxies/swag/): An integration guide for Authelia and the SWAG reverse proxy
+- [NGINX Proxy Manager](https://www.authelia.com/integration/proxies/nginx-proxy-manager/): An integration guide for Authelia and the NGINX Proxy Manager reverse proxy
+- [Skipper](https://www.authelia.com/integration/proxies/skipper/): An integration guide for Authelia and the Skipper reverse proxy
+- [Traefik](https://www.authelia.com/integration/proxies/traefik/): An integration guide for Authelia and the Traefik reverse proxy
+- [Traefik v1](https://www.authelia.com/integration/proxies/traefikv1/): An integration guide for Authelia and the Traefik v1 reverse proxy
+
+### Trusted Header SSO
+
+> Trusted Header SSO Integration
+
+- [Trusted Header SSO](https://www.authelia.com/integration/trusted-header-sso/introduction/): Trusted Header SSO Integration
+- [Seerr](https://www.authelia.com/integration/trusted-header-sso/seerr/): Trusted Header SSO Integration for Seerr
+- [Paperless](https://www.authelia.com/integration/trusted-header-sso/paperless/): Trusted Header SSO Integration for Paperless
+- [Jira](https://www.authelia.com/integration/trusted-header-sso/jira/): Trusted Header SSO Integration for Jira
+- [Organizr](https://www.authelia.com/integration/trusted-header-sso/organizr/): Trusted Header SSO Integration for Organizr
+- [Seafile](https://www.authelia.com/integration/trusted-header-sso/seafile/): Trusted Header SSO Integration for Seafile
+- [Frequently Asked Questions](https://www.authelia.com/integration/trusted-header-sso/frequently-asked-questions/): Frequently Asked Questions regarding integrating the Authelia Trusted Header SSO implementation with applications
+
+### Kubernetes
+
+> Kubernetes Integration
+
+- [Kubernetes](https://www.authelia.com/integration/kubernetes/introduction/): An introduction into integrating Authelia with Kubernetes.
+- [Chart](https://www.authelia.com/integration/kubernetes/chart/): A guide to using the Authelia helm chart to integrate Authelia with Kubernetes
+- [Secrets](https://www.authelia.com/integration/kubernetes/secrets/): A guide to using secrets when integrating Authelia with Kubernetes.
+- [Traefik Ingress](https://www.authelia.com/integration/kubernetes/traefik-ingress/): A guide to integrating Authelia with the Traefik Kubernetes Ingress.
+- [Envoy](https://www.authelia.com/integration/kubernetes/envoy/): Envoy Kubernetes Integration
+- [NGINX Ingress](https://www.authelia.com/integration/kubernetes/nginx-ingress/): A guide to integrating Authelia with the NGINX Kubernetes Ingress.
+
+### Guides
+
+> Guides
+
+- [Securing Applications with Basic Auth](https://www.authelia.com/integration/guides/securing-apps-with-basic-auth/): Learn how to protect applications using Authelia's ForwardAuth while enabling API access through Basic Authentication and service accounts.
+- [Protecting SSH and Console Logins with pam_authelia](https://www.authelia.com/integration/guides/pam-authelia/): Install and configure pam_authelia to delegate PAM-based authentication (SSH, login, sudo) to Authelia, with 1FA, 2FA, and OAuth2 Device Authorization flows.
+
+### OpenID Connect 1.0
+
+> OpenID Connect 1.0 Integration
+
+- [OpenID Connect 1.0](https://www.authelia.com/integration/openid-connect/introduction/): An introduction into integrating the Authelia OpenID Connect 1.0 Provider with an OpenID Connect 1.0 Relying Party
+- [OpenID Connect 1.0 Claims](https://www.authelia.com/integration/openid-connect/openid-connect-1.0-claims/): An introduction into utilizing the Authelia OpenID Connect 1.0 Claims functionality
+- [OAuth 2.0 Bearer Token Usage](https://www.authelia.com/integration/openid-connect/oauth-2.0-bearer-token-usage/): An introduction into utilizing the Authelia OAuth 2.0 Provider as an authorization method
+- [Frequently Asked Questions](https://www.authelia.com/integration/openid-connect/frequently-asked-questions/): Frequently Asked Questions regarding integrating the Authelia OpenID Connect 1.0 Provider with an OpenID Connect 1.0 Relying Party
+- [Clients](https://www.authelia.com/integration/openid-connect/clients/): OpenID Connect 1.0 Client Integration Guides
+
+### LDAP
+
+> LDAP Integration
+
+- [LDAP](https://www.authelia.com/integration/ldap/introduction/): An introduction into integrating Authelia with LDAP.
+- [Active Directory](https://www.authelia.com/integration/ldap/activedirectory/)
+- [FreeIPA](https://www.authelia.com/integration/ldap/freeipa/)
+- [GLAuth](https://www.authelia.com/integration/ldap/glauth/)
+- [LLDAP](https://www.authelia.com/integration/ldap/lldap/)
+- [RFC2307bis](https://www.authelia.com/integration/ldap/rfc2307bis/)
+
+## Overview
+
+> Authelia Overview
+
+- [Prologue](https://www.authelia.com/overview/prologue/): Overview Prologue
+- [Authentication](https://www.authelia.com/overview/authentication/): Authentication
+- [Authorization](https://www.authelia.com/overview/authorization/): Authorization Overview
+- [Security](https://www.authelia.com/overview/security/): Overview Prologue
+
+### Prologue
+
+> Overview Prologue
+
+- [Prologue](https://www.authelia.com/overview/prologue/introduction/): An introduction into the Authelia overview.
+- [Architecture](https://www.authelia.com/overview/prologue/architecture/): An overview of the Authelia architecture.
+- [Supported Proxies](https://www.authelia.com/overview/prologue/supported-proxies/): An introduction into the Authelia overview.
+
+### Authentication
+
+> Authentication
+
+- [Authentication](https://www.authelia.com/overview/authentication/introduction/): An overview of a authentication.
+- [First Factor](https://www.authelia.com/overview/authentication/first-factor/): Authelia utilizes the standard username and password combination for first factor authentication.
+- [One Time Password](https://www.authelia.com/overview/authentication/one-time-password/): Authelia utilizes Time-based One-Time Passwords as one of it's second factor authentication methods.
+- [Security Key and Passkeys](https://www.authelia.com/overview/authentication/security-key/): Authelia utilizes WebAuthn Credentials as one of it's second factor authentication methods and a passwordless login method via Passkeys.
+- [Duo / Mobile Push](https://www.authelia.com/overview/authentication/push-notification/): Authelia utilizes Duo Push Notifications as one of it's second factor authentication methods.
+- [Password Policy](https://www.authelia.com/overview/authentication/password-policy/): Authelia implements a password policy feature.
+
+### Authorization
+
+> Authorization Overview
+
+- [Access Control](https://www.authelia.com/overview/authorization/access-control/): Access Control is the main authorization system in Authelia.
+- [Regulation](https://www.authelia.com/overview/authorization/regulation/): Regulation of failed attempts is an important function of an IAM system.
+- [OpenID Connect 1.0](https://www.authelia.com/overview/authorization/openid-connect-1.0/): OpenID Connect 1.0 is a authorization identity framework supported by Authelia.
+- [Trusted Headers SSO](https://www.authelia.com/overview/authorization/trusted-headers/): Trusted Headers SSO is a simple header authorization framework supported by Authelia.
+- [Statelessness](https://www.authelia.com/overview/authorization/statelessness/): Statelessness is the ability for a system to operate without an in-memory state. A crash could result in loss of the in-memory state causing a bad user experience.
+
+### Security
+
+> Overview Prologue
+
+- [Security](https://www.authelia.com/overview/security/introduction/): An overview introduction into Authelia's security features.
+- [Measures](https://www.authelia.com/overview/security/measures/): An overview of the security measures Authelia implements.
+- [Post-Quantum Cryptography](https://www.authelia.com/overview/security/post-quantum-cryptography/): An overview of the Post-Quantum Cryptography security Authelia implements.
+- [Threat Model](https://www.authelia.com/overview/security/threat-model/): An overview of the Authelia threat model.
+- [Artifact Signing and Provenance](https://www.authelia.com/overview/security/artifact-signing-and-provenance/): An overview of Authelia's Artifact Signing and Provenance.
+
+## Reference
+
+> Authelia Reference
+
+- [Reference](https://www.authelia.com/reference/prologue/): Reference Prologue
+- [Project Processes](https://www.authelia.com/reference/project-processes/): Reference Project Processes
+- [Guides](https://www.authelia.com/reference/guides/): Reference Prologue
+- [Integrations](https://www.authelia.com/reference/integrations/): Integrations Reference Prologue
+- [CLI](https://www.authelia.com/reference/cli/)
+- [Architecture Decision Log](https://www.authelia.com/reference/architecture-decision-log/): Architecture Decision Log Prologue
+
+### Reference
+
+> Reference Prologue
+
+- [Prologue](https://www.authelia.com/reference/prologue/introduction/): An introduction into Authelia reference documentation.
+
+### Project Processes
+
+> Reference Project Processes
+
+- [Testing](https://www.authelia.com/reference/project-processes/testing-procedures/): A description of testing procedures for Authelia
+
+### Guides
+
+> Reference Prologue
+
+- [Guides](https://www.authelia.com/reference/guides/introduction/): A collection of reference guides
+- [Systemd](https://www.authelia.com/reference/guides/systemd/): A reference guide on systemd
+- [Authentication Method Reference Values](https://www.authelia.com/reference/guides/authentication-method-references/): This guide shows a list of Authentication Method Reference Values based on RFC8176 and how they are implemented within Authelia
+- [WebAuthn](https://www.authelia.com/reference/guides/webauthn/): A reference guide on various WebAuthn features and topics
+- [Attributes](https://www.authelia.com/reference/guides/attributes/): This guide highlights information about attributes available via various methods
+- [Access Control Rule Guide](https://www.authelia.com/reference/guides/rule-operators/): A reference guide on access control rule operators
+- [Branding](https://www.authelia.com/reference/guides/branding/): This guide highlights information about Authelia's branding assets
+- [Frequently Asked Questions](https://www.authelia.com/reference/guides/frequently-asked-questions/): This guide shows a list of other frequently asked question documents as well as some general ones
+- [Generating Secure Values](https://www.authelia.com/reference/guides/generating-secure-values/): A reference guide on generating secure values such as password hashes, password strings, and cryptography keys
+- [HTTP Archive Files](https://www.authelia.com/reference/guides/http-archive-file/): This guide describes and helps users create HTTP Archive (HAR) files
+- [Internationalization](https://www.authelia.com/reference/guides/internationalization/): A collection of internationalization reference information
+- [Log Messages](https://www.authelia.com/reference/guides/log-messages/): A collection of log message reference information
+- [Notification Templates](https://www.authelia.com/reference/guides/notification-templates/): A reference guide on overriding notification templates
+- [Passwords](https://www.authelia.com/reference/guides/passwords/): A reference guide on passwords and hashing etc
+- [Proxy Authorization](https://www.authelia.com/reference/guides/proxy-authorization/): A reference guide on Proxy Authorization implementations
+- [Schemas](https://www.authelia.com/reference/guides/schemas/): A reference guide on the schemas provided by Authelia
+- [Server Asset Overrides](https://www.authelia.com/reference/guides/server-asset-overrides/): A reference guide on overriding server assets
+- [Telemetry](https://www.authelia.com/reference/guides/metrics/): A reference guide on the telemetry collection
+- [Templating](https://www.authelia.com/reference/guides/templating/): A reference guide on the templates system
+- [Troubleshooting](https://www.authelia.com/reference/guides/troubleshooting/): This guide describes and helps users provide information during troubleshooting including sanitization etc
+- [Validating Forwarded Authentication](https://www.authelia.com/reference/guides/validating-forwarded-authentication/): A reference guide on validating the Forwarded Authentication Integration
+
+### Integrations
+
+> Integrations Reference Prologue
+
+- [Integrations](https://www.authelia.com/reference/integrations/introduction/): A collection of integration reference guides
+- [Cache Integrations](https://www.authelia.com/reference/integrations/cache-integrations/): A cache integration reference guide
+- [Database Integrations](https://www.authelia.com/reference/integrations/database-integrations/): A database integration reference guide
+- [LDAP Integrations](https://www.authelia.com/reference/integrations/ldap-integrations/): A LDAP integration reference guide
+- [Time-based OTP Applications](https://www.authelia.com/reference/integrations/time-based-one-time-password-apps/): A Time-based OTP Application integration reference guide
+
+### CLI
+
+
+
+- [authelia](https://www.authelia.com/reference/cli/authelia/)
+- [authelia-gen](https://www.authelia.com/reference/cli/authelia-gen/)
+- [authelia-scripts](https://www.authelia.com/reference/cli/authelia-scripts/)
+
+### Architecture Decision Log
+
+> Architecture Decision Log Prologue
+
+- [Architecture Decision Log](https://www.authelia.com/reference/architecture-decision-log/introduction/): The Authelia Architecture Decision Log
+- [ADR1: OpenID Connect Client Authorization Policies](https://www.authelia.com/reference/architecture-decision-log/1/): An official Architecture Decision Record
+- [ADR2: Configuration via Environment and Secrets](https://www.authelia.com/reference/architecture-decision-log/2/): An official Architecture Decision Record
+- [ADR3: Using Docker Labels for Authorization Rules](https://www.authelia.com/reference/architecture-decision-log/3/): An official Architecture Decision Record
+
+## Roadmap
+
+> Authelia Roadmap
+
+- [Prologue](https://www.authelia.com/roadmap/prologue/): Roadmap Prologue
+- [Planning](https://www.authelia.com/roadmap/planning/): Planning Roadmap Details
+- [Active](https://www.authelia.com/roadmap/active/): Active Roadmap Details
+- [Complete](https://www.authelia.com/roadmap/complete/): Complete Roadmap Details
+
+### Prologue
+
+> Roadmap Prologue
+
+- [Prologue](https://www.authelia.com/roadmap/prologue/introduction/): An introduction into the Authelia roadmap.
+
+### Planning
+
+> Planning Roadmap Details
+
+- [OpenID Connect 1.0 Relying Party](https://www.authelia.com/roadmap/planning/openid-connect-1.0-relying-party/): Authelia OpenID Connect 1.0 Relying Party Implementation
+- [Security Assertion Markup Language (SAML) 2.0 Provider](https://www.authelia.com/roadmap/planning/security-assertion-markup-language-saml-2.0-identity-provider/): Authelia Security Assertion Markup Language (SAML) 2.0 Provider Implementation
+
+### Active
+
+> Active Roadmap Details
+
+- [OpenID Connect 1.0 Provider](https://www.authelia.com/roadmap/active/openid-connect-1.0-provider/): Authelia OpenID Connect 1.0 Provider Implementation
+- [Granular Authorization](https://www.authelia.com/roadmap/active/granular-authorization/): Authelia Granular Authorization Implementation
+- [Multi-Domain Protection](https://www.authelia.com/roadmap/active/multi-domain-protection/): Authelia Multi-Domain Protection Implementation
+- [Dashboard / Control Panel for Users](https://www.authelia.com/roadmap/active/dashboard-control-panel-for-users/): Authelia User Dashboard.
+- [Dashboard / Control Panel and CLI for Administrators](https://www.authelia.com/roadmap/active/dashboard-control-panel-and-cli-for-admins/): Authelia Administrator Dashboard.
+
+### Complete
+
+> Complete Roadmap Details
+
+- [Internationalization](https://www.authelia.com/roadmap/complete/internationalization/): Authelia Internationalization Implementation
+- [Kubernetes Documentation](https://www.authelia.com/roadmap/complete/kubernetes-documentation/): Add better Kubernetes documentation.
+- [WebAuthn](https://www.authelia.com/roadmap/complete/webauthn/): Authelia WebAuthn Implementation
+
+## Blog
+
+> The Authelia Blog.
+
+- [We are now OpenID Certified™](https://www.authelia.com/blog/we-are-now-openid-certified/)
+- [Technical: OpenID Connect 1.0 Nuances](https://www.authelia.com/blog/technical-openid-connect-1.0-nuances/): This is a commentary on several troubling trends in the security world, as well as an explainer on some fundamental OpenID Connect 1.0 concepts.
+- [4.39: Release Notes](https://www.authelia.com/blog/4.39-release-notes/): Authelia 4.39 release notes.
+- [Authelia + Traefik Setup Guide](https://www.authelia.com/blog/authelia--traefik-setup-guide/): A temporary guide for setting up Authelia with Traefik while the official Getting Started documentation is being improved.
+- [4.37: Pre-Release Notes](https://www.authelia.com/blog/4.37-pre-release-notes/): Authelia 4.37 is just around the corner. This version has several additional features and improvements to existing features. In this blog post we'll discuss the new features and roughly what it means for users.
+- [4.38: Release Notes](https://www.authelia.com/blog/4.38-release-notes/): Authelia 4.38 release notes.
+- [Say hello to the new website 👋](https://www.authelia.com/blog/say-hello-to-the-new-website/): Introducing the new website
+

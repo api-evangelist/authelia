@@ -1,0 +1,54 @@
+generated: '2026-09-06'
+method: probed
+source: Live HTTPS probes with a browser User-Agent, 2026-09-06.
+description: >-
+  Probe record for RFC 8615 well-known documents on every host this record knows. Authelia is self-hosted
+  software: the only hosts the project itself operates are the documentation/marketing site
+  (www.authelia.com / authelia.com). Every well-known path returned HTTP 404 with the site's HTML 404 body,
+  so NO WellKnown or SecurityTxt pointer is emitted for this provider.
+  Note the distinction that matters here: an Authelia DEPLOYMENT does serve
+  /.well-known/openid-configuration and /.well-known/oauth-authorization-server — both are documented
+  operations in the first-party OpenAPI (openapi/authelia-api-openapi.yml) — but those are served from the
+  operator's own host, not from a host Authelia controls, so they are not creditable to Authelia as a
+  published discovery surface here.
+hosts:
+- host: www.authelia.com
+  documents:
+  - path: /.well-known/security.txt
+    status: 404
+  - path: /.well-known/openid-configuration
+    status: 404
+  - path: /.well-known/oauth-authorization-server
+    status: 404
+  - path: /.well-known/oauth-protected-resource
+    status: 404
+  - path: /.well-known/api-catalog
+    status: 404
+  - path: /.well-known/ai-plugin.json
+    status: 404
+  - path: /.well-known/agent-card.json
+    status: 404
+  - path: /.well-known/agent.json
+    status: 404
+- host: authelia.com
+  documents:
+  - path: /.well-known/security.txt
+    status: 404
+  - path: /.well-known/openid-configuration
+    status: 404
+  - path: /.well-known/oauth-authorization-server
+    status: 404
+  - path: /.well-known/oauth-protected-resource
+    status: 404
+  - path: /.well-known/api-catalog
+    status: 404
+  - path: /.well-known/ai-plugin.json
+    status: 404
+  - path: /.well-known/agent-card.json
+    status: 404
+  - path: /.well-known/agent.json
+    status: 404
+notes:
+- The apis.yml baseURL hosts are templated example hosts (your-authelia-instance.example.com) belonging to
+  the deploying operator, not to Authelia; they are not probed and cannot be.
+- No A2A Agent Card was found on any host. No a2a/ artifact was written.

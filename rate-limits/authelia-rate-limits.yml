@@ -1,100 +1,148 @@
-specification: API Commons Rate Limits
-specificationVersion: '0.1'
-schema: https://raw.githubusercontent.com/api-evangelist/interface-research/main/schema/api-commons.yml#/$defs/RateLimits
-provider: Authelia
-providerId: authelia
-created: '2026-05-04'
-# Provenance stamped 2026-08-11: this artifact was written by the API Evangelist
-# bulk sweep dated 2026-05-04, not harvested from the provider. See roadmap#35.
-method: generated
-modified: '2026-05-04'
-tags:
-  - Authentication
-  - Authorization
-  - LDAP
-  - MFA
-  - Open Source
-  - OpenID Connect
-  - Self-Hosted
-  - SSO
-  - Rate Limiting
-  - Quotas
-  - Throttling
-description: Machine-readable rate limit definitions for the Authelia API surface. Captures per-tier quotas,
-  burst behavior, response signaling, and recovery semantics. Defaults are scaffold values to be replaced
-  with published provider limits.
-headers:
-  limit: X-RateLimit-Limit
-  remaining: X-RateLimit-Remaining
-  reset: X-RateLimit-Reset
-  retryAfter: Retry-After
-  policy: RateLimit-Policy
-responseCodes:
-  throttled: 429
-  quotaExceeded: 429
-  serviceUnavailable: 503
+generated: '2026-09-06'
+method: searched
+source: https://www.authelia.com/configuration/miscellaneous/server-endpoint-rate-limits/
+description: >-
+  Authelia ships default per-endpoint rate limits, enabled by default, implemented as multiple overlapping
+  token buckets per endpoint. These are anti-brute-force controls on a self-hosted server, not a commercial
+  quota: they are per-deployment, configured by the operator, and every value below is the shipped default
+  that the operator may raise, lower or disable. Distinct from Regulation, which silently bans users at the
+  username/password form.
+  REPLACES a 2026-05-04 bulk-sweep scaffold that recorded invented per-tier quotas and X-RateLimit-* headers
+  Authelia does not send.
+scope: per-endpoint, per-deployment
+enforced_by: server (config key server.endpoints.rate_limits)
+limit_count: 11
+response:
+  status_on_exhaustion: 429
+  headers:
+    limit: null
+    remaining: null
+    reset: null
+    retry_after: null
+  note: >-
+    No rate-limit response headers are declared on any 429 response in the first-party contract
+    (openapi/authelia-api-openapi.yml, 9 operations declare 429) and none are documented. A client cannot
+    read its remaining budget; it must back off blindly for the bucket period.
 limits:
-  - tier: free
-    name: Free Tier Default
-    scope: api-key
-    metric: requests_per_minute
-    limit: 10
-    burst: 20
-    timeFrame: minute
-    applies:
-      - Authelia REST API
-      - Authelia OpenID Connect 1.0 Provider
-  - tier: free
-    name: Free Tier Monthly Quota
-    scope: api-key
-    metric: requests_per_month
-    limit: 1000
-    timeFrame: month
-    applies:
-      - Authelia REST API
-      - Authelia OpenID Connect 1.0 Provider
-  - tier: professional
-    name: Professional Tier Default
-    scope: api-key
-    metric: requests_per_minute
-    limit: 100
-    burst: 200
-    timeFrame: minute
-    applies:
-      - Authelia REST API
-      - Authelia OpenID Connect 1.0 Provider
-  - tier: professional
-    name: Professional Tier Monthly Quota
-    scope: api-key
-    metric: requests_per_month
-    limit: 100000
-    timeFrame: month
-    applies:
-      - Authelia REST API
-      - Authelia OpenID Connect 1.0 Provider
-  - tier: enterprise
-    name: Enterprise Negotiated Limit
-    scope: contract
-    metric: requests_per_minute
-    limit: 1000
-    burst: 5000
-    timeFrame: minute
-    applies:
-      - Authelia REST API
-      - Authelia OpenID Connect 1.0 Provider
-policies:
-  - name: Backoff Strategy
-    description: Clients should implement exponential backoff with jitter, honoring the Retry-After header
-      when present.
-  - name: Burst Handling
-    description: Short bursts above the steady-state limit are tolerated up to the documented burst ceiling
-      before throttling engages.
-  - name: Quota Reset
-    description: Monthly quotas reset at the start of each calendar month in UTC. Per-minute and per-second
-      windows reset on a sliding-window basis.
-  - name: Fair Use
-    description: Even on uncapped enterprise tiers, sustained usage that materially impacts shared infrastructure
-      may be subject to fair-use throttling.
-maintainers:
-  - FN: Kin Lane
-    email: kin@apievangelist.com
+- endpoint: reset_password_start
+  operations: [postResetPasswordIdentityStart]
+  enabled_by_default: true
+  buckets:
+  - period: 10 minutes
+    requests: 5
+  - period: 15 minutes
+    requests: 10
+  - period: 30 minutes
+    requests: 15
+- endpoint: reset_password_finish
+  operations: [postResetPasswordIdentityFinish, postResetPassword]
+  enabled_by_default: true
+  buckets:
+  - period: 1 minute
+    requests: 10
+  - period: 2 minutes
+    requests: 15
+- endpoint: second_factor_totp
+  operations: [postSecondFactorTOTP]
+  enabled_by_default: true
+  buckets:
+  - period: 1 minute
+    requests: 30
+  - period: 2 minutes
+    requests: 40
+  - period: 10 minutes
+    requests: 50
+- endpoint: second_factor_duo
+  operations: [postSecondFactorDuo]
+  enabled_by_default: true
+  buckets:
+  - period: 1 minute
+    requests: 10
+  - period: 2 minutes
+    requests: 15
+- endpoint: session_elevation_start
+  operations: [postUserSessionElevation]
+  enabled_by_default: true
+  buckets:
+  - period: 5 minutes
+    requests: 3
+  - period: 10 minutes
+    requests: 5
+  - period: 1 hour
+    requests: 15
+- endpoint: session_elevation_finish
+  operations: [putUserSessionElevation]
+  enabled_by_default: true
+  buckets:
+  - period: 10 minutes
+    requests: 3
+  - period: 20 minutes
+    requests: 5
+  - period: 1 hour
+    requests: 15
+- endpoint: openid_connect_token
+  operations: [postOpenIDConnectToken]
+  enabled_by_default: true
+  buckets:
+  - period: 1 minute
+    requests: 30
+  - period: 2 minutes
+    requests: 40
+  - period: 10 minutes
+    requests: 50
+  - period: 1 hour
+    requests: 100
+- endpoint: openid_connect_pushed_authorization_request
+  operations: [postOAuth2PushedAuthorizationRequest]
+  enabled_by_default: true
+  buckets:
+  - period: 1 minute
+    requests: 30
+  - period: 2 minutes
+    requests: 40
+  - period: 10 minutes
+    requests: 50
+  - period: 1 hour
+    requests: 100
+- endpoint: openid_connect_userinfo
+  operations: [getOpenIDConnectUserInfo, postOpenIDConnectUserInfo]
+  enabled_by_default: true
+  buckets:
+  - period: 1 minute
+    requests: 30
+  - period: 2 minutes
+    requests: 40
+  - period: 10 minutes
+    requests: 50
+  - period: 1 hour
+    requests: 100
+- endpoint: openid_connect_introspection
+  operations: [postOAuth2Introspection]
+  enabled_by_default: true
+  buckets:
+  - period: 1 minute
+    requests: 30
+  - period: 2 minutes
+    requests: 40
+  - period: 10 minutes
+    requests: 50
+  - period: 1 hour
+    requests: 100
+- endpoint: openid_connect_revocation
+  operations: [postOAuth2Revocation]
+  enabled_by_default: true
+  buckets:
+  - period: 1 minute
+    requests: 30
+  - period: 2 minutes
+    requests: 40
+  - period: 10 minutes
+    requests: 50
+  - period: 1 hour
+    requests: 100
+related:
+  regulation:
+    description: >-
+      A separate control that temporarily bans a user after repeated failed first-factor attempts. Not a
+      rate limit and not signalled with 429.
+    docs: https://www.authelia.com/configuration/security/regulation/

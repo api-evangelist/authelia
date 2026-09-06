@@ -1,0 +1,95 @@
+overlay: 1.0.0
+info:
+  title: API Evangelist enrichment overlay for the Authelia API
+  version: 1.0.0
+x-provenance:
+  generated: '2026-09-06'
+  method: generated
+  source: >-
+    Enhancements API Evangelist derived from Authelia's own published documentation, applied over
+    openapi/authelia-api-openapi.yml (which is the first-party contract from
+    https://github.com/authelia/authelia/blob/master/api/openapi.yml, rendered from its Go template).
+  extends: openapi/authelia-api-openapi.yml
+  note: >-
+    This overlay never mutates the original. Every value below is traceable to an Authelia document cited in
+    the action description; nothing is invented.
+actions:
+- target: $.info
+  description: >-
+    Record the deployment reality of this contract — the server is self-hosted, so the servers[] host is a
+    template for the operator's own deployment, and the API version tracks the server release.
+  update:
+    x-deployment-model: self-hosted
+    x-api-versioned: false
+    x-license-spdx: Apache-2.0
+    x-contract-source: https://github.com/authelia/authelia/blob/master/api/openapi.yml
+    x-contract-format: >-
+      Published as a Go text/template; the committed file contains conditional blocks gated on which
+      features the deployment enables. This copy was rendered with all optional feature blocks enabled and
+      the documented default authz endpoints.
+- target: $.info
+  description: Point at the rate limits Authelia enforces by default, which the contract itself does not describe.
+  update:
+    x-rate-limits: https://www.authelia.com/configuration/miscellaneous/server-endpoint-rate-limits/
+    x-rate-limit-headers: none
+- target: $.info
+  description: Record the standards posture asserted in conformance/authelia-conformance.yml.
+  update:
+    x-domain-standard: OpenID Connect 1.0
+    x-domain-standard-status: certified
+    x-domain-standard-evidence: https://www.authelia.com/blog/we-are-now-openid-certified/
+- target: $.info
+  description: Record the versioning and support policy that governs this contract.
+  update:
+    x-versioning-policy: https://www.authelia.com/policies/versioning/
+    x-versioning-scheme: semver
+    x-support-window: 3 minor versions minimum for questions; latest minor for bug fixes
+- target: $.info
+  description: Record error-envelope semantics — no RFC 9457 problem+json exists on this surface.
+  update:
+    x-error-format: proprietary
+    x-error-envelopes:
+    - 'portal: {status, message}'
+    - 'oauth2: {error, error_description, error_uri, error_hint, error_debug, state}'
+    x-problem-json: false
+- target: $.info
+  description: Record replay and reversal semantics for agents.
+  update:
+    x-idempotency-coverage: none
+    x-reversibility-grade: documented
+    x-dry-run: false
+- target: $.paths['/api/oidc/token'].post
+  description: >-
+    Flag the default rate limit Authelia applies to the token endpoint
+    (server.endpoints.rate_limits.openid_connect_token).
+  update:
+    x-rate-limit-buckets:
+    - period: 1 minute
+      requests: 30
+    - period: 1 hour
+      requests: 100
+- target: $.paths['/api/secondfactor/totp'].delete
+  description: Flag the operation as irreversible for agent planning.
+  update:
+    x-irreversible: true
+    x-irreversible-reason: >-
+      Deleting the TOTP configuration destroys the shared secret. There is no restore window; the user must
+      re-enroll from the authenticator.
+- target: $.paths['/api/secondfactor/webauthn/credential/{credentialID}'].delete
+  description: Flag the operation as irreversible for agent planning.
+  update:
+    x-irreversible: true
+    x-irreversible-reason: >-
+      Deleting a WebAuthn credential is permanent; the physical authenticator must be re-registered.
+- target: $.paths['/api/oidc/revocation'].post
+  description: Mark this as the reversal path for tokens issued at the token endpoint.
+  update:
+    x-reverses: postOpenIDConnectToken
+    x-reversal-window: >-
+      None stated. RFC 7009 revocation is accepted for the life of the token; the JWT Profile for Access
+      Tokens weakens this by making introspection stateless.
+- target: $.paths['/api/user/session/elevation/{id}'].delete
+  description: Mark this as the reversal path for session elevation.
+  update:
+    x-reverses: postUserSessionElevation
+    x-reversal-window: The life of the elevation, bounded by identity_validation.elevated_session.elevation_lifespan.

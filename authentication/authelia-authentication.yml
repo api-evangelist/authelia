@@ -1,31 +1,124 @@
-generated: '2026-07-11'
-method: derived
-source: openapi/authelia-openapi.yml
+generated: '2026-09-06'
+method: searched
+docs: https://www.authelia.com/reference/guides/proxy-authorization/
+source: >-
+  openapi/authelia-api-openapi.yml (first-party OpenAPI 3.2.0),
+  https://www.authelia.com/integration/openid-connect/oauth-2.0-bearer-token-usage/,
+  https://www.authelia.com/reference/guides/proxy-authorization/,
+  https://www.authelia.com/configuration/session/ and
+  https://www.authelia.com/integration/guides/securing-apps-with-basic-auth/.
+description: >-
+  How a caller authenticates to an Authelia deployment. Two distinct things are easy to confuse and are kept
+  apart here: (1) authenticating TO the Authelia API, which is session-cookie based, and (2) the
+  authentication schemes Authelia accepts at its PROXY AUTHORIZATION endpoints on behalf of the applications
+  it protects. There is no API key issuance flow and no vendor-managed credential of any kind — Authelia is
+  self-hosted, so all credentials belong to the operator's deployment.
 summary:
   types:
-  - http
-  - oauth2
-  oauth2_flows:
-  - authorizationCode
+  - apiKey
+  - openIdConnect
+  api_key_program: false
+  self_service_signup: false
+  note: >-
+    Upgrades a 2026-07-11 derived profile that read a best-effort scaffold spec and reported http/basic +
+    http/bearer + an oauth2 authorizationCode flow against example.com hosts.
 schemes:
-- name: clientBasicAuth
-  type: http
-  scheme: basic
-  description: RFC 6749 client_secret_basic for token, introspection and revocation endpoints.
+- name: authelia_auth
+  type: apiKey
+  in: cookie
+  parameter: authelia_session
+  applies_to: the Authelia portal API (/api/* other than /api/oidc/*)
+  detail: >-
+    A session cookie issued by postFirstFactor and elevated by the second-factor operations. The cookie name
+    defaults to `authelia_session` and is configurable per deployment (session.cookies[].name), so the value
+    declared in the contract is a default. The cookie is domain-scoped and requires https.
   sources:
-  - openapi/authelia-openapi.yml
-- name: bearerAuth
-  type: http
-  scheme: bearer
-  description: Bearer access token for UserInfo and other protected endpoints.
+  - openapi/authelia-api-openapi.yml#/components/securitySchemes/authelia_auth
+  - https://www.authelia.com/configuration/session/
+- name: openid
+  type: openIdConnect
+  openIdConnectUrl: <base>/.well-known/openid-configuration
+  applies_to: the OpenID Connect 1.0 Provider surface (/api/oidc/*)
+  detail: >-
+    Relying parties authenticate at the token, introspection, revocation and PAR endpoints using the
+    client's registered token_endpoint_auth_method — client_secret_basic, client_secret_post,
+    client_secret_jwt or private_key_jwt for confidential clients, `none` for public clients.
   sources:
-  - openapi/authelia-openapi.yml
-- name: oauth2
-  type: oauth2
-  flows:
-  - flow: authorizationCode
-    authorizationUrl: https://auth.example.com/api/oidc/authorization
-    tokenUrl: https://auth.example.com/api/oidc/token
-    scopes: 5
-  sources:
-  - openapi/authelia-openapi.yml
+  - openapi/authelia-api-openapi.yml#/components/securitySchemes/openid
+authentication_levels:
+  description: >-
+    Authelia's authorization decisions are graded by the caller's authentication level, not by a scope.
+  levels:
+  - level: anonymous
+    meaning: No valid session.
+  - level: one_factor
+    meaning: Username and password verified (postFirstFactor) or a bearer token from the client_credentials grant.
+  - level: two_factor
+    meaning: A second factor completed — TOTP, WebAuthn/passkey or Duo push.
+  elevation: >-
+    Sensitive self-service operations (credential management) additionally require an ELEVATED session,
+    obtained by proving control of the registered email address. See
+    https://www.authelia.com/configuration/identity-validation/elevated-session/.
+first_factor_methods:
+- method: password
+  backends: [file, ldap, activedirectory]
+  operation: postFirstFactor
+- method: passkey
+  detail: WebAuthn passkey login as a first factor, when enabled.
+  operation: postFirstFactorPasskey
+second_factor_methods:
+- method: totp
+  standard: RFC 6238
+  operations: [getSecondFactorTOTPConfiguration, postSecondFactorTOTP, postSecondFactorTOTPRegistration, deleteSecondFactorTOTP]
+- method: webauthn
+  standard: W3C WebAuthn / FIDO2
+  operations: [getSecondFactorWebAuthn, postSecondFactorWebAuthn, getSecondFactorWebAuthnCredentials, deleteSecondFactorWebAuthnCredential]
+- method: duo
+  detail: Duo Push via the Duo API.
+  operations: [getSecondFactorDuo, postSecondFactorDuo, getSecondFactorDuoDevices, postSecondFactorDuoDevice]
+- method: password
+  detail: Password re-entry as a second factor when the first factor was a passkey.
+  operations: [postSecondFactorPassword]
+proxy_authorization_schemes:
+  description: >-
+    Schemes Authelia accepts at /api/authz/* on behalf of protected applications. Each is opt-in per authz
+    endpoint via server.endpoints.authz.<name>.authn_strategies.
+  strategies:
+  - name: CookieSession
+    scheme: cookie
+    default: true
+  - name: HeaderAuthorization
+    schemes: [Basic, Bearer]
+    default: false
+  - name: HeaderProxyAuthorization
+    schemes: [Basic, Bearer]
+    default: false
+  - name: HeaderAuthRequestProxyAuthorization
+    schemes: [Basic, Bearer]
+    default: false
+  - name: HeaderLegacy
+    default: true
+    note: Legacy /api/verify endpoint only.
+  basic_auth: >-
+    Basic credentials are validated against the configured authentication backend and are treated as a
+    1FA authorization. Documented as the service-account pattern for API access at
+    https://www.authelia.com/integration/guides/securing-apps-with-basic-auth/.
+  bearer_auth:
+    scope: authelia.bearer.authz
+    token_prefixes:
+      access_token: authelia_at_
+      refresh_token: authelia_rt_
+      authorization_code: authelia_ac_
+    detail: >-
+      Only a genuine access token (authelia_at_ prefix) is accepted; refresh tokens and authorization codes
+      are rejected. The token's audience must exactly match or prefix the requested URL. A token issued via
+      client_credentials is always treated as 1FA and matches access control rules through the special
+      subject oauth2:client:<id>.
+    docs: https://www.authelia.com/integration/openid-connect/oauth-2.0-bearer-token-usage/
+transport:
+  https_required: true
+  detail: Authelia MUST be served over https; this is a stated design decision, not a recommendation.
+gaps:
+- No API key or personal access token concept exists for the Authelia API itself.
+- Authelia's own documentation states that authelia.bearer.authz tokens are not intended for calling the
+  Authelia API; a dedicated scope and audience scheme for that is deferred to a future release.

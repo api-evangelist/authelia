@@ -1,0 +1,109 @@
+generated: '2026-09-06'
+method: derived
+status: candidate
+source: >-
+  Derived from openapi/authelia-api-openapi.yml (the first-party Authelia OpenAPI 3.2.0 contract).
+  Searched for an official server first: the authelia GitHub organization publishes no MCP repository,
+  npm returns only third-party integrations (@berlm/expenseowl-authelia-mcp-server and similar community
+  projects), and no hosted endpoint is documented anywhere on www.authelia.com.
+description: >-
+  CANDIDATE tool list only. Authelia ships no Model Context Protocol server of any kind — no hosted endpoint
+  and no installable stdio package. The tools below are a proposal derived from real operationIds in the
+  published contract so that an operator building an MCP front-end for their own deployment has a starting
+  point. Nothing here is callable as written: every operation lives on the operator's own Authelia host and
+  requires that deployment's session cookie or an OAuth 2.0 access token.
+deployment:
+  mode: none
+  auth: unknown
+  verified: derived
+  note: >-
+    No server exists to verify. Authelia is self-hosted, so any future MCP surface would be per-deployment
+    rather than a vendor-hosted endpoint.
+surfaces:
+  openapi: openapi/authelia-api-openapi.yml
+  operations_total: 78
+  mcp_endpoint: null
+tools:
+- tool: authelia_get_state
+  rest: [getState]
+  category: state
+  consequence: read
+  note: Current authentication level and session state for the caller.
+- tool: authelia_get_configuration
+  rest: [getConfiguration]
+  category: state
+  consequence: read
+  note: Available second factor methods and TOTP period configuration for the deployment.
+- tool: authelia_get_password_policy
+  rest: [getPasswordPolicyConfiguration]
+  category: state
+  consequence: read
+- tool: authelia_health_check
+  rest: [getHealth, headHealth]
+  category: state
+  consequence: read
+- tool: authelia_get_user_info
+  rest: [getUserInfo]
+  category: user
+  consequence: read
+- tool: authelia_set_preferred_second_factor
+  rest: [postUserInfoSecondFactorMethod]
+  category: user
+  consequence: write
+- tool: authelia_list_webauthn_credentials
+  rest: [getSecondFactorWebAuthnCredentials]
+  category: credentials
+  consequence: read
+- tool: authelia_delete_webauthn_credential
+  rest: [deleteSecondFactorWebAuthnCredential]
+  category: credentials
+  consequence: destructive
+  note: Irreversible — a deleted WebAuthn credential must be re-registered from the physical authenticator.
+- tool: authelia_delete_totp_configuration
+  rest: [deleteSecondFactorTOTP]
+  category: credentials
+  consequence: destructive
+  note: Irreversible — the shared secret is destroyed and must be re-enrolled.
+- tool: authelia_get_session_elevation
+  rest: [getUserSessionElevation]
+  category: elevation
+  consequence: read
+- tool: authelia_start_session_elevation
+  rest: [postUserSessionElevation]
+  category: elevation
+  consequence: write
+- tool: authelia_revoke_session_elevation
+  rest: [deleteUserSessionElevation]
+  category: elevation
+  consequence: write
+  note: Reverses authelia_start_session_elevation.
+- tool: authelia_introspect_token
+  rest: [postOAuth2Introspection]
+  category: oauth2
+  consequence: read
+  note: RFC 7662. Requires client authentication.
+- tool: authelia_revoke_token
+  rest: [postOAuth2Revocation]
+  category: oauth2
+  consequence: write
+  note: RFC 7009. Reverses a previously issued access or refresh token.
+- tool: authelia_get_openid_configuration
+  rest: [getOpenIDConnectConfiguration]
+  category: discovery
+  consequence: read
+- tool: authelia_get_jwks
+  rest: [getOpenIDConnectJSONWebKeySet]
+  category: discovery
+  consequence: read
+excluded:
+- reason: >-
+    Browser-redirect and interactive flows (getOpenIDConnectAuthorization, postFirstFactor,
+    postFirstFactorPasskey, postSecondFactorWebAuthn, the /api/oidc/consent pair) depend on a user agent,
+    a WebAuthn authenticator or a 302/303 redirect chain and are not meaningfully expressible as agent tools.
+  operations: [getOpenIDConnectAuthorization, postOpenIDConnectAuthorization, postFirstFactor,
+    postFirstFactorPasskey, getFirstFactorPasskey, postSecondFactorWebAuthn, getOpenIDConnectConsent,
+    postOpenIDConnectConsent]
+- reason: >-
+    The proxy authorization endpoints (/api/authz/*, /api/verify) are called by a reverse proxy on every
+    request, not by an agent, and return only 200/302/401.
+  operations: [getAuthzForwardAuth, getAuthzExtAuthz, getAuthzAuthRequest, getAuthzLegacy]

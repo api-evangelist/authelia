@@ -1,0 +1,32 @@
+generated: '2026-09-06'
+method: generated
+source: openapi/authelia-api-openapi.yml
+description: >-
+  Packaged Agent Skills for the Authelia API. Every operationId referenced was verified against the
+  first-party OpenAPI 3.2.0 contract in this repository. Authelia publishes no skills or AGENTS.md of its
+  own; these are API Evangelist generations grounded in the real contract and in Authelia's documented
+  conventions.
+searched_for_provider_skills:
+  result: none
+  checked:
+  - https://github.com/authelia/authelia (no SKILL.md, AGENTS.md or skills/ directory in the repository tree)
+  - https://www.authelia.com/llms.txt (no skills section)
+skills:
+- name: authelia-verify-deployment-state
+  file: skills/authelia-verify-deployment-state.md
+  api: authelia:authelia-api
+  operations: [getHealth, getConfiguration, getPasswordPolicyConfiguration, getState]
+- name: authelia-manage-second-factor-credentials
+  file: skills/authelia-manage-second-factor-credentials.md
+  api: authelia:authelia-api
+  operations: [getState, getUserInfo, getUserSessionElevation, postUserSessionElevation,
+    putUserSessionElevation, deleteUserSessionElevation, getSecondFactorWebAuthnCredentials,
+    deleteSecondFactorWebAuthnCredential, getSecondFactorTOTPConfiguration, deleteSecondFactorTOTP,
+    postUserInfoSecondFactorMethod]
+  destructive: true
+- name: authelia-oauth2-token-lifecycle
+  file: skills/authelia-oauth2-token-lifecycle.md
+  api: authelia:authelia-oidc-api
+  operations: [getOpenIDConnectConfiguration, getOAuth2AuthorizationServerMetadata,
+    getOpenIDConnectJSONWebKeySet, postOAuth2PushedAuthorizationRequest, postOpenIDConnectToken,
+    postOAuth2Introspection, postOAuth2Revocation, getOpenIDConnectUserInfo, postOAuth2DeviceAuthorization]

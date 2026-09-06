@@ -1,152 +1,1686 @@
-openapi: 3.1.0
+openapi: 3.2.0
 info:
-  title: Authelia OpenID Connect 1.0 Endpoints Discovery OIDC API
-  description: 'Best-effort OpenAPI 3.1 description of the public-facing HTTP endpoints exposed
-
-    by an Authelia deployment. Authelia is primarily a forward-auth/SSO portal for
-
-    reverse proxies; the most stable public surface is its OpenID Connect 1.0
-
-    Provider, plus the well-known discovery documents. Derived from public
-
-    documentation at https://www.authelia.com/reference/ and the OIDC integration
-
-    guide at https://www.authelia.com/integration/openid-connect/introduction/.
-
-    '
-  version: '1.0'
+  title: Authelia OpenID Connect 1.0 / OAuth 2.0 Endpoints
+  description: OpenID Connect 1.0 Provider and OAuth 2.0 authorization server endpoints exposed by an Authelia deployment.
+    Extracted verbatim from the first-party Authelia OpenAPI 3.2.0 contract at https://github.com/authelia/authelia/blob/master/api/openapi.yml.
+  version: 1.0.0
   contact:
-    name: Authelia Reference Docs
-    url: https://www.authelia.com/reference/
+    name: Support
+    url: https://www.authelia.com/contact/
+    email: team@authelia.com
+  license:
+    name: Apache 2.0
+    url: https://www.apache.org/licenses/LICENSE-2.0
 servers:
 - url: https://{authelia_host}
-  description: Your Authelia deployment root URL
+  description: 'Authelia deployment root URL. Authelia is self-hosted: substitute the host of your own deployment.'
   variables:
     authelia_host:
       default: auth.example.com
-      description: Hostname of your Authelia instance
-security:
-- oauth2: []
-- bearerAuth: []
+      description: Hostname of your Authelia instance. auth.example.com is the default used by Authelia's own published contract
+        template.
 tags:
-- name: OIDC
-  description: OpenID Connect 1.0 / OAuth 2.0 provider endpoints.
+- name: OAuth 2.0
+  description: OAuth 2.0 Endpoints
+  externalDocs:
+    url: https://www.authelia.com/integration/openid-connect/introduction/
+- name: OpenID Connect 1.0
+  description: OpenID Connect 1.0 Endpoints
+  externalDocs:
+    url: https://www.authelia.com/integration/openid-connect/introduction/
 paths:
-  /jwks.json:
-    get:
-      tags:
-      - OIDC
-      summary: JSON Web Key Set
-      description: Public keys used to verify signatures of issued tokens.
-      operationId: jwks
-      responses:
-        '200':
-          description: JWKS document returned
   /api/oidc/authorization:
     get:
+      operationId: getOpenIDConnectAuthorization
       tags:
-      - OIDC
-      summary: Authorization endpoint
-      description: Initiates the authentication flow and handles authorization requests.
-      operationId: oidcAuthorization
-      responses:
-        '302':
-          description: Redirect to consent or relying party
-    post:
-      tags:
-      - OIDC
-      summary: Authorization endpoint (POST form)
-      operationId: oidcAuthorizationPost
-      responses:
-        '302':
-          description: Redirect to consent or relying party
-  /api/oidc/token:
-    post:
-      tags:
-      - OIDC
-      summary: Token endpoint
-      description: Issues access, ID and refresh tokens after code exchange.
-      operationId: oidcToken
+      - OAuth 2.0
+      - OpenID Connect 1.0
+      summary: OpenID Connect 1.0 Authorization Endpoint
+      description: 'This endpoint performs OpenID Connect 1.0 Authorization.
+
+        '
+      parameters:
+      - in: query
+        name: consent_id
+        required: false
+        description: The OpenID Connect 1.0 consent workflow ID.
+        schema:
+          type: string
+          format: uuid
+          pattern: ^[0-9a-fA-F]{8}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{12}$
+          examples:
+          - 713ef767-81bc-4a27-9b83-5fe2e101b2b4
+      - in: query
+        name: scope
+        description: The requested scope.
+        required: true
+        schema:
+          type: string
+          examples:
+          - openid profile groups
+      - in: query
+        name: response_type
+        description: The OAuth 2.0 response type.
+        required: true
+        schema:
+          $ref: '#/components/schemas/openid.spec.ResponseType'
+      - in: query
+        name: client_id
+        description: The OAuth 2.0 client identifier.
+        required: true
+        schema:
+          type: string
+          examples:
+          - app
+      - in: query
+        name: redirect_uri
+        description: 'Redirection URI to which the response will be sent. This URI MUST exactly match one of the Redirection
+          URI values for the Client pre-registered at the OpenID Provider, with the matching performed as described in Section
+          6.2.1 of [RFC3986] (Simple String Comparison). When using this flow, the Redirection URI SHOULD use the https scheme;
+          however, it MAY use the http scheme, provided that the Client Type is confidential, as defined in Section 2.1 of
+          OAuth 2.0, and provided the OP allows the use of http Redirection URIs in this case. The Redirection URI MAY use
+          an alternate scheme, such as one that is intended to identify a callback into a native application.
+
+          '
+        required: true
+        schema:
+          type: string
+          format: uri
+          examples:
+          - https://app.example.com
+      - in: query
+        name: state
+        description: 'Opaque value used to maintain state between the request and the callback. Typically, Cross-Site Request
+          Forgery (CSRF, XSRF) mitigation is done by cryptographically binding the value of this parameter with a browser
+          cookie.
+
+          '
+        required: false
+        schema:
+          type: string
+          examples:
+          - oV84Vsy7wyCgRk2h4aZBmXZq4q3g2f
+      - in: query
+        name: response_mode
+        description: 'Informs the Authorization Server of the mechanism to be used for returning parameters from the Authorization
+          Endpoint. This use of this parameter is NOT RECOMMENDED when the Response Mode that would be requested is the default
+          mode specified for the Response Type.
+
+          '
+        required: false
+        schema:
+          $ref: '#/components/schemas/openid.spec.ResponseMode'
+      - in: query
+        name: nonce
+        description: 'String value used to associate a Client session with an ID Token, and to mitigate replay attacks. The
+          value is passed through unmodified from the Authentication Request to the ID Token. Sufficient entropy MUST be present
+          in the nonce values used to prevent attackers from guessing values. For implementation notes, see Section 15.5.2.
+
+          '
+        required: false
+        schema:
+          type: string
+          examples:
+          - TRMLqchoKGQNcooXvBvUy9PtmLdJGf
+      - in: query
+        name: display
+        description: 'Not Supported: ASCII string value that specifies how the Authorization Server displays the authentication
+          and consent user interface pages to the End-User.
+
+          '
+        required: false
+        schema:
+          $ref: '#/components/schemas/openid.spec.DisplayType'
+      - in: query
+        name: prompt
+        description: 'Not Supported: Space delimited, case sensitive list of ASCII string values that specifies whether the
+          Authorization Server prompts the End-User for reauthentication and consent.
+
+          '
+        required: false
+        schema:
+          $ref: '#/components/schemas/openid.spec.Prompt'
+      - in: query
+        name: max_age
+        description: 'Maximum Authentication Age. Specifies the allowable elapsed time in seconds since the last time the
+          End-User was actively authenticated by the OP. If the elapsed time is greater than this value, the OP MUST attempt
+          to actively re-authenticate the End-User. (The max_age request parameter corresponds to the OpenID 2.0 PAPE [OpenID.PAPE]
+          max_auth_age request parameter.) When max_age is used, the ID Token returned MUST include an auth_time Claim Value.
+
+          '
+        required: false
+        schema:
+          type: integer
+          examples:
+          - 3600
+      - in: query
+        name: ui_locales
+        description: 'Not Supported: End-User''s preferred languages and scripts for the user interface, represented as a
+          space-separated list of BCP47 [RFC5646] language tag values, ordered by preference. For instance, the value "fr-CA
+          fr en" represents a preference for French as spoken in Canada, then French (without a region designation), followed
+          by English (without a region designation). An error SHOULD NOT result if some or all of the requested locales are
+          not supported by the OpenID Provider.
+
+          '
+        required: false
+        schema:
+          type: string
+          examples:
+          - en-US
+      - in: query
+        name: claims_locales
+        description: 'Not Supported: End-User''s preferred languages and scripts for Claims being returned, represented as
+          a space-separated list of BCP47 [RFC5646] language tag values, ordered by preference. An error SHOULD NOT result
+          if some or all of the requested locales are not supported by the OpenID Provider.
+
+          '
+        required: false
+        schema:
+          type: string
+          examples:
+          - en-US
+      - in: query
+        name: id_token_hint
+        required: false
+        description: 'Not Supported: ID Token previously issued by the Authorization Server being passed as a hint about the
+          End-User''s current or past authenticated session with the Client. If the End-User identified by the ID Token is
+          logged in or is logged in by the request, then the Authorization Server returns a positive response; otherwise,
+          it SHOULD return an error, such as login_required. When possible, an id_token_hint SHOULD be present when prompt=none
+          is used and an invalid_request error MAY be returned if it is not; however, the server SHOULD respond successfully
+          when possible, even if it is not present. The Authorization Server need not be listed as an audience of the ID Token
+          when it is used as an id_token_hint value. If the ID Token received by the RP from the OP is encrypted, to use it
+          as an id_token_hint, the Client MUST decrypt the signed ID Token contained within the encrypted ID Token. The Client
+          MAY re-encrypt the signed ID token to the Authentication Server using a key that enables the server to decrypt the
+          ID Token, and use the re-encrypted ID token as the id_token_hint value.
+
+          '
+        schema:
+          type: string
+      - in: query
+        name: login_hint
+        description: 'Not Supported: Hint to the Authorization Server about the login identifier the End-User might use to
+          log in (if necessary). This hint can be used by an RP if it first asks the End-User for their e-mail address (or
+          other identifier) and then wants to pass that value as a hint to the discovered authorization service. It is RECOMMENDED
+          that the hint value match the value used for discovery. This value MAY also be a phone number in the format specified
+          for the phone_number Claim. The use of this parameter is left to the OP''s discretion.
+
+          '
+        required: false
+        schema:
+          type: string
+      - in: query
+        name: acr_values
+        description: 'Not Supported: Requested Authentication Context Class Reference values. Space-separated string that
+          specifies the acr values that the Authorization Server is being requested to use for processing this Authentication
+          Request, with the values appearing in order of preference. The Authentication Context Class satisfied by the authentication
+          performed is returned as the acr Claim Value, as specified in Section 2. The acr Claim is requested as a Voluntary
+          Claim by this parameter.
+
+          '
+        required: false
+        schema:
+          type: string
+      - in: query
+        name: claims
+        description: 'Not Supported: The claims parameter value, as specified in Section 5.5.
+
+          '
+        required: false
+        schema:
+          type: string
+      - in: query
+        name: registration
+        description: 'Not Supported: This parameter is used by the Client to provide information about itself to a Self-Issued
+          OP that would normally be provided to an OP during Dynamic Client Registration, as specified in Section 7.2.1.
+
+          '
+        required: false
+        schema:
+          type: string
+      - in: query
+        name: request
+        description: 'Not Supported: Request Object value, as specified in Section 6.1. The Request Object MAY be encrypted
+          to the Self-Issued OP by the Client. In this case, the sub (subject) of a previously issued ID Token for this Client
+          MUST be sent as the kid (Key ID) of the JWE. Encrypting content to Self-Issued OPs is currently only supported when
+          the OP''s JWK key type is RSA and the encryption algorithm used is RSA1_5.
+
+          '
+        required: false
+        schema:
+          type: string
+      - in: query
+        name: code_challenge
+        description: 'RFC7636 Code Challenge.
+
+          '
+        required: false
+        schema:
+          type: string
+      - in: query
+        name: code_challenge_method
+        required: false
+        description: 'RFC7636 Code Challenge Method. defaults to "plain" if not present in the request. Code verifier transformation
+          method is "S256" or "plain".
+
+          '
+        schema:
+          $ref: '#/components/schemas/openid.spec.CodeChallengeMethod'
       responses:
         '200':
-          description: Tokens returned
-  /api/oidc/userinfo:
-    get:
-      tags:
-      - OIDC
-      summary: UserInfo endpoint
-      description: Returns claims about the authenticated end user.
-      operationId: oidcUserinfo
-      responses:
-        '200':
-          description: UserInfo document returned
+          description: 'OK Response. It should be noted that it is not possible to properly describe responses for this endpoint.
+
+            '
+          content:
+            text/html:
+              schema:
+                type: string
+                description: The Form Post Response Mode content.
+        '303':
+          description: 'See Other. It should be noted that it is not possible to properly describe responses for this endpoint.
+
+            '
+          headers:
+            Location:
+              schema:
+                type: string
+              description: 'Redirection location for the consent flow, or the authorization response callback location when
+                using the Query or Fragment Response Modes.
+
+                '
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/openid.spec.ErrorResponseGeneric'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/openid.spec.ErrorResponseGeneric'
+      security:
+      - authelia_auth: []
     post:
+      operationId: postOpenIDConnectAuthorization
       tags:
-      - OIDC
-      summary: UserInfo endpoint (POST)
-      operationId: oidcUserinfoPost
+      - OAuth 2.0
+      - OpenID Connect 1.0
+      summary: OpenID Connect 1.0 Authorization Endpoint
+      description: 'This endpoint performs OpenID Connect 1.0 Authorization.
+
+        '
+      requestBody:
+        description: Authorize Request Parameters.
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/openid.spec.AuthorizeRequest'
       responses:
         '200':
-          description: UserInfo document returned
-  /api/oidc/introspection:
-    post:
-      tags:
-      - OIDC
-      summary: Token introspection
-      description: Validates and returns metadata about an issued token.
-      operationId: oidcIntrospection
-      responses:
-        '200':
-          description: Introspection response returned
-  /api/oidc/revocation:
-    post:
-      tags:
-      - OIDC
-      summary: Token revocation
-      description: Invalidates an issued token.
-      operationId: oidcRevocation
-      responses:
-        '200':
-          description: Token revoked
+          description: OK
+          content:
+            text/html:
+              schema:
+                type: string
+                description: The Form Post Response Mode content.
+        '303':
+          description: See Other
+          headers:
+            Location:
+              schema:
+                type: string
+              description: 'Redirection location for the consent flow, or the authorization response callback location when
+                using the Query or Fragment Response Modes.
+
+                '
+        '400':
+          description: Bad Request
+        '500':
+          description: Internal Server Error
+      security:
+      - authelia_auth: []
   /api/oidc/device-authorization:
     post:
+      operationId: postOAuth2DeviceAuthorization
       tags:
-      - OIDC
-      summary: Device Authorization endpoint
-      description: OAuth 2.0 Device Authorization Grant for constrained devices.
-      operationId: oidcDeviceAuthorization
+      - OAuth 2.0
+      - OpenID Connect 1.0
+      summary: RFC8628 OAuth 2.0 Device Authorization Grant Endpoint
+      description: 'This endpoint performs the client interaction for the Device Authorization Flow.
+
+        '
+      requestBody:
+        description: Device Authorize Request (Device Code Flow) Parameters.
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/openid.spec.DeviceAuthorizeRequest'
       responses:
         '200':
-          description: Device authorization response
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  device_code:
+                    type: string
+                    examples:
+                    - authelia_dc_oqLXXUv2pvCDgBJLBav63ZduL4CxKP7JpYZ6ldHp39Y.u3XxwV3O-uYOA5TSv44iQyB27YjUGawJLlwOMuC770E
+                  user_code:
+                    type: string
+                    examples:
+                    - XGQWWFMM
+                  verification_uri:
+                    type: string
+                    format: uri
+                    examples:
+                    - https://auth.example.com/consent/openid/device-authorization
+                  verification_uri_complete:
+                    type: string
+                    format: uri
+                    examples:
+                    - https://auth.example.com/consent/openid/device-authorization?user_code=XGQWWFMM
+                  expires_in:
+                    type: integer
+                    examples:
+                    - 600
+                  interval:
+                    type: integer
+                    examples:
+                    - 10
+        '400':
+          description: Bad Request
+        '500':
+          description: Internal Server Error
+      security:
+      - authelia_auth: []
+    put:
+      operationId: putOAuth2DeviceAuthorization
+      tags:
+      - OAuth 2.0
+      - OpenID Connect 1.0
+      summary: RFC8628 OAuth 2.0 Device Authorization Grant Endpoint
+      description: 'This endpoint performs the user interaction for the Device Authorization Flow.
+
+        '
+      requestBody:
+        description: Device Authorize Request (User Code Flow) Parameters.
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties:
+                flow_id:
+                  type: string
+                  description: This is the field of the same name returned by the consent endpoint.
+                user_code:
+                  type: string
+                  description: This is the user code submitted by the user during the Device Authorization Flow.
+      responses:
+        '200':
+          description: OK
+        '400':
+          description: Bad Request
+        '500':
+          description: Internal Server Error
+      security:
+      - authelia_auth: []
   /api/oidc/pushed-authorization-request:
     post:
+      operationId: postOAuth2PushedAuthorizationRequest
       tags:
-      - OIDC
-      summary: Pushed Authorization Request (PAR)
-      description: Enables secure pre-registration of authorization requests.
-      operationId: oidcPushedAuthorizationRequest
+      - OAuth 2.0
+      - OpenID Connect 1.0
+      summary: OAuth 2.0 Pushed Authorization Endpoint
+      description: 'This endpoint performs OAuth 2.0 Pushed Authorization.
+
+        '
+      requestBody:
+        description: Pushed Authorize Request Parameters.
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              allOf:
+              - $ref: '#/components/schemas/openid.spec.AuthorizeRequest'
+              - $ref: '#/components/schemas/openid.spec.AccessRequest.ClientAuth'
       responses:
-        '201':
-          description: Request object accepted
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                description: The Pushed Authorize Request Successful Response.
+                properties:
+                  request_uri:
+                    type: string
+                    format: uri
+                    description: 'The request URI corresponding to the authorization request posted. This URI is a single-use
+                      reference to the respective request data in the subsequent authorization request. The way the authorization
+                      process obtains the authorization request data is at the discretion of the authorization server and
+                      is out of scope of this specification. There is no need to make the authorization request data available
+                      to other parties via this URI.
+
+                      '
+                    examples:
+                    - urn:ietf:params:oauth:request_uri:lXtUUGsLrMxI5cogDk6Zk1pc5-Zw95lT4fzY0eAbdiU
+                  expires_in:
+                    type: integer
+                    description: 'A JSON number that represents the lifetime of the request URI in seconds as a positive integer.
+                      The request URI lifetime is at the discretion of the authorization server but will typically be relatively
+                      short (e.g., between 5 and 600 seconds).
+
+                      '
+                    examples:
+                    - 300
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/openid.spec.ErrorResponseGeneric'
+        '413':
+          description: Content Too Large
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/openid.spec.ErrorResponseGeneric'
+        '429':
+          description: Too Many Requests
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/openid.spec.ErrorResponseGeneric'
+          headers:
+            Retry-After:
+              schema:
+                type: string
+                format: http-date
+              description: The date time that the request can be retried.
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/openid.spec.ErrorResponseGeneric'
+      security:
+      - openid: []
+  /api/oidc/token:
+    post:
+      operationId: postOpenIDConnectToken
+      tags:
+      - OAuth 2.0
+      - OpenID Connect 1.0
+      summary: OpenID Connect 1.0 Token Endpoint
+      description: 'This endpoint performs OpenID Connect 1.0 Token Access Requests.
+
+        '
+      requestBody:
+        description: Access Request Parameters.
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              oneOf:
+              - $ref: '#/components/schemas/openid.spec.AccessRequest.AuthorizationCodeFlow'
+              - $ref: '#/components/schemas/openid.spec.AccessRequest.RefreshTokenFlow'
+              - $ref: '#/components/schemas/openid.spec.AccessRequest.ClientCredentialsFlow'
+              - $ref: '#/components/schemas/openid.spec.AccessRequest.DeviceCodeFlow'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                oneOf:
+                - $ref: '#/components/schemas/openid.spec.AccessResponse'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/openid.spec.ErrorResponseGeneric'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/openid.spec.ErrorResponseGeneric'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/openid.spec.ErrorResponseGeneric'
+      security:
+      - openid: []
+  /api/oidc/revocation:
+    post:
+      operationId: postOAuth2Revocation
+      tags:
+      - OAuth 2.0
+      - OpenID Connect 1.0
+      summary: OAuth 2.0 Token Revocation Endpoint
+      description: 'This endpoint performs OAuth 2.0 Token Revocation Requests.
+
+        '
+      requestBody:
+        description: Required OAuth 2.0 revocation parameters.
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              allOf:
+              - $ref: '#/components/schemas/openid.spec.AccessServerTokenAssertionRequest'
+              - $ref: '#/components/schemas/openid.spec.AccessRequest.ClientAuth'
+      responses:
+        '200':
+          description: OK
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/openid.spec.ErrorResponseGeneric'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/openid.spec.ErrorResponseGeneric'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/openid.spec.ErrorResponseGeneric'
+      security:
+      - openid: []
+  /api/oidc/introspection:
+    post:
+      operationId: postOAuth2Introspection
+      tags:
+      - OAuth 2.0
+      - OpenID Connect 1.0
+      summary: OAuth 2.0 Token Introspection Endpoint
+      description: 'This endpoint performs OAuth 2.0 Token Introspection Requests.
+
+        '
+      requestBody:
+        description: Required OAuth 2.0 introspection parameters.
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              allOf:
+              - $ref: '#/components/schemas/openid.spec.AccessServerTokenAssertionRequest'
+              - $ref: '#/components/schemas/openid.spec.AccessRequest.ClientAuth'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/openid.spec.IntrospectionResponse'
+            application/token-introspection+jwt:
+              schema:
+                description: 'The RFC7519 encoded JWT with the nested ''token_introspection'' claim which contains the same
+                  structure
+
+                  as the openid.spec.IntrospectionResponse described in this OpenAPI 3.0 specification.
+
+                  '
+                type: string
+                examples:
+                - eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJodHRwczovL2F1dGguZXhhbXBsZS5jb20vIiwiYXVkIjoiaHR0cHM6Ly9hcHAuZXhhbXBsZS5jb20vcmVzb3VyY2UiLCJpYXQiOjE1MTQ3OTc4OTIsInRva2VuX2ludHJvc3BlY3Rpb24iOnsiYWN0aXZlIjp0cnVlLCJleHAiOjE1MTQ3OTc5NDIsImNsaWVudF9pZCI6ImV4YW1wbGUiLCJzY29wZSI6Im9wZW5pZCBwcm9maWxlIiwiaWF0IjoxNTE0Nzk3ODIyLCJzdWIiOiI5Y2JhMzJhMC02M2EyLTQyZDUtODNlYi1kZmM3NTc4OGEyMjIiLCJhdWQiOiJodHRwczovL2FwcC5leGFtcGxlLmNvbS9yZXNvdXJjZSIsInVzZXJuYW1lIjoiam9obiJ9fQ.9rN-G3uaj28Geiktfvknl-G6EnZxOGJjpXcemvsllYA
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/openid.spec.ErrorResponseGeneric'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/openid.spec.ErrorResponseGeneric'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/openid.spec.ErrorResponseGeneric'
+      security:
+      - openid: []
+  /api/oidc/userinfo:
+    get:
+      operationId: getOpenIDConnectUserInfo
+      tags:
+      - OpenID Connect 1.0
+      summary: OpenID Connect 1.0 UserInfo Endpoint
+      description: 'This endpoint performs OpenID Connect 1.0 UserInfo Access Requests.
+
+        '
+      parameters:
+      - in: query
+        name: access_token
+        description: The OAuth 2.0 Access Token issued by this OpenID Connect 1.0 Provider.
+        schema:
+          type: string
+          examples:
+          - authelia_at_6-8jeA8y9Y744pAHCRwGtJrsD9ABOVWyzL3uWB1ntbI.foaDPNLT0T7VVQ9on5F1rOfHs0Lbc09FGO2xF_pzmNY
+      responses:
+        '200':
+          description: OK
+          content:
+            application/jwt: {}
+            application/json:
+              schema:
+                $ref: '#/components/schemas/openid.implementation.Claims.Object'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '500':
+          description: Internal Server Error
+      security:
+      - openid: []
+    post:
+      operationId: postOpenIDConnectUserInfo
+      tags:
+      - OpenID Connect 1.0
+      summary: OpenID Connect 1.0 UserInfo Endpoint
+      description: 'This endpoint performs OpenID Connect 1.0 UserInfo Access Requests.
+
+        '
+      parameters:
+      - in: query
+        name: access_token
+        description: The OAuth 2.0 Access Token issued by this OpenID Connect 1.0 Provider.
+        schema:
+          type: string
+          examples:
+          - authelia_at_6-8jeA8y9Y744pAHCRwGtJrsD9ABOVWyzL3uWB1ntbI.foaDPNLT0T7VVQ9on5F1rOfHs0Lbc09FGO2xF_pzmNY
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties:
+                access_token:
+                  description: The OAuth 2.0 Access Token issued by this OpenID Connect 1.0 Provider.
+                  type: string
+                  examples:
+                  - authelia_at_6-8jeA8y9Y744pAHCRwGtJrsD9ABOVWyzL3uWB1ntbI.foaDPNLT0T7VVQ9on5F1rOfHs0Lbc09FGO2xF_pzmNY
+      responses:
+        '200':
+          description: OK
+          content:
+            application/jwt: {}
+            application/json:
+              schema:
+                $ref: '#/components/schemas/openid.implementation.Claims.Object'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '500':
+          description: Internal Server Error
+      security:
+      - openid: []
+  /api/oidc/consent:
+    get:
+      operationId: getOpenIDConnectConsent
+      tags:
+      - OAuth 2.0
+      - OpenID Connect 1.0
+      summary: OpenID Connect 1.0 Consent Information
+      description: 'This endpoint retrieves the consent information about a specific consent ID during the consent workflow.
+
+
+        Either the flow_id or user_code parameter must be provided. The user_code parameter is used by the RFC8628 OAuth 2.0
+        Device Authorization Grant sub-flow.
+
+        '
+      parameters:
+      - $ref: '#/components/parameters/flowIDParam'
+      - $ref: '#/components/parameters/userCodeParam'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/openid.request.consent'
+        '403':
+          description: Forbidden
+      security:
+      - authelia_auth: []
+    post:
+      operationId: postOpenIDConnectConsent
+      tags:
+      - OAuth 2.0
+      - OpenID Connect 1.0
+      summary: OpenID Connect 1.0 Consent Response
+      description: 'This endpoint retrieves the consent response for a specific consent ID during the consent workflow.
+
+        '
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/openid.request.consent.body'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/openid.response.consent'
+        '403':
+          description: Forbidden
+      security:
+      - authelia_auth: []
 components:
+  schemas:
+    openid.spec.AccessResponse:
+      type: object
+      required:
+      - access_token
+      - token_type
+      - expires_in
+      properties:
+        access_token:
+          description: The access token issued by the authorization server.
+          examples:
+          - authelia_at_6-8jeA8y9Y744pAHCRwGtJrsD9ABOVWyzL3uWB1ntbI.foaDPNLT0T7VVQ9on5F1rOfHs0Lbc09FGO2xF_pzmNY
+          type: string
+        id_token:
+          description: The id token issued by the authorization server.
+          examples:
+          - eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c
+          type: string
+        refresh_token:
+          description: 'The refresh token, which can be used to obtain new access tokens using the same authorization grant
+            as described in Section 6.
+
+            '
+          examples:
+          - authelia_rt_MgALbONdFPIwo3o2QukHry7W451xrO6jza31IS8Vh4M.IArqzOzLwY6HWqom1vmp9DUWBuOQel_fGnRw5MyT-jo
+          type: string
+        token_type:
+          description: 'The access token type provides the client with the information required to successfully utilize the
+            access token to make a protected resource request (along with type-specific attributes). The client MUST NOT use
+            an access token if it does not understand the token type.
+
+            '
+          enum:
+          - bearer
+          examples:
+          - bearer
+          type: string
+        expires_in:
+          description: 'The lifetime in seconds of the access token. For example, the value "3600" denotes that the access
+            token will expire in one hour from the time the response was generated. If omitted, the authorization server SHOULD
+            provide the expiration time via other means or document the default value.
+
+            '
+          examples:
+          - 3600
+          type: integer
+        state:
+          description: Exactly the state value passed in the authorization request if present.
+          examples:
+          - 5dVZhNfri5XZS6wadskuzUk4MHYCvEcUgidjMeBjsktAhY7EKB
+          type: string
+        scope:
+          description: 'The scope of the access token as described by Section 3.3 if it differs from the requested scope.
+
+            '
+          examples:
+          - openid profile groups
+          type: string
+    openid.response.consent:
+      type: object
+      properties:
+        status:
+          type: string
+          examples:
+          - OK
+        data:
+          type: object
+          properties:
+            flow_id:
+              description: The identifier of the consent flow session.
+              type: string
+              format: uuid
+              pattern: ^[0-9a-fA-F]{8}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{12}$
+              examples:
+              - 713ef767-81bc-4a27-9b83-5fe2e101b2b4
+            redirect_uri:
+              description: The URI the user should be redirected to.
+              type: string
+              format: uri
+    openid.spec.ResponseType:
+      description: The OAuth 2.0 / OpenID Connect 1.0 Response Type.
+      enum:
+      - code
+      - id_token
+      - token
+      - code token
+      - code id_token
+      - id_token token
+      - code id_token token
+      - none
+      examples:
+      - code
+      type: string
+    openid.spec.AccessRequest.ClientAuth.JWT:
+      type: object
+      required:
+      - client_assertion
+      - client_assertion_type
+      properties:
+        client_id:
+          description: 'REQUIRED if the client is not authenticating with the authorization server as described in Section
+            3.2.1. of [RFC6749]. The client identifier as described in Section 2.2 of [RFC6749].
+
+            '
+          examples:
+          - my_client
+          type: string
+        client_assertion:
+          description: 'A JWT signed with HS256 using the client secret value or RS256 using a registered public key. Theoretically
+            a properly formed JWT signed using HS256 with the client secret as the HMAC key should work but this has not been
+            tested.
+
+            '
+          format: password
+          type: string
+        client_assertion_type:
+          description: 'The value of the client_assertion_type parameter MUST be "urn:ietf:params:oauth:client-assertion-type:jwt-bearer"
+
+            '
+          type: string
+          enum:
+          - urn:ietf:params:oauth:client-assertion-type:jwt-bearer
+          examples:
+          - urn:ietf:params:oauth:client-assertion-type:jwt-bearer
+    openid.spec.AccessServerTokenAssertionRequest:
+      required:
+      - token
+      type: object
+      properties:
+        token:
+          description: 'The string value of the token. For access tokens, this is the ''access_token" value returned from
+            the token endpoint defined in OAuth 2.0 [RFC6749], Section 5.1. For refresh tokens, this is the "refresh_token"
+            value returned from the token endpoint as defined in OAuth 2.0 [RFC6749], Section 5.1. Other token types are outside
+            the scope of this specification.
+
+            '
+          examples:
+          - authelia_at_6-8jeA8y9Y744pAHCRwGtJrsD9ABOVWyzL3uWB1ntbI.foaDPNLT0T7VVQ9on5F1rOfHs0Lbc09FGO2xF_pzmNY
+          type: string
+        token_type_hint:
+          description: 'A hint about the type of the token submitted for introspection. The protected resource MAY pass this
+            parameter to help the authorization server optimize the token lookup. If the server is unable to locate the token
+            using the given hint, it MUST extend its search across all of its supported token types. An authorization server
+            MAY ignore this parameter, particularly if it is able to detect the token type automatically. Values for this
+            field are defined in the "OAuth Token Type Hints" registry defined in OAuth Token Revocation [RFC7009].
+
+            '
+          enum:
+          - access_token
+          - refresh_token
+          examples:
+          - access_token
+          type: string
+    openid.spec.AccessRequest.RefreshTokenFlow:
+      allOf:
+      - $ref: '#/components/schemas/openid.spec.AccessRequest.ClientAuth'
+      - type: object
+        required:
+        - grant_type
+        - refresh_token
+        properties:
+          grant_type:
+            description: Value MUST be set to "refresh_token".
+            enum:
+            - refresh_token
+            type: string
+          refresh_token:
+            description: The Refresh Token.
+            examples:
+            - authelia_rt_MgALbONdFPIwo3o2QukHry7W451xrO6jza31IS8Vh4M.IArqzOzLwY6HWqom1vmp9DUWBuOQel_fGnRw5MyT-jo
+            type: string
+          scope:
+            description: 'The scope of the access request as described by Section 3.3. The requested scope MUST NOT include
+              any scope not originally granted by the resource owner, and if omitted is treated as equal to the scope originally
+              granted by the resource owner.
+
+              '
+            examples:
+            - openid profile groups
+            type: string
+    openid.request.consent.body:
+      description: The consent decision submitted by the user during the consent workflow.
+      type: object
+      properties:
+        flow_id:
+          description: 'The identifier of the consent flow session. Required unless the device_authorization subflow is being
+            used, in which case the user_code is used instead.
+
+            '
+          type: string
+          format: uuid
+          pattern: ^[0-9a-fA-F]{8}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{12}$
+          examples:
+          - 713ef767-81bc-4a27-9b83-5fe2e101b2b4
+        client_id:
+          description: The identifier of the client the user is providing consent for.
+          type: string
+          examples:
+          - app
+        consent:
+          description: If the user granted consent for the request.
+          type: boolean
+          examples:
+          - true
+        pre_configure:
+          description: If the user elected to pre-configure this consent for future requests.
+          type: boolean
+          examples:
+          - false
+        claims:
+          description: The list of requested optional claims the user granted.
+          type: array
+          items:
+            type: string
+        subflow:
+          description: The name of the subflow if applicable.
+          type: string
+          examples:
+          - device_authorization
+          enum:
+          - device_authorization
+        user_code:
+          description: The user code from the Device Authorization Flow if applicable.
+          type: string
+          examples:
+          - XGQWWFMM
+    openid.spec.AccessRequest.DeviceCodeFlow:
+      allOf:
+      - $ref: '#/components/schemas/openid.spec.AccessRequest.ClientAuth'
+      - type: object
+        required:
+        - grant_type
+        - device_code
+        properties:
+          grant_type:
+            description: Value MUST be set to "urn:ietf:params:oauth:grant-type:device_code".
+            enum:
+            - urn:ietf:params:oauth:grant-type:device_code
+            type: string
+          device_code:
+            description: The Device Authorization Code.
+            examples:
+            - authelia_dc_oqLXXUv2pvCDgBJLBav63ZduL4CxKP7JpYZ6ldHp39Y.u3XxwV3O-uYOA5TSv44iQyB27YjUGawJLlwOMuC770E
+            type: string
+    openid.spec.IntrospectionResponse:
+      type: object
+      required:
+      - active
+      properties:
+        active:
+          type: boolean
+          description: 'REQUIRED. Boolean indicator of whether or not the presented token is currently active. The specifics
+            of a token''s "active" state will vary depending on the implementation of the authorization server and the information
+            it keeps about its tokens, but a "true" value return for the "active" property will generally indicate that a
+            given token has been issued by this authorization server, has not been revoked by the resource owner, and is within
+            its given time window of validity (e.g., after its issuance time and before its expiration time).  See Section
+            4 for information on implementation of such checks.
+
+            '
+        scope:
+          type: string
+          description: 'OPTIONAL. A JSON string containing a space-separated list of scopes associated with this token, in
+            the format described in Section 3.3 of OAuth 2.0 [RFC6749].
+
+            '
+        client_id:
+          type: string
+          description: OPTIONAL. Client identifier for the OAuth 2.0 client that requested this token.
+        username:
+          type: string
+          description: OPTIONAL. Human-readable identifier for the resource owner who authorized this token.
+        token_type:
+          type: string
+          enum:
+          - bearer
+          examples:
+          - bearer
+          description: OPTIONAL. Type of the token as defined in Section 5.1 of OAuth 2.0 [RFC6749].
+        exp:
+          type: integer
+          description: 'OPTIONAL. Integer timestamp, measured in the number of seconds since January 1 1970 UTC, indicating
+            when this token will expire, as defined in JWT [RFC7519].
+
+            '
+        iat:
+          type: integer
+          description: 'OPTIONAL. Integer timestamp, measured in the number of seconds since January 1 1970 UTC, indicating
+            when this token was originally issued, as defined in JWT [RFC7519].
+
+            '
+        nbf:
+          type: integer
+          description: 'OPTIONAL. Integer timestamp, measured in the number of seconds since January 1 1970 UTC, indicating
+            when this token is not to be used before, as defined in JWT [RFC7519].
+
+            '
+        sub:
+          type: string
+          description: 'OPTIONAL. Subject of the token, as defined in JWT [RFC7519]. Usually a machine-readable identifier
+            of the resource owner who authorized this token.
+
+            '
+        aud:
+          oneOf:
+          - type: array
+            items:
+              type: string
+              description: 'OPTIONAL. Service-specific string identifier or list of string identifiers representing the intended
+                audience for this token, as defined in JWT [RFC7519].
+
+                '
+          - type: string
+            description: 'OPTIONAL. Service-specific string identifier or list of string identifiers representing the intended
+              audience for this token, as defined in JWT [RFC7519].
+
+              '
+        iss:
+          type: string
+          description: OPTIONAL. String representing the issuer of this token, as defined in JWT [RFC7519].
+        jti:
+          type: string
+          description: OPTIONAL. String identifier for the token, as defined in JWT [RFC7519].
+    openid.spec.DeviceAuthorizeRequest.Parameters:
+      type: object
+      required:
+      - scope
+      properties:
+        scope:
+          description: The requested scope.
+          examples:
+          - openid profile groups
+          type: string
+        acr_values:
+          description: 'Not Supported: Requested Authentication Context Class Reference values. Space-separated string that
+            specifies the acr values that the Authorization Server is being requested to use for processing this Authentication
+            Request, with the values appearing in order of preference. The Authentication Context Class satisfied by the authentication
+            performed is returned as the acr Claim Value, as specified in Section 2. The acr Claim is requested as a Voluntary
+            Claim by this parameter.
+
+            '
+          type: string
+        claims:
+          description: 'The claims parameter value, as specified in Section 5.5.
+
+            '
+          type: string
+        claims_locales:
+          description: 'Not Supported: End-User''s preferred languages and scripts for Claims being returned, represented
+            as a space-separated list of BCP47 [RFC5646] language tag values, ordered by preference. An error SHOULD NOT result
+            if some or all of the requested locales are not supported by the OpenID Provider.
+
+            '
+          type: string
+        ui_locales:
+          description: 'Not Supported: End-User''s preferred languages and scripts for the user interface, represented as
+            a space-separated list of BCP47 [RFC5646] language tag values, ordered by preference. For instance, the value
+            "fr-CA fr en" represents a preference for French as spoken in Canada, then French (without a region designation),
+            followed by English (without a region designation). An error SHOULD NOT result if some or all of the requested
+            locales are not supported by the OpenID Provider.
+
+            '
+          type: string
+    openid.spec.DeviceAuthorizeRequest:
+      allOf:
+      - $ref: '#/components/schemas/openid.spec.AccessRequest.ClientAuth'
+      - $ref: '#/components/schemas/openid.spec.DeviceAuthorizeRequest.Parameters'
+    openid.spec.ResponseMode:
+      description: 'Informs the Authorization Server of the mechanism to be used for returning parameters from the Authorization
+        Endpoint. This use of this parameter is NOT RECOMMENDED when the Response Mode that would be requested is the default
+        mode specified for the Response Type.
+
+        '
+      enum:
+      - form_post
+      - query
+      - fragment
+      - jwt
+      - form_post.jwt
+      - query.jwt
+      - fragment.jwt
+      examples:
+      - query
+      type: string
+    openid.implementation.Claims.Object:
+      description: OpenID Connect 1.0 User Claims.
+      type: object
+      properties:
+        sub:
+          type: string
+        name:
+          type: string
+        given_name:
+          type: string
+        family_name:
+          type: string
+        middle_name:
+          type: string
+        nickname:
+          type: string
+        preferred_username:
+          type: string
+        profile:
+          type: string
+          format: uri
+        picture:
+          type: string
+          format: uri
+        website:
+          type: string
+          format: uri
+        email:
+          type: string
+        alt_emails:
+          type: array
+          items:
+            type: string
+        email_verified:
+          type: boolean
+        gender:
+          type: string
+        birthdate:
+          type: string
+        zoneinfo:
+          type: string
+        locale:
+          type: string
+        phone_number:
+          type: string
+        phone_number_verified:
+          type: boolean
+        address:
+          type: object
+          properties:
+            formatted:
+              type: string
+            street_address:
+              type: string
+            locality:
+              type: string
+            region:
+              type: string
+            postal_code:
+              type: string
+            country:
+              type: string
+        updated_at:
+          type: integer
+        groups:
+          type: array
+          items:
+            type: string
+        amr:
+          type: array
+          items:
+            type: string
+            enum:
+            - mfa
+            - mca
+            - user
+            - pin
+            - pwd
+            - otp
+            - hwk
+            - sms
+        aud:
+          type: array
+          items:
+            type: string
+        azp:
+          type: string
+        client_id:
+          type: string
+        scope:
+          type: string
+        scp:
+          type: array
+          items:
+            type: string
+        rat:
+          type: integer
+        auth_time:
+          type: integer
+    openid.spec.AccessRequest.ClientAuth.None:
+      description: 'Client authentication for public clients registered with the ''none'' client authentication method.
+
+        '
+      type: object
+      required:
+      - client_id
+      properties:
+        client_id:
+          description: The client identifier as described in Section 2.2 of [RFC6749].
+          examples:
+          - my_client
+          type: string
+    openid.spec.ErrorResponseGeneric:
+      description: 'An OpenID Connect 1.0 and OAuth 2.0 error response Note this is a generic error response and may describe
+        a possible response for a given endpoint that is not entirely accurate or possible. This is only meant to represent
+        all of the potential response types. The enum may also not be exhaustive as the relevant specifications are incredibly
+        vast.
+
+        '
+      type: object
+      required:
+      - error
+      properties:
+        error:
+          description: REQUIRED. A single ASCII [USASCII] error code from the enum.
+          type: string
+          enum:
+          - invalid_request
+          - invalid_client
+          - invalid_grant
+          - invalid_scope
+          - invalid_request_uri
+          - invalid_request_object
+          - unauthorized_client
+          - unsupported_grant_type
+          - unsupported_response_type
+          - unsupported_token_type
+          - request_not_supported
+          - request_uri_not_supported
+          - registration_not_supported
+          - access_denied
+          - server_error
+          - temporarily_unavailable
+          - unmet_authentication_requirements
+          - interaction_required
+          - login_required
+          - account_selection_required
+          - consent_required
+        error_description:
+          description: 'OPTIONAL. Human-readable ASCII [USASCII] text providing additional information, used to assist the
+            client developer in understanding the error that occurred. Values for the "error_description" parameter MUST NOT
+            include characters outside the set %x20-21 / %x23-5B / %x5D-7E.
+
+            '
+          type: string
+        error_uri:
+          description: 'OPTIONAL. A URI identifying a human-readable web page with information about the error, used to provide
+            the client developer with additional information about the error. Values for the "error_uri" parameter MUST conform
+            to the URI-reference syntax and thus MUST NOT include characters outside the set %x21 / %x23-5B / %x5D-7E.
+
+            '
+          type: string
+        error_hint:
+          description: An additional hint about the cause of the error.
+          type: string
+        error_debug:
+          description: Additional debug information about the cause of the error.
+          type: string
+        state:
+          description: 'OAuth 2.0 state value. REQUIRED if the Authorization Request included the state parameter. Set to
+            the value received from the Client.
+
+            '
+          type: string
+    openid.spec.AccessRequest.ClientCredentialsFlow:
+      allOf:
+      - $ref: '#/components/schemas/openid.spec.AccessRequest.ClientAuth'
+      - type: object
+        required:
+        - grant_type
+        properties:
+          grant_type:
+            description: Value MUST be set to "client_credentials".
+            enum:
+            - client_credentials
+            type: string
+          scope:
+            description: 'The scope of the access request as described by Section 3.3. The requested scope MUST NOT include
+              any scope not originally granted by the resource owner, and if omitted is treated as equal to the scope originally
+              granted by the resource owner.
+
+              '
+            examples:
+            - openid profile groups
+            type: string
+    openid.spec.AccessRequest.ClientAuth:
+      description: 'The client authentication parameters included in the request body. Clients using the client_secret_basic
+        method authenticate via the Authorization header rather than the request body.
+
+        '
+      anyOf:
+      - $ref: '#/components/schemas/openid.spec.AccessRequest.ClientAuth.None'
+      - $ref: '#/components/schemas/openid.spec.AccessRequest.ClientAuth.Secret'
+      - $ref: '#/components/schemas/openid.spec.AccessRequest.ClientAuth.JWT'
+    openid.spec.AuthorizeRequest:
+      type: object
+      required:
+      - scope
+      - response_type
+      - client_id
+      - redirect_uri
+      properties:
+        scope:
+          description: The requested scope.
+          examples:
+          - openid profile groups
+          type: string
+        response_type:
+          $ref: '#/components/schemas/openid.spec.ResponseType'
+        client_id:
+          description: The OAuth 2.0 client identifier.
+          examples:
+          - app
+          type: string
+        redirect_uri:
+          description: 'Redirection URI to which the response will be sent. This URI MUST exactly match one of the Redirection
+            URI values for the Client pre-registered at the OpenID Provider, with the matching performed as described in Section
+            6.2.1 of [RFC3986] (Simple String Comparison). When using this flow, the Redirection URI SHOULD use the https
+            scheme; however, it MAY use the http scheme, provided that the Client Type is confidential, as defined in Section
+            2.1 of OAuth 2.0, and provided the OP allows the use of http Redirection URIs in this case. The Redirection URI
+            MAY use an alternate scheme, such as one that is intended to identify a callback into a native application.
+
+            '
+          examples:
+          - https://app.example.com
+          type: string
+          format: uri
+        state:
+          description: 'Opaque value used to maintain state between the request and the callback. Typically, Cross-Site Request
+            Forgery (CSRF, XSRF) mitigation is done by cryptographically binding the value of this parameter with a browser
+            cookie.
+
+            '
+          examples:
+          - oV84Vsy7wyCgRk2h4aZBmXZq4q3g2f
+          type: string
+        response_mode:
+          $ref: '#/components/schemas/openid.spec.ResponseMode'
+        nonce:
+          description: 'String value used to associate a Client session with an ID Token, and to mitigate replay attacks.
+            The value is passed through unmodified from the Authentication Request to the ID Token. Sufficient entropy MUST
+            be present in the nonce values used to prevent attackers from guessing values. For implementation notes, see Section
+            15.5.2.
+
+            '
+          examples:
+          - TRMLqchoKGQNcooXvBvUy9PtmLdJGf
+          type: string
+        display:
+          $ref: '#/components/schemas/openid.spec.DisplayType'
+        prompt:
+          $ref: '#/components/schemas/openid.spec.Prompt'
+        max_age:
+          description: 'Maximum Authentication Age. Specifies the allowable elapsed time in seconds since the last time the
+            End-User was actively authenticated by the OP. If the elapsed time is greater than this value, the OP MUST attempt
+            to actively re-authenticate the End-User. (The max_age request parameter corresponds to the OpenID 2.0 PAPE [OpenID.PAPE]
+            max_auth_age request parameter.) When max_age is used, the ID Token returned MUST include an auth_time Claim Value.
+
+            '
+          type: integer
+        ui_locales:
+          description: 'Not Supported: End-User''s preferred languages and scripts for the user interface, represented as
+            a space-separated list of BCP47 [RFC5646] language tag values, ordered by preference. For instance, the value
+            "fr-CA fr en" represents a preference for French as spoken in Canada, then French (without a region designation),
+            followed by English (without a region designation). An error SHOULD NOT result if some or all of the requested
+            locales are not supported by the OpenID Provider.
+
+            '
+          type: string
+        claims_locales:
+          description: 'Not Supported: End-User''s preferred languages and scripts for Claims being returned, represented
+            as a space-separated list of BCP47 [RFC5646] language tag values, ordered by preference. An error SHOULD NOT result
+            if some or all of the requested locales are not supported by the OpenID Provider.
+
+            '
+          type: string
+        id_token_hint:
+          description: 'Not Supported: ID Token previously issued by the Authorization Server being passed as a hint about
+            the End-User''s current or past authenticated session with the Client. If the End-User identified by the ID Token
+            is logged in or is logged in by the request, then the Authorization Server returns a positive response; otherwise,
+            it SHOULD return an error, such as login_required. When possible, an id_token_hint SHOULD be present when prompt=none
+            is used and an invalid_request error MAY be returned if it is not; however, the server SHOULD respond successfully
+            when possible, even if it is not present. The Authorization Server need not be listed as an audience of the ID
+            Token when it is used as an id_token_hint value. If the ID Token received by the RP from the OP is encrypted,
+            to use it as an id_token_hint, the Client MUST decrypt the signed ID Token contained within the encrypted ID Token.
+            The Client MAY re-encrypt the signed ID token to the Authentication Server using a key that enables the server
+            to decrypt the ID Token, and use the re-encrypted ID token as the id_token_hint value.
+
+            '
+          type: string
+        login_hint:
+          description: 'Not Supported: Hint to the Authorization Server about the login identifier the End-User might use
+            to log in (if necessary). This hint can be used by an RP if it first asks the End-User for their e-mail address
+            (or other identifier) and then wants to pass that value as a hint to the discovered authorization service. It
+            is RECOMMENDED that the hint value match the value used for discovery. This value MAY also be a phone number in
+            the format specified for the phone_number Claim. The use of this parameter is left to the OP''s discretion.
+
+            '
+          type: string
+        acr_values:
+          description: 'Not Supported: Requested Authentication Context Class Reference values. Space-separated string that
+            specifies the acr values that the Authorization Server is being requested to use for processing this Authentication
+            Request, with the values appearing in order of preference. The Authentication Context Class satisfied by the authentication
+            performed is returned as the acr Claim Value, as specified in Section 2. The acr Claim is requested as a Voluntary
+            Claim by this parameter.
+
+            '
+          type: string
+        claims:
+          description: 'The claims parameter value, as specified in Section 5.5.
+
+            '
+          type: string
+        registration:
+          description: 'Not Supported: This parameter is used by the Client to provide information about itself to a Self-Issued
+            OP that would normally be provided to an OP during Dynamic Client Registration, as specified in Section 7.2.1.
+
+            '
+          type: string
+        request:
+          description: 'Request Object value, as specified in Section 6.1. The Request Object MAY be encrypted to the Self-Issued
+            OP by the Client. In this case, the sub (subject) of a previously issued ID Token for this Client MUST be sent
+            as the kid (Key ID) of the JWE. Encrypting content to Self-Issued OPs is currently only supported when the OP''s
+            JWK key type is RSA and the encryption algorithm used is RSA1_5.
+
+            '
+          type: string
+    openid.request.consent:
+      type: object
+      properties:
+        status:
+          type: string
+          examples:
+          - OK
+        data:
+          type: object
+          properties:
+            client_id:
+              type: string
+              description: The identifier of the client for the user to provide consent for.
+              examples:
+              - app
+            client_description:
+              description: The descriptive name of the client for the user to provide consent for.
+              type: string
+              examples:
+              - App Platform
+            scopes:
+              description: The list of the requested scopes for the user to provide consent for.
+              type: array
+              items:
+                type: string
+                enum:
+                - openid
+                - offline_access
+                - groups
+                - email
+                - profile
+            audience:
+              description: The list of the requested audiences for the user to provide consent for.
+              type: array
+              items:
+                type: string
+            pre_configuration:
+              description: Indicates if this client supports pre-configuration.
+              type: boolean
+              examples:
+              - true
+            claims:
+              description: List of requested optional claims.
+              type: array
+              items:
+                type: string
+            essential_claims:
+              description: List of requested essential claims.
+              type: array
+              items:
+                type: string
+            require_login:
+              description: If the user must perform a login event before proceeding to provide consent.
+              type: boolean
+              examples:
+              - true
+    openid.spec.CodeChallengeMethod:
+      description: The RFC7636 Code Challenge Verifier Method.
+      enum:
+      - plain
+      - S256
+      examples:
+      - S256
+      type: string
+    openid.spec.AccessRequest.ClientAuth.Secret:
+      required:
+      - client_id
+      - client_secret
+      type: object
+      properties:
+        client_id:
+          description: 'REQUIRED if the client is not authenticating with the authorization server as described in Section
+            3.2.1. of [RFC6749]. The client identifier as described in Section 2.2 of [RFC6749].
+
+            '
+          examples:
+          - my_client
+          type: string
+        client_secret:
+          description: 'REQUIRED. The client secret. The client MAY omit the parameter if the client secret is an empty string.
+
+            '
+          format: password
+          type: string
+    openid.spec.DisplayType:
+      description: 'ASCII string value that specifies how the Authorization Server displays the authentication and consent
+        user interface pages to the End-User.
+
+        '
+      enum:
+      - page
+      - popup
+      - touch
+      - wap
+      examples:
+      - page
+      type: string
+    openid.spec.AccessRequest.AuthorizationCodeFlow:
+      allOf:
+      - $ref: '#/components/schemas/openid.spec.AccessRequest.ClientAuth'
+      - type: object
+        required:
+        - code
+        - grant_type
+        properties:
+          grant_type:
+            description: Value MUST be set to "code".
+            enum:
+            - authorization_code
+            type: string
+          code:
+            description: The Authorization Code.
+            examples:
+            - authelia_ac_VdQ5Ts3BCDtN4X-aCUW6esVl_PmMklup81bqyZ8PQJc.mQ7qgtwQu6_JdXR_OPJX3YDGOATBK6Bt6BgnsndFJQs
+            type: string
+          code_verifier:
+            description: The Authorization Code Verifier (PKCE).
+            examples:
+            - 88a25754f7c0b3b3b88cf6cd4e29e8356b160524fdc1cb329a94471825628fd3
+            type: string
+          redirect_uri:
+            description: The original Redirect URI used in the Authorization Request.
+            examples:
+            - https://app.example.com/oidc/callback
+            type: string
+    openid.spec.Prompt:
+      description: 'Not Supported: Space delimited, case sensitive list of ASCII string values that specifies whether the
+        Authorization Server prompts the End-User for reauthentication and consent.
+
+        '
+      enum:
+      - none
+      - login
+      - consent
+      - select_account
+      - login consent
+      - login select_account
+      - consent select_account
+      examples:
+      - none
+      type: string
+  parameters:
+    userCodeParam:
+      name: user_code
+      in: query
+      description: 'The RFC8628 OAuth 2.0 Device Authorization Grant user code. Required unless the flow_id parameter is provided.
+
+        '
+      required: false
+      schema:
+        type: string
+        examples:
+        - XGQWWFMM
+    flowIDParam:
+      name: flow_id
+      in: query
+      description: 'The Flow ID that''s being requested. Required unless the user_code parameter is provided.
+
+        '
+      required: false
+      schema:
+        type: string
+        format: uuid
+        pattern: ^[0-9a-fA-F]{8}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{12}$
+        examples:
+        - 713ef767-81bc-4a27-9b83-5fe2e101b2b4
   securitySchemes:
-    clientBasicAuth:
-      type: http
-      scheme: basic
-      description: RFC 6749 client_secret_basic for token, introspection and revocation endpoints.
-    bearerAuth:
-      type: http
-      scheme: bearer
-      description: Bearer access token for UserInfo and other protected endpoints.
-    oauth2:
-      type: oauth2
-      flows:
-        authorizationCode:
-          authorizationUrl: https://auth.example.com/api/oidc/authorization
-          tokenUrl: https://auth.example.com/api/oidc/token
-          scopes:
-            openid: OpenID Connect base scope
-            profile: Profile claims
-            email: Email claims
-            groups: Group memberships
-            offline_access: Refresh token
+    authelia_auth:
+      type: apiKey
+      name: authelia_session
+      in: cookie
+    openid:
+      type: openIdConnect
+      openIdConnectUrl: https://auth.example.com/.well-known/openid-configuration

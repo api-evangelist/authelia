@@ -1,0 +1,79 @@
+generated: '2026-09-06'
+method: searched
+source: >-
+  https://www.authelia.com/policies/versioning/ (last updated 2026-08-24),
+  https://github.com/authelia/authelia/releases and
+  https://www.authelia.com/configuration/prologue/migration/.
+description: >-
+  Versioning, support and deprecation posture for Authelia. Authelia publishes an explicit written
+  versioning policy — unusual for a self-hosted open source project — but ships no status page and no
+  RFC 8594 Sunset/Deprecation headers on its HTTP surface.
+versioning:
+  scheme: semver
+  policy: Semantic Versioning 2.0.0
+  policy_url: https://www.authelia.com/policies/versioning/
+  current_version: v4.39.22
+  current_version_released: '2026-09-03'
+  format: <major>.<minor>.<patch>
+  api_versioning: >-
+    The HTTP API is NOT independently versioned — there is no /v1/ path segment and no version header. The
+    contract at https://github.com/authelia/authelia/blob/master/api/openapi.yml carries info.version 1.0.0
+    and tracks whatever server release is deployed, so the server version IS the API version.
+  guidance: >-
+    The policy tells administrators to pin to a minor (e.g. 4.39) to prevent automatic minor upgrades, or to
+    the major (4) to prevent automatic major upgrades, and explicitly recommends against automated upgrades
+    of critical systems.
+  component_versioning: >-
+    Each component carries its own version: the server may be v4.40.0 while the Helm chart is v0.11.x. A
+    breaking change may land in one without the other.
+support:
+  question_support: 3 minor versions at minimum
+  bug_fixes: latest minor version only, shipped as a patch
+  vulnerability_fixes: >-
+    Workarounds and patches in the security advisory; backported to the last 3 minor versions on request.
+  major_version_zero: >-
+    Components released under v0.x.x may introduce breaking changes without warning, per SemVer 2.0.0.
+deprecation:
+  policy_url: https://www.authelia.com/policies/versioning/
+  documented: true
+  detail: >-
+    Deprecations may occur in minor or patch releases and apply to features and configuration keys. A
+    deprecated item continues to work but is discouraged, and is likely to be removed in the next major
+    release.
+  migration_guide: https://www.authelia.com/configuration/prologue/migration/
+  http_signals:
+    sunset_header: false
+    deprecation_header: false
+    note: >-
+      No RFC 8594 Sunset or Deprecation header is declared on any operation in the contract, and no
+      operation is marked `deprecated: true`.
+  excluded_from_policy:
+  - Changes between stable releases (master, alpha, beta, pre-release, any testing build).
+  - Advanced customizations, which are explicitly listed as an exception to the versioning policy.
+status_page:
+  exists: false
+  note: >-
+    Authelia is self-hosted; there is no vendor-operated service to report status for, so no status page
+    exists and none is expected. Deployment health is exposed to the operator by the contract's own
+    /api/health endpoint (operationIds getHealth, headHealth) and by the telemetry/metrics surface
+    documented at https://www.authelia.com/reference/guides/metrics/.
+sla:
+  exists: false
+  note: Apache-2.0 open source with no commercial support offering and no published SLA.
+deprecated_operations: []
+release_cadence:
+  source: https://api.github.com/repos/authelia/authelia/releases
+  recent:
+  - version: v4.39.22
+    date: '2026-09-03'
+  - version: v4.39.21
+    date: '2026-09-03'
+  - version: v4.39.20
+    date: '2026-05-26'
+  - version: v4.39.19
+    date: '2026-04-12'
+  - version: v4.39.18
+    date: '2026-04-10'
+  note: >-
+    Patch-only releases on the 4.39 line since 2025; the minor line 4.39 has been current across the whole
+    observed window.

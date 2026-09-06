@@ -1,0 +1,103 @@
+generated: '2026-09-06'
+method: derived
+source: >-
+  openapi/authelia-api-openapi.yml (first-party Authelia OpenAPI 3.2.0) plus
+  https://www.authelia.com/reference/guides/log-messages/ and
+  https://www.authelia.com/reference/guides/troubleshooting/.
+format: proprietary
+description: >-
+  Authelia declares NO application/problem+json response anywhere in its contract, so this is not an
+  RFC 9457 catalog. Two distinct error envelopes exist side by side, and which one a caller gets depends on
+  which half of the surface it is talking to.
+envelopes:
+- id: authelia-portal
+  name: Authelia portal envelope
+  media_type: application/json
+  schema: openapi/authelia-api-openapi.yml#/components/schemas/middlewares.Response.KO
+  shape:
+    status: '"KO" on failure, "OK" on success'
+    message: Human-readable message, e.g. "Operation Failed."
+  applies_to: >-
+    Every /api/* endpoint other than /api/oidc/* — first factor, second factor, user info, session
+    elevation, password reset and password change.
+  note: >-
+    The envelope carries no machine-readable error code. `message` is prose and is deliberately generic on
+    authentication paths so as not to leak whether a username exists. Callers cannot branch on the error
+    type; they must branch on the HTTP status.
+- id: oauth2
+  name: RFC 6749 / RFC 6750 OAuth 2.0 error envelope
+  media_type: application/json
+  schema: openapi/authelia-api-openapi.yml#/components/schemas/openid.spec.ErrorResponseGeneric
+  shape:
+    error: A single ASCII error code from the enumeration below.
+    error_description: Human-readable description.
+    error_uri: URI of a page describing the error.
+    error_hint: Authelia extension — a hint about the cause.
+    error_debug: Authelia extension — debug detail, emitted only when enabled.
+    state: The state value from the request, when applicable.
+  applies_to: /api/oidc/* and the OAuth 2.0 / OpenID Connect 1.0 endpoints.
+status_codes:
+- status: 400
+  title: Bad Request
+  operations: 26
+  meaning: Malformed body, invalid parameters, or an invalid OAuth 2.0 request.
+- status: 401
+  title: Unauthorized
+  operations: 32
+  meaning: >-
+    No valid session cookie or access token, or client authentication failed at the token/introspection/
+    revocation endpoints.
+- status: 403
+  title: Forbidden
+  operations: 32
+  meaning: >-
+    Authenticated but not authorized for this operation — commonly an insufficient authentication level
+    (1FA where 2FA is required) or an access control rule denial.
+- status: 404
+  title: Not Found
+  operations: 1
+- status: 409
+  title: Conflict
+  operations: 2
+  meaning: The resource already exists — e.g. registering a second factor that is already registered.
+- status: 413
+  title: Content Too Large
+  operations: 1
+- status: 429
+  title: Too Many Requests
+  operations: 9
+  meaning: >-
+    A per-endpoint token bucket was exhausted. Authelia ships default rate limits on the password reset,
+    TOTP, Duo, session elevation and OAuth 2.0 token/PAR/userinfo/introspection/revocation endpoints.
+  remediation: >-
+    Back off for the bucket period and retry. See rate-limits/authelia-rate-limits.yml and
+    https://www.authelia.com/configuration/miscellaneous/server-endpoint-rate-limits/.
+- status: 500
+  title: Internal Server Error
+  operations: 13
+oauth2_error_codes:
+- invalid_request
+- invalid_client
+- invalid_grant
+- invalid_scope
+- invalid_request_uri
+- invalid_request_object
+- unauthorized_client
+- unsupported_grant_type
+- unsupported_response_type
+- unsupported_token_type
+- request_not_supported
+- request_uri_not_supported
+- registration_not_supported
+- access_denied
+- server_error
+- temporarily_unavailable
+- unmet_authentication_requirements
+- interaction_required
+- login_required
+- account_selection_required
+- consent_required
+gaps:
+- No RFC 9457 problem+json representation is offered on any operation.
+- The portal envelope has no stable error code field, so an agent cannot distinguish a wrong password from
+  a banned account from a rate limit other than by HTTP status.

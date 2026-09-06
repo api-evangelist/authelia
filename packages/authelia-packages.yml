@@ -1,0 +1,151 @@
+generated: '2026-09-06'
+method: searched
+source: >-
+  Go module proxy (proxy.golang.org), registry.npmjs.org, charts.authelia.com/index.yaml,
+  hub.docker.com and the authelia GitHub organization (https://github.com/authelia).
+description: >-
+  First-party distributions published by the Authelia project. Authelia is a self-hosted server, so its
+  primary distributions are the server binary/container and the Go libraries the project extracted from it.
+  NOTE: Authelia publishes NO client SDK for its own HTTP API in any language registry — the packages below
+  are the server itself, its deployment artifacts, and general-purpose Go libraries the project maintains.
+  Verified 2026-09-06 against each registry's unauthenticated metadata endpoint.
+summary:
+  package_count: 11
+  official_count: 11
+  client_sdk_count: 0
+  registries:
+  - go
+  - npm
+  - helm
+  - container
+packages:
+- name: github.com/authelia/authelia/v4
+  registry: go
+  official: true
+  kind: server
+  version: v4.39.22
+  published: '2026-09-03'
+  url: https://pkg.go.dev/github.com/authelia/authelia/v4
+  repository: https://github.com/authelia/authelia
+  source: https://proxy.golang.org/github.com/authelia/authelia/v4/@latest
+  note: The Authelia server itself, importable as a Go module. Not a client SDK.
+- name: github.com/authelia/oauth2-provider
+  registry: go
+  official: true
+  kind: library
+  version: v0.3.0
+  published: '2026-08-31'
+  url: https://pkg.go.dev/github.com/authelia/oauth2-provider
+  repository: https://github.com/authelia/oauth2-provider
+  source: https://proxy.golang.org/github.com/authelia/oauth2-provider/@latest
+  note: Authelia OAuth 2.0 Framework (Provider Role) — the OAuth 2.0/OIDC engine behind the provider endpoints.
+- name: github.com/authelia/oauth2-client
+  registry: go
+  official: true
+  kind: library
+  version: v0.0.0-20250405043315-6378a9b2a190
+  published: '2025-04-05'
+  url: https://pkg.go.dev/github.com/authelia/oauth2-client
+  repository: https://github.com/authelia/oauth2-client
+  source: https://proxy.golang.org/github.com/authelia/oauth2-client/@latest
+  note: >-
+    Authelia OAuth 2.0 Framework (Client Role). Untagged — the module proxy resolves only a pseudo-version
+    from a 2025-04-05 commit, so consumers cannot pin a semantic release.
+- name: github.com/authelia/otp
+  registry: go
+  official: true
+  kind: library
+  version: v1.0.4
+  published: '2026-02-15'
+  url: https://pkg.go.dev/github.com/authelia/otp
+  repository: https://github.com/authelia/otp
+  source: https://proxy.golang.org/github.com/authelia/otp/@latest
+  note: TOTP library for Go used by the Authelia second-factor implementation.
+- name: github.com/authelia/pam
+  registry: go
+  official: true
+  kind: library
+  version: v0.1.2
+  published: '2026-05-12'
+  url: https://pkg.go.dev/github.com/authelia/pam
+  repository: https://github.com/authelia/pam
+  source: https://proxy.golang.org/github.com/authelia/pam/@latest
+  note: Authelia PAM (Pluggable Authentication Module) bindings.
+- name: github.com/authelia/jsonschema
+  registry: go
+  official: true
+  kind: library
+  version: v0.1.7
+  published: '2023-09-03'
+  url: https://pkg.go.dev/github.com/authelia/jsonschema
+  repository: https://github.com/authelia/jsonschema
+  source: https://proxy.golang.org/github.com/authelia/jsonschema/@latest
+  note: >-
+    Generates the published JSON Schemas from Go types. Last tagged 2023-09-03 — the oldest tagged
+    first-party module in the set.
+- name: github.com/authelia/session
+  registry: go
+  official: true
+  kind: library
+  version: v1.1.8
+  published: '2020-04-14'
+  url: https://pkg.go.dev/github.com/authelia/session
+  repository: https://github.com/authelia/session
+  source: https://proxy.golang.org/github.com/authelia/session/@latest
+  note: Session implementation for fasthttp. Last release 2020-04-14; effectively frozen.
+- name: github.com/authelia/ac
+  registry: go
+  official: true
+  kind: cli
+  version: v0.0.0-20250405071522-28aa56124fc9
+  published: '2025-04-05'
+  url: https://pkg.go.dev/github.com/authelia/ac
+  repository: https://github.com/authelia/ac
+  source: https://proxy.golang.org/github.com/authelia/ac/@latest
+  note: >-
+    "Authelia CLI" (ac) — an early standalone CLI, untagged and resolvable only as a pseudo-version.
+    The shipping CLI surface is the `authelia` binary itself; see cli/authelia-cli.yml.
+- name: authelia
+  registry: npm
+  official: true
+  kind: server
+  status: retired
+  version: 3.16.2
+  published: '2019-10-28'
+  url: https://www.npmjs.com/package/authelia
+  repository: https://github.com/clems4ever/authelia
+  source: https://registry.npmjs.org/-/v1/search?text=authelia
+  note: >-
+    The retired Node.js implementation of Authelia, published by the project founder before the Go rewrite.
+    Last published 2019-10-28 and superseded by the Go server; recorded for provenance, not for use.
+- name: authelia
+  registry: helm
+  official: true
+  kind: deployment
+  version: 0.11.20
+  app_version: 4.39.20
+  published: '2026-08-26'
+  url: https://charts.authelia.com/
+  repository: https://github.com/authelia/chartrepo
+  source: https://charts.authelia.com/index.yaml
+  note: >-
+    Official Helm chart. Versioned independently of the server per the Authelia versioning policy
+    (https://www.authelia.com/policies/versioning/); chart 0.11.20 ships appVersion 4.39.20.
+- name: authelia/authelia
+  registry: container
+  official: true
+  kind: container
+  version: '4.39.22'
+  published: '2026-09-06'
+  url: https://hub.docker.com/r/authelia/authelia
+  mirrors:
+  - ghcr.io/authelia/authelia
+  - docker.io/authelia/authelia
+  source: https://hub.docker.com/v2/repositories/authelia/authelia/
+  note: >-
+    Primary distribution channel; 81,480,469 pulls recorded at Docker Hub on 2026-09-06. `published` is the
+    repository's last_updated timestamp, and `version` is the current release tag from the GitHub releases feed.
+gaps:
+- No first-party client SDK exists for the Authelia HTTP API in npm, PyPI, Maven Central, NuGet, RubyGems,
+  Packagist or crates.io. PyPI has no `authelia` project (HTTP 404 on https://pypi.org/pypi/authelia/json).
+- npm results other than the retired `authelia` package are community integrations, not Authelia publications.

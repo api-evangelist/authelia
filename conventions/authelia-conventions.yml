@@ -1,0 +1,168 @@
+generated: '2026-09-06'
+method: searched
+source: >-
+  openapi/authelia-api-openapi.yml (first-party OpenAPI 3.2.0),
+  https://www.authelia.com/integration/openid-connect/oauth-2.0-bearer-token-usage/,
+  https://www.authelia.com/configuration/miscellaneous/server-endpoint-rate-limits/,
+  https://www.authelia.com/configuration/session/,
+  https://www.authelia.com/reference/guides/proxy-authorization/ and
+  https://www.authelia.com/policies/versioning/.
+description: >-
+  Cross-cutting runtime semantics for the Authelia HTTP API. The critical framing for any agent: Authelia is
+  a self-hosted authentication portal, not a hosted service. There is no vendor host, no account, no API
+  key issuance flow and no sandbox — the base URL is whatever host the operator deployed, and the API is
+  scoped to the calling user's own session.
+auth:
+  style: session-cookie primary, OAuth 2.0 bearer secondary
+  schemes:
+  - name: authelia_auth
+    type: apiKey
+    location: cookie
+    parameter: authelia_session
+    detail: >-
+      The default session cookie name is `authelia_session`; it is configurable per deployment
+      (session.cookies[].name), so the contract's declared name is the default, not a guarantee.
+  - name: openid
+    type: openIdConnect
+    discovery: <base>/.well-known/openid-configuration
+  bearer_tokens:
+    scope: authelia.bearer.authz
+    detail: >-
+      A registered OAuth 2.0 client permitted the authelia.bearer.authz scope can obtain an access token
+      usable as an RFC 6750 bearer token on the PROXY AUTHORIZATION endpoints in place of the session
+      cookie. Authelia's own docs state plainly that these tokens are NOT intended for use with the
+      Authelia API; a separate scope and audience scheme for that is deferred to a later release.
+    token_prefixes:
+      access_token: authelia_at_
+      refresh_token: authelia_rt_
+      authorization_code: authelia_ac_
+    preconditions:
+    - The authz endpoint must be explicitly configured with the Bearer scheme in authn_strategies.
+    - The OpenID Connect 1.0 Provider must be configured and a client registered with the scope.
+    - The token audience must exactly match or prefix the requested URL or authorization is denied.
+  client_authentication:
+    endpoints: [/api/oidc/token, /api/oidc/introspection, /api/oidc/revocation, /api/oidc/pushed-authorization-request]
+    methods: [client_secret_basic, client_secret_post, client_secret_jwt, private_key_jwt, none]
+    note: >-
+      Set per registered client via token_endpoint_auth_method. The list is the server's own
+      validOIDCClientTokenEndpointAuthMethods
+      (https://github.com/authelia/authelia/blob/master/internal/configuration/validator/const.go);
+      `none` is accepted only for public clients, and confidential clients are restricted to
+      client_secret_post, client_secret_basic and private_key_jwt.
+idempotency:
+  coverage: none
+  mechanism: null
+  header: null
+  detail: >-
+    No Idempotency-Key header, no request-id replay key and no dedupe window is declared on any of the
+    mutating operations in the contract. Replay safety is a property of the individual operations rather
+    than of the API: PUT-shaped operations (putUserSessionElevation, putSecondFactorWebAuthnCredential) are
+    naturally idempotent, POST-shaped ones (postSecondFactorTOTPRegistration, postResetPassword,
+    postFirstFactor) are not, and re-firing them either errors with 409 Conflict or consumes a rate-limit
+    bucket.
+  note: >-
+    A retrying agent must treat every POST here as potentially double-firing. The practical guard is the
+    per-endpoint rate limiter, not idempotency.
+reversibility:
+  grade: documented
+  detail: >-
+    Several write surfaces have a real reversal operation, but Authelia publishes a stated WINDOW for only
+    one of them (session elevation), so this grades `documented` rather than `verified`. Nothing here is
+    a financial action; the destructive operations are credential deletions.
+  surfaces:
+  - write: postUserSessionElevation / putUserSessionElevation
+    reversal: deleteUserSessionElevation
+    window: >-
+      The elevation is itself time-bounded by identity_validation.elevated_session.elevation_lifespan
+      (documented at https://www.authelia.com/configuration/identity-validation/elevated-session/); the
+      revoke operation works for the life of the elevation.
+    docs: https://www.authelia.com/configuration/identity-validation/elevated-session/
+  - write: postOpenIDConnectToken (token issuance)
+    reversal: postOAuth2Revocation
+    window: >-
+      No window stated — RFC 7009 revocation is accepted for the life of the token. Authelia's own docs warn
+      that the JWT Profile for Access Tokens makes introspection stateless and therefore weakens revocation.
+    docs: https://www.authelia.com/integration/openid-connect/oauth-2.0-bearer-token-usage/
+  - write: postFirstFactor (session creation)
+    reversal: postLogout
+    window: No window stated; valid for the life of the session.
+  - write: postSecondFactorTOTPRegistration
+    reversal: deleteSecondFactorTOTP
+    window: null
+    note: >-
+      NOT a reversal in the recoverable sense. Deleting a TOTP configuration destroys the shared secret;
+      the user must re-enroll from scratch. There is no restore and no undo period.
+  - write: postSecondFactorWebAuthnCredentialRegistration
+    reversal: deleteSecondFactorWebAuthnCredential
+    window: null
+    note: >-
+      Same caveat — deletion is permanent and the physical authenticator must be re-registered.
+  - write: postChangePassword / postResetPassword
+    reversal: none
+    window: null
+    note: No password history or rollback is exposed; a reset can only be followed by another reset.
+dry_run_mode:
+  available: false
+  note: >-
+    No HTTP dry-run parameter exists. The nearest equivalent is CLI-side and does not touch the API:
+    `authelia config validate` and `authelia access-control check-policy` evaluate configuration and
+    authorization rules without applying anything. See cli/authelia-cli.yml.
+pagination:
+  style: none
+  detail: >-
+    No operation declares page, limit, offset or cursor parameters. Every collection in the contract
+    (WebAuthn credentials, Duo devices) is scoped to one user and returned whole.
+field_expansion:
+  available: false
+metadata:
+  available: false
+  note: >-
+    No arbitrary key/value metadata on API resources. The equivalent extensibility lives in configuration:
+    custom user attributes, claims policies and custom scopes
+    (https://www.authelia.com/integration/openid-connect/openid-connect-1.0-claims/).
+request_tracing:
+  request_id_header: null
+  detail: >-
+    No request-id header is declared in the contract. Correlation is done server-side through the structured
+    log (https://www.authelia.com/reference/guides/log-messages/) and the Prometheus telemetry endpoint
+    (https://www.authelia.com/reference/guides/metrics/).
+versioning:
+  api_versioned: false
+  detail: >-
+    No version path segment and no version header. The deployed server release is the API version; see
+    lifecycle/authelia-lifecycle.yml.
+error_envelope:
+  portal: '{status: "OK"|"KO", message: string}'
+  oauth2: '{error, error_description, error_uri, error_hint, error_debug, state}'
+  problem_json: false
+  reference: errors/authelia-problem-types.yml
+rate_limit_signaling:
+  status_on_exhaustion: 429
+  headers_declared: []
+  detail: >-
+    Authelia enforces per-endpoint token buckets with published defaults and returns 429 on exhaustion, but
+    the contract declares NO X-RateLimit-* or RateLimit-* response headers and no Retry-After on the 429
+    responses. An agent cannot read remaining budget from a response; it must know the configured bucket
+    periods out of band.
+  reference: rate-limits/authelia-rate-limits.yml
+proxy_authorization:
+  detail: >-
+    The /api/authz/* family is a distinct convention from the rest of the API. It is called by a reverse
+    proxy on every request, keyed on forwarded headers (X-Forwarded-Proto, X-Forwarded-Host,
+    X-Forwarded-URI or X-Original-URL depending on implementation), and answers 200 (allow), 401/302
+    (challenge) or 403 (deny). Four implementations exist — ForwardAuth, ExtAuthz, AuthRequest and the
+    deprecated Legacy /api/verify.
+  reference: https://www.authelia.com/reference/guides/proxy-authorization/
+  required_headers: https://www.authelia.com/integration/proxies/introduction/
+transport:
+  https_required: true
+  detail: >-
+    Authelia MUST be served over https, and every application protected by the cookie-based flow must also
+    use secure schemes (https/wss). This is a stated design decision, not a recommendation
+    (https://www.authelia.com/integration/prologue/get-started/).
+cross_links:
+  errors: errors/authelia-problem-types.yml
+  lifecycle: lifecycle/authelia-lifecycle.yml
+  authentication: authentication/authelia-authentication.yml
+  rate_limits: rate-limits/authelia-rate-limits.yml
+  scopes: scopes/authelia-scopes.yml

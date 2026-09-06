@@ -1,0 +1,148 @@
+generated: '2026-09-06'
+method: searched
+source: >-
+  https://www.authelia.com/blog/we-are-now-openid-certified/,
+  https://www.authelia.com/integration/openid-connect/introduction/,
+  https://www.authelia.com/integration/openid-connect/oauth-2.0-bearer-token-usage/,
+  https://www.authelia.com/reference/guides/authentication-method-references/,
+  https://www.authelia.com/policies/versioning/ and the first-party contract
+  openapi/authelia-api-openapi.yml (OpenAPI 3.2.0).
+description: >-
+  Cross-cutting and domain-standard conformance for Authelia. Authelia's market is identity and access
+  management, and its domain standard is OpenID Connect 1.0 — which the project is formally CERTIFIED
+  against, the strongest form of evidence available in this category. Every entry below points at either a
+  path/operation in the published contract or a first-party document.
+domain_standard:
+  standard: OpenID Connect 1.0
+  status: certified
+  evidence: https://www.authelia.com/blog/we-are-now-openid-certified/
+  contract_evidence: >-
+    openapi/authelia-api-openapi.yml declares the discovery document at
+    /.well-known/openid-configuration, a `openid` securityScheme of type openIdConnect, and the full
+    provider surface (/api/oidc/authorization, /api/oidc/token, /api/oidc/userinfo, /api/oidc/introspection,
+    /api/oidc/revocation, /api/oidc/device-authorization, /api/oidc/pushed-authorization-request).
+  note: >-
+    Authelia announced OpenID Certified™ status on 2025-05-18. Certification is the domain-standard signal
+    for an identity provider: a relying party that already speaks OIDC integrates with no bespoke connector.
+conformance:
+- id: oidc
+  name: OpenID Connect Core 1.0
+  conforms: true
+  evidence: https://www.authelia.com/integration/openid-connect/introduction/
+  detail: >-
+    OpenID Certified™ Provider. The contract's openid.spec.ResponseType enum declares the Authorization
+    Code, Implicit and Hybrid response types (code, id_token, token, code id_token, code token,
+    id_token token, code id_token token, none), and discovery is served at
+    /.well-known/openid-configuration (operationId getOpenIDConnectConfiguration).
+- id: oidc-discovery
+  name: OpenID Connect Discovery 1.0
+  conforms: true
+  evidence: openapi/authelia-api-openapi.yml#/paths/~1.well-known~1openid-configuration
+- id: oauth2
+  name: 'RFC 6749: The OAuth 2.0 Authorization Framework'
+  conforms: true
+  evidence: openapi/authelia-api-openapi.yml#/paths/~1api~1oidc~1token
+  detail: >-
+    Token endpoint with client_secret_basic and client_secret_post client authentication; the
+    openid.spec.ErrorResponseGeneric schema enumerates the RFC 6749 error codes verbatim.
+- id: oauth2-bearer
+  name: 'RFC 6750: OAuth 2.0 Bearer Token Usage'
+  conforms: true
+  evidence: https://www.authelia.com/integration/openid-connect/oauth-2.0-bearer-token-usage/
+  detail: >-
+    Access tokens granted the authelia.bearer.authz scope may be presented via the Bearer scheme to the
+    proxy authorization endpoints in place of the session cookie.
+- id: oauth2-pkce
+  name: 'RFC 7636: Proof Key for Code Exchange'
+  conforms: true
+  evidence: https://www.authelia.com/configuration/identity-providers/openid-connect/clients/
+  detail: >-
+    PKCE is supported and enforceable per registered client via the `require_pkce` / `pkce_challenge_method`
+    client options (the provider configuration reference documents enforce_pkce).
+- id: oauth2-introspection
+  name: 'RFC 7662: OAuth 2.0 Token Introspection'
+  conforms: true
+  evidence: openapi/authelia-api-openapi.yml#/paths/~1api~1oidc~1introspection
+- id: oauth2-revocation
+  name: 'RFC 7009: OAuth 2.0 Token Revocation'
+  conforms: true
+  evidence: openapi/authelia-api-openapi.yml#/paths/~1api~1oidc~1revocation
+- id: oauth2-par
+  name: 'RFC 9126: OAuth 2.0 Pushed Authorization Requests'
+  conforms: true
+  evidence: openapi/authelia-api-openapi.yml#/paths/~1api~1oidc~1pushed-authorization-request
+- id: jarm
+  name: 'JWT Secured Authorization Response Mode (JARM)'
+  conforms: true
+  evidence: openapi/authelia-api-openapi.yml#/components/schemas/openid.spec.ResponseMode
+  detail: The ResponseMode enum declares jwt, form_post.jwt, query.jwt and fragment.jwt.
+- id: oauth2-device-grant
+  name: 'RFC 8628: OAuth 2.0 Device Authorization Grant'
+  conforms: true
+  evidence: openapi/authelia-api-openapi.yml#/paths/~1api~1oidc~1device-authorization
+- id: oauth2-authorization-server-metadata
+  name: 'RFC 8414: OAuth 2.0 Authorization Server Metadata'
+  conforms: true
+  evidence: openapi/authelia-api-openapi.yml#/paths/~1.well-known~1oauth-authorization-server
+- id: amr
+  name: 'RFC 8176: Authentication Method Reference Values'
+  conforms: true
+  evidence: https://www.authelia.com/reference/guides/authentication-method-references/
+  detail: The amr claim in the ID Token uses RFC 8176 values.
+- id: webauthn
+  name: W3C Web Authentication (WebAuthn) / FIDO2
+  conforms: true
+  evidence: https://www.authelia.com/reference/guides/webauthn/
+  detail: >-
+    Contract exposes /api/secondfactor/webauthn, /api/secondfactor/webauthn/credentials and
+    /api/firstfactor/passkey; the deployment consumes the FIDO MDS3 metadata service
+    (`authelia storage cache mds3` CLI subcommands).
+- id: totp
+  name: 'RFC 6238: TOTP / RFC 4226: HOTP'
+  conforms: true
+  evidence: openapi/authelia-api-openapi.yml#/paths/~1api~1secondfactor~1totp
+- id: jwks
+  name: 'RFC 7517: JSON Web Key'
+  conforms: true
+  evidence: openapi/authelia-api-openapi.yml#/paths/~1jwks.json
+- id: json-schema
+  name: JSON Schema 2020-12
+  conforms: true
+  evidence: https://www.authelia.com/schemas/latest/json-schema/configuration.json
+  detail: >-
+    Five first-party schemas published under https://www.authelia.com/schemas/ ($schema
+    https://json-schema.org/draft/2020-12/schema), covering the server configuration, the file-based user
+    database and the identifier/TOTP/WebAuthn export formats.
+- id: semver
+  name: Semantic Versioning 2.0.0
+  conforms: true
+  evidence: https://www.authelia.com/policies/versioning/
+- id: openapi
+  name: OpenAPI 3.2.0
+  conforms: true
+  evidence: https://github.com/authelia/authelia/blob/master/api/openapi.yml
+- id: rfc9457
+  name: 'RFC 9457: Problem Details for HTTP APIs'
+  conforms: false
+  evidence: openapi/authelia-api-openapi.yml
+  detail: >-
+    No application/problem+json response is declared anywhere in the contract. Authelia uses its own
+    {status, message} envelope on the portal API and the RFC 6749 {error, error_description} envelope on the
+    OAuth 2.0 endpoints. See errors/authelia-problem-types.yml.
+- id: pagination
+  name: Collection pagination
+  conforms: false
+  evidence: openapi/authelia-api-openapi.yml
+  detail: No collection endpoint in the contract accepts page/limit/cursor parameters; all collections are bounded per-user.
+- id: idempotency
+  name: Idempotency-Key request replay protection
+  conforms: false
+  evidence: openapi/authelia-api-openapi.yml
+  detail: No Idempotency-Key header is declared on any of the mutating operations.
+- id: scim
+  name: 'SCIM 2.0 (RFC 7643/7644)'
+  conforms: false
+  evidence: https://www.authelia.com/roadmap/
+  detail: >-
+    Not implemented and not on the published roadmap. Recorded because SCIM is the provisioning standard
+    adjacent to this market; its absence is a real integration gap for IdP buyers, not a scored penalty.

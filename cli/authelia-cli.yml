@@ -1,0 +1,85 @@
+generated: '2026-09-06'
+method: searched
+source: >-
+  https://www.authelia.com/reference/cli/authelia/authelia/ (the generated CLI reference) and
+  https://github.com/authelia/authelia.
+description: >-
+  Authelia ships a first-party CLI as the same binary that runs the server. `authelia` is the operator's
+  primary administrative surface — several capabilities (storage migration, encryption key rotation, user
+  ban management, TOTP/WebAuthn credential administration) exist ONLY in the CLI and have no HTTP endpoint
+  in openapi/authelia-api-openapi.yml. Two additional binaries, `authelia-gen` and `authelia-scripts`, are
+  contributor tooling rather than operator tooling.
+binaries:
+- name: authelia
+  role: server and operator CLI
+  reference: https://www.authelia.com/reference/cli/authelia/authelia/
+- name: authelia-gen
+  role: code, docs and JSON Schema generation (contributor tooling)
+  reference: https://www.authelia.com/reference/cli/authelia-gen/
+- name: authelia-scripts
+  role: build and test automation (contributor tooling)
+  reference: https://www.authelia.com/reference/cli/authelia-scripts/
+install:
+- method: container
+  command: docker pull authelia/authelia:4.39.22
+  note: The CLI is invoked inside the container, e.g. `docker exec authelia authelia storage schema-info`.
+- method: container
+  command: docker pull ghcr.io/authelia/authelia:4.39.22
+- method: helm
+  command: helm repo add authelia https://charts.authelia.com
+  note: Kubernetes deployment; see https://www.authelia.com/integration/kubernetes/chart/
+- method: bare-metal
+  command: Download the release binary from https://github.com/authelia/authelia/releases
+  note: See https://www.authelia.com/integration/deployment/bare-metal/
+- method: go
+  command: go install github.com/authelia/authelia/v4/cmd/authelia@latest
+  note: Builds from source; the release binaries are the supported path.
+commands:
+- group: access-control
+  subcommands: [check-policy]
+  description: Evaluate the configured access control rules against a hypothetical request.
+- group: build-info
+  subcommands: []
+  description: Print build metadata for the running binary.
+- group: config
+  subcommands: [template, validate]
+  description: Validate a configuration file or render it through the templating system before deploying it.
+- group: crypto
+  subcommands: [certificate, hash, pair, rand]
+  description: >-
+    Generate and validate cryptographic material — X.509 certificates and key pairs (ECDSA, Ed25519, RSA and
+    ML-DSA post-quantum), password hashes (argon2, bcrypt, pbkdf2, scrypt, sha2crypt) and random values.
+- group: debug
+  subcommands: [expression, oidc, tls]
+  description: Debug user-attribute expressions, OpenID Connect claims resolution and TLS connectivity.
+- group: storage
+  subcommands: [bans, cache, encryption, migrate, schema-info, user]
+  description: >-
+    The administrative core. `bans ip|user add|list|revoke` manages regulation bans; `cache mds3` manages the
+    FIDO metadata service cache; `encryption change-key|check|rotate` rotates the storage encryption and HMAC
+    keys; `migrate up|down|history|list-up|list-down` runs schema migrations; `user identifiers|totp|webauthn`
+    administers per-user opaque identifiers, TOTP configurations (generate, delete, import, export as csv,
+    png or uri) and WebAuthn credentials (list, delete, verify, import, export).
+key_flows:
+- name: Validate configuration before deploy
+  command: authelia config validate --config /config/configuration.yml
+- name: Generate a password hash for the file-based user database
+  command: authelia crypto hash generate argon2
+- name: Run pending storage schema migrations
+  command: authelia storage migrate up
+- name: Rotate the storage encryption key
+  command: authelia storage encryption rotate
+- name: Administratively remove a user's TOTP configuration
+  command: authelia storage user totp delete <username>
+- name: Revoke a regulation ban on a user
+  command: authelia storage bans user revoke
+cli_only_capabilities:
+- Storage schema migration and schema inspection.
+- Storage encryption and HMAC key rotation.
+- IP and user ban administration (regulation).
+- Administrative deletion, import and export of another user's TOTP and WebAuthn credentials.
+- Access control policy evaluation.
+- Cryptographic material generation, including ML-DSA post-quantum key pairs.
+note: >-
+  The `github.com/authelia/ac` repository ("Authelia CLI") is a separate, untagged early project and is NOT
+  the CLI documented here; see packages/authelia-packages.yml.

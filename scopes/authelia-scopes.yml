@@ -1,41 +1,76 @@
-generated: '2026-07-11'
-method: derived
-source: openapi/authelia-openapi.yml
+generated: '2026-09-06'
+method: searched
+docs: https://www.authelia.com/integration/openid-connect/openid-connect-1.0-claims/
+source: >-
+  https://www.authelia.com/integration/openid-connect/openid-connect-1.0-claims/,
+  https://www.authelia.com/integration/openid-connect/oauth-2.0-bearer-token-usage/,
+  https://www.authelia.com/configuration/identity-providers/openid-connect/clients/ and
+  https://github.com/authelia/authelia/blob/master/internal/configuration/validator/const.go
+  (validOIDCClientScopes — the authoritative list the server validates client registrations against).
+description: >-
+  OAuth 2.0 / OpenID Connect 1.0 scopes an Authelia deployment will accept in a registered client's
+  `scopes` list. Authelia additionally supports operator-defined CUSTOM scopes, so this list is the
+  built-in set, not a closed universe.
 schemes:
-- name: oauth2
-  source: openapi/authelia-openapi.yml
-  flows:
-  - flow: authorizationCode
-    authorizationUrl: https://auth.example.com/api/oidc/authorization
-    tokenUrl: https://auth.example.com/api/oidc/token
+- name: openid
+  type: openIdConnect
+  discovery: <base>/.well-known/openid-configuration
+  source: openapi/authelia-api-openapi.yml#/components/securitySchemes/openid
+grant_types: [authorization_code, refresh_token, client_credentials, implicit, urn:ietf:params:oauth:grant-type:device_code]
 scopes:
-- scope: email
-  description: Email claims
-  flows:
-  - authorizationCode
-  sources:
-  - openapi/authelia-openapi.yml
-- scope: groups
-  description: Group memberships
-  flows:
-  - authorizationCode
-  sources:
-  - openapi/authelia-openapi.yml
-- scope: offline_access
-  description: Refresh token
-  flows:
-  - authorizationCode
-  sources:
-  - openapi/authelia-openapi.yml
 - scope: openid
-  description: OpenID Connect base scope
-  flows:
-  - authorizationCode
-  sources:
-  - openapi/authelia-openapi.yml
+  description: >-
+    Required for any OpenID Connect 1.0 request. Grants the sub claim and signals that an ID Token is
+    requested.
+  standard: true
 - scope: profile
-  description: Profile claims
-  flows:
-  - authorizationCode
-  sources:
-  - openapi/authelia-openapi.yml
+  description: Standard profile claims (name, preferred_username and related standard attributes).
+  standard: true
+- scope: email
+  description: Standard email claims (email, email_verified, and alternate addresses where available).
+  standard: true
+- scope: address
+  description: Standard address claim.
+  standard: true
+- scope: phone
+  description: Standard phone claims (phone_number, phone_number_verified).
+  standard: true
+- scope: groups
+  description: >-
+    Authelia extension. Grants the groups claim carrying the user's group memberships from the
+    authentication backend, used by relying parties for authorization.
+  standard: false
+- scope: offline_access
+  description: Requests a refresh token (RFC 6749 / OIDC Core offline access).
+  standard: true
+- scope: offline
+  description: Legacy alias for offline_access retained for compatibility with older relying parties.
+  standard: false
+- scope: authelia.bearer.authz
+  description: >-
+    Authelia extension. Grants an access token usable as an RFC 6750 bearer token against the PROXY
+    AUTHORIZATION endpoints in place of the session cookie. Not available by default — the authz endpoint
+    must be explicitly configured to accept the Bearer scheme, the client must be registered with this
+    scope, and the token audience must exactly match or prefix the requested URL. Authelia's docs state
+    these tokens are NOT intended for use with the Authelia API itself.
+  standard: false
+  docs: https://www.authelia.com/integration/openid-connect/oauth-2.0-bearer-token-usage/
+  constraints:
+    grant_types: [authorization_code, refresh_token, client_credentials]
+    response_modes: [form_post, form_post.jwt]
+    response_types: [code]
+    audience_required: true
+custom_scopes:
+  supported: true
+  description: >-
+    Operators can define arbitrary scopes under identity_providers.oidc.scopes and bind them to custom
+    claims via a claims policy, then permit individual clients to request them. Custom scope names are
+    deployment-specific and therefore not enumerable here.
+  docs: https://www.authelia.com/integration/openid-connect/openid-connect-1.0-claims/
+notes:
+- >-
+  Because Authelia supports the OIDC claims parameter, the ID Token is deliberately minimal; scope-granted
+  claims are generally read from the UserInfo endpoint with the access token rather than from the ID Token.
+- >-
+  This file upgrades a 2026-07-11 derived artifact that listed only the five scopes visible in a
+  best-effort scaffold spec and carried an example-host authorizationUrl.

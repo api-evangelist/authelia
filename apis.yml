@@ -53,7 +53,7 @@ tags_raw:
 url: >-
   https://raw.githubusercontent.com/api-evangelist/authelia/refs/heads/main/apis.yml
 created: '2026-03-25'
-modified: '2026-04-19'
+modified: '2026-09-06'
 specificationVersion: '0.23'
 apis:
 - aid: authelia:authelia-oidc-provider
@@ -62,7 +62,7 @@ apis:
     Authelia acts as an OpenID Certified OpenID Connect 1.0 Provider supporting Authorization Code, Implicit,
     and Hybrid flows with PKCE, PAR, and various token endpoint authentication methods.
   humanURL: https://www.authelia.com/configuration/identity-providers/openid-connect/provider/
-  baseURL: https://your-authelia-instance.example.com
+  baseURL: https://auth.example.com
   tags:
   - Authentication
   - OIDC
@@ -75,11 +75,42 @@ apis:
   properties:
   - type: Documentation
     url: https://www.authelia.com/configuration/identity-providers/openid-connect/provider/
+- aid: authelia:authelia-api
+  name: Authelia API
+  description: >
+    The full first-party Authelia HTTP API — the portal, authorization, authentication, second factor,
+    user information, session elevation, password reset/change and OpenID Connect 1.0 surfaces. Described by
+    Authelia's own OpenAPI 3.2.0 contract (42 paths, 78 operations, 100 schemas), published in the Authelia
+    repository at api/openapi.yml and served by each deployment. Authelia is self-hosted, so the base URL is
+    the operator's own deployment host; auth.example.com is the default Authelia's own contract template uses.
+  humanURL: https://www.authelia.com/reference/
+  baseURL: https://auth.example.com
+  tags:
+  - Authentication
+  - Authorization
+  - MFA
+  - OpenID Connect
+  - SSO
+  tags_raw:
+  - Authentication
+  - Authorization
+  - MFA
+  - OpenID Connect
+  - SSO
+  properties:
+  - type: OpenAPI
+    url: openapi/authelia-api-openapi.yml
+  - type: Overlay
+    url: overlays/authelia-api-overlay.yaml
+  - type: Documentation
+    url: https://www.authelia.com/reference/
+  - type: GitHubRepository
+    url: https://github.com/authelia/authelia
 - aid: authelia:authelia-discovery-api
   name: Authelia Discovery API
   description: Well-known discovery endpoints.
   humanURL: https://www.authelia.com/reference/
-  baseURL: https://your-authelia-instance.example.com/api
+  baseURL: https://auth.example.com
   tags:
   - Discovery
   properties:
@@ -93,7 +124,7 @@ apis:
   name: Authelia OIDC API
   description: OpenID Connect 1.0 / OAuth 2.0 provider endpoints.
   humanURL: https://www.authelia.com/reference/
-  baseURL: https://your-authelia-instance.example.com/api
+  baseURL: https://auth.example.com
   tags:
   - OIDC
   properties:
@@ -181,6 +212,73 @@ common:
     description: Complete self-hosted identity and access management solution for privacy-conscious deployments.
   - name: Zero Trust Security
     description: Enforce zero trust network access policies for internal applications with per-request authentication verification.
+- type: Packages
+  url: packages/authelia-packages.yml
+- type: LLMsTxt
+  url: llms/authelia-llms.txt
+- type: X-MCPServerCandidate
+  url: mcp/authelia-mcp.yml
+- type: Conformance
+  url: conformance/authelia-conformance.yml
+- type: ErrorCatalog
+  url: errors/authelia-problem-types.yml
+- type: Lifecycle
+  url: lifecycle/authelia-lifecycle.yml
+- type: Deprecation
+  url: lifecycle/authelia-lifecycle.yml
+- type: Conventions
+  url: conventions/authelia-conventions.yml
+- type: ChangeLog
+  url: changelog/authelia-changelog.yml
+- type: CLI
+  url: cli/authelia-cli.yml
+- type: DataModel
+  url: data-model/authelia-data-model.yml
+- type: AgentSkill
+  url: skills/_index.yml
+- type: Plans
+  url: plans/authelia-plans-pricing.yml
+- type: RateLimits
+  url: rate-limits/authelia-rate-limits.yml
+- type: VulnerabilityDisclosure
+  url: security/authelia-vulnerability-disclosure.yml
+- type: Security
+  url: security/authelia-vulnerability-disclosure.yml
+- type: JSONSchema
+  name: Authelia Configuration
+  url: json-schema/authelia-configuration.schema.json
+- type: JSONSchema
+  name: Authelia User Database
+  url: json-schema/authelia-user-database.schema.json
+- type: JSONSchema
+  name: Authelia Identifiers Export
+  url: json-schema/authelia-exports.identifiers.schema.json
+- type: JSONSchema
+  name: Authelia TOTP Export
+  url: json-schema/authelia-exports.totp.schema.json
+- type: JSONSchema
+  name: Authelia WebAuthn Export
+  url: json-schema/authelia-exports.webauthn.schema.json
+- type: APIReference
+  url: https://www.authelia.com/reference/
+- type: GettingStarted
+  url: https://www.authelia.com/integration/prologue/get-started/
+- type: Blog
+  url: https://www.authelia.com/blog/
+- type: Roadmap
+  url: https://www.authelia.com/roadmap/
+- type: PrivacyPolicy
+  url: https://www.authelia.com/policies/privacy/
+- type: SecurityPolicy
+  name: Authelia Security Policy
+  url: https://www.authelia.com/policies/security/
+- type: Versioning
+  url: https://www.authelia.com/policies/versioning/
 maintainers:
 - FN: Kin Lane
   email: kin@apievangelist.com
+x-enrichment:
+  date: '2026-09-06'
+  status: enriched
+  artifacts_added: 25
+  pass: local-v3
