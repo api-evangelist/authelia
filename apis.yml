@@ -75,66 +75,177 @@ apis:
   properties:
   - type: Documentation
     url: https://www.authelia.com/configuration/identity-providers/openid-connect/provider/
-- aid: authelia:authelia-api
-  name: Authelia API
-  description: >
-    The full first-party Authelia HTTP API — the portal, authorization, authentication, second factor,
-    user information, session elevation, password reset/change and OpenID Connect 1.0 surfaces. Described by
-    Authelia's own OpenAPI 3.2.0 contract (42 paths, 78 operations, 100 schemas), published in the Authelia
-    repository at api/openapi.yml and served by each deployment. Authelia is self-hosted, so the base URL is
-    the operator's own deployment host; auth.example.com is the default Authelia's own contract template uses.
-  humanURL: https://www.authelia.com/reference/
+- aid: authelia:authelia-authentication-api
+  name: Authelia Authentication API
+  description: Authentication endpoints
+  humanURL: https://www.authelia.com/configuration/identity-providers/openid-connect/provider/
   baseURL: https://auth.example.com
   tags:
   - Authentication
-  - Authorization
-  - MFA
-  - OpenID Connect
-  - SSO
-  tags_raw:
-  - Authentication
-  - Authorization
-  - MFA
-  - OpenID Connect
-  - SSO
   properties:
   - type: OpenAPI
-    url: openapi/authelia-api-openapi.yml
-  - type: Overlay
-    url: overlays/authelia-api-overlay.yaml
+    url: openapi/authelia-authentication-api-openapi.yml
   - type: Documentation
     url: https://www.authelia.com/reference/
   - type: GitHubRepository
     url: https://github.com/authelia/authelia
-- aid: authelia:authelia-discovery-api
-  name: Authelia Discovery API
-  description: Well-known discovery endpoints.
-  humanURL: https://www.authelia.com/reference/
+- aid: authelia:authelia-authorization-api
+  name: Authelia Authorization API
+  description: Authorization endpoints
+  humanURL: https://www.authelia.com/configuration/identity-providers/openid-connect/provider/
   baseURL: https://auth.example.com
   tags:
-  - Discovery
+  - Authorization
   properties:
   - type: OpenAPI
-    url: openapi/authelia-discovery-api-openapi.yml
+    url: openapi/authelia-authorization-api-openapi.yml
   - type: Documentation
     url: https://www.authelia.com/reference/
   - type: GitHubRepository
     url: https://github.com/authelia/authelia
-- aid: authelia:authelia-oidc-api
-  name: Authelia OIDC API
-  description: OpenID Connect 1.0 / OAuth 2.0 provider endpoints.
-  humanURL: https://www.authelia.com/reference/
+- aid: authelia:authelia-first-factor-api
+  name: Authelia First Factor API
+  description: First Factor Authentication
+  humanURL: https://www.authelia.com/configuration/identity-providers/openid-connect/provider/
   baseURL: https://auth.example.com
   tags:
-  - OIDC
+  - First Factor
   properties:
   - type: OpenAPI
-    url: openapi/authelia-oidc-api-openapi.yml
+    url: openapi/authelia-first-factor-api-openapi.yml
+  - type: Documentation
+    url: https://www.authelia.com/reference/
+  - type: GitHubRepository
+    url: https://github.com/authelia/authelia
+- aid: authelia:authelia-oauth-2-0-api
+  name: Authelia OAuth 2.0 API
+  description: OAuth 2.0 Endpoints
+  humanURL: https://www.authelia.com/configuration/identity-providers/openid-connect/provider/
+  baseURL: https://auth.example.com
+  tags:
+  - OAuth 2.0
+  properties:
+  - type: OpenAPI
+    url: openapi/authelia-oauth-2-0-api-openapi.yml
+  - type: Documentation
+    url: https://www.authelia.com/reference/
+  - type: GitHubRepository
+    url: https://github.com/authelia/authelia
+- aid: authelia:authelia-openid-connect-1-0-api
+  name: Authelia OpenID Connect 1.0 API
+  description: OpenID Connect 1.0 Endpoints
+  humanURL: https://www.authelia.com/configuration/identity-providers/openid-connect/provider/
+  baseURL: https://auth.example.com
+  tags:
+  - OpenID Connect 1.0
+  properties:
+  - type: OpenAPI
+    url: openapi/authelia-openid-connect-1-0-api-openapi.yml
+  - type: Documentation
+    url: https://www.authelia.com/reference/
+  - type: GitHubRepository
+    url: https://github.com/authelia/authelia
+- aid: authelia:authelia-password-change-api
+  name: Authelia Password Change API
+  description: Password change endpoint
+  humanURL: https://www.authelia.com/configuration/identity-providers/openid-connect/provider/
+  baseURL: https://auth.example.com
+  tags:
+  - Password Change
+  properties:
+  - type: OpenAPI
+    url: openapi/authelia-password-change-api-openapi.yml
+  - type: Documentation
+    url: https://www.authelia.com/reference/
+  - type: GitHubRepository
+    url: https://github.com/authelia/authelia
+- aid: authelia:authelia-password-reset-api
+  name: Authelia Password Reset API
+  description: Password reset endpoints
+  humanURL: https://www.authelia.com/configuration/identity-providers/openid-connect/provider/
+  baseURL: https://auth.example.com
+  tags:
+  - Password Reset
+  properties:
+  - type: OpenAPI
+    url: openapi/authelia-password-reset-api-openapi.yml
+  - type: Documentation
+    url: https://www.authelia.com/reference/
+  - type: GitHubRepository
+    url: https://github.com/authelia/authelia
+- aid: authelia:authelia-second-factor-api
+  name: Authelia Second Factor API
+  description: TOTP, WebAuthn and Duo endpoints
+  humanURL: https://www.authelia.com/configuration/identity-providers/openid-connect/provider/
+  baseURL: https://auth.example.com
+  tags:
+  - Second Factor
+  properties:
+  - type: OpenAPI
+    url: openapi/authelia-second-factor-api-openapi.yml
+  - type: Documentation
+    url: https://www.authelia.com/reference/
+  - type: GitHubRepository
+    url: https://github.com/authelia/authelia
+- aid: authelia:authelia-state-api
+  name: Authelia State API
+  description: Configuration, health and state endpoints
+  humanURL: https://www.authelia.com/configuration/identity-providers/openid-connect/provider/
+  baseURL: https://auth.example.com
+  tags:
+  - State
+  properties:
+  - type: OpenAPI
+    url: openapi/authelia-state-api-openapi.yml
+  - type: Documentation
+    url: https://www.authelia.com/reference/
+  - type: GitHubRepository
+    url: https://github.com/authelia/authelia
+- aid: authelia:authelia-user-elevation-api
+  name: Authelia User Elevation API
+  description: User session elevation endpoints
+  humanURL: https://www.authelia.com/configuration/identity-providers/openid-connect/provider/
+  baseURL: https://auth.example.com
+  tags:
+  - User Elevation
+  properties:
+  - type: OpenAPI
+    url: openapi/authelia-user-elevation-api-openapi.yml
+  - type: Documentation
+    url: https://www.authelia.com/reference/
+  - type: GitHubRepository
+    url: https://github.com/authelia/authelia
+- aid: authelia:authelia-user-information-api
+  name: Authelia User Information API
+  description: User configuration endpoints
+  humanURL: https://www.authelia.com/configuration/identity-providers/openid-connect/provider/
+  baseURL: https://auth.example.com
+  tags:
+  - User Information
+  properties:
+  - type: OpenAPI
+    url: openapi/authelia-user-information-api-openapi.yml
+  - type: Documentation
+    url: https://www.authelia.com/reference/
+  - type: GitHubRepository
+    url: https://github.com/authelia/authelia
+- aid: authelia:authelia-utilities-api
+  name: Authelia Utilities API
+  description: General utilities used in several operations
+  humanURL: https://www.authelia.com/configuration/identity-providers/openid-connect/provider/
+  baseURL: https://auth.example.com
+  tags:
+  - Utilities
+  properties:
+  - type: OpenAPI
+    url: openapi/authelia-utilities-api-openapi.yml
   - type: Documentation
     url: https://www.authelia.com/reference/
   - type: GitHubRepository
     url: https://github.com/authelia/authelia
 common:
+- type: Overlay
+  url: overlays/authelia-api-overlay.yaml
 - type: IssueTracker
   url: https://github.com/authelia/authelia/issues
 - type: SecurityPolicy
