@@ -123,6 +123,8 @@ apis:
   humanURL: https://www.authelia.com/configuration/identity-providers/openid-connect/provider/
   baseURL: https://auth.example.com
   tags:
+  - Authentication
+  tags_raw:
   - OAuth 2.0
   properties:
   - type: OpenAPI
@@ -193,6 +195,8 @@ apis:
   humanURL: https://www.authelia.com/configuration/identity-providers/openid-connect/provider/
   baseURL: https://auth.example.com
   tags:
+  - States
+  tags_raw:
   - State
   properties:
   - type: OpenAPI
