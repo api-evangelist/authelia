@@ -1,20 +1,41 @@
 {
   "provider": "authelia",
   "sources": [
-    "authelia-discovery-api-openapi.yml",
-    "authelia-oidc-api-openapi.yml"
+    "_original/authelia-api-openapi.yml"
   ],
   "outputs": [
-    "authelia-discovery-api-openapi.yml",
-    "authelia-oidc-api-openapi.yml"
+    "authelia-authentication-api-openapi.yml",
+    "authelia-authorization-api-openapi.yml",
+    "authelia-first-factor-api-openapi.yml",
+    "authelia-oauth-2-0-api-openapi.yml",
+    "authelia-openid-connect-1-0-api-openapi.yml",
+    "authelia-password-change-api-openapi.yml",
+    "authelia-password-reset-api-openapi.yml",
+    "authelia-second-factor-api-openapi.yml",
+    "authelia-state-api-openapi.yml",
+    "authelia-user-elevation-api-openapi.yml",
+    "authelia-user-information-api-openapi.yml",
+    "authelia-utilities-api-openapi.yml"
   ],
   "archived": [],
   "errors": [],
   "warnings": [],
   "notes": [
-    "authelia-discovery-api-openapi.yml: upgraded openapi 3.1.0 -> OpenAPI 3.2.0",
-    "authelia-oidc-api-openapi.yml: upgraded openapi 3.1.0 -> OpenAPI 3.2.0",
+    "sourced from openapi/_original/ (1 archived document(s)); previously refined output at the top level was skipped rather than re-split",
     "apis.yml register: already-registered"
   ],
-  "skipped": []
+  "skipped": [
+    "authelia-authentication-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "authelia-authorization-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "authelia-first-factor-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "authelia-oauth-2-0-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "authelia-openid-connect-1-0-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "authelia-password-change-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "authelia-password-reset-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "authelia-second-factor-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "authelia-state-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "authelia-user-elevation-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "authelia-user-information-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "authelia-utilities-api-openapi.yml: previously refined output, superseded by openapi/_original/"
+  ]
 }

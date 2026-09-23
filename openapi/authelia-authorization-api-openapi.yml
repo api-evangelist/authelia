@@ -1,0 +1,1981 @@
+openapi: 3.2.0
+info:
+  title: Authelia Authorization API
+  description: Authelia is an open-source authentication and authorization server and portal fulfilling the identity and access management (IAM) role of information security in providing multi-factor authentication and single sign-on (SSO) for your applications via a web portal. Authelia is an OpenID Connect 1.0 Provider which is OpenID Certified™ allowing comprehensive integrations, and acts as a companion for common reverse proxies.
+  contact:
+    name: Support
+    url: https://www.authelia.com/contact/
+    email: team@authelia.com
+  license:
+    name: Apache 2.0
+    url: https://www.apache.org/licenses/LICENSE-2.0
+  version: 1.0.0
+servers:
+- url: https://auth.example.com
+  description: Authelia API
+tags:
+- name: Authorization
+  description: Authorization endpoints
+paths:
+  /api/authz/auth-request:
+    get:
+      operationId: getAuthzAuthRequest
+      tags:
+      - Authorization
+      summary: Authorization Verification (AuthRequest)
+      description: The AuthRequest authorization verification endpoint provides the ability to verify if a user has the necessary permissions to access a specified resource with the HAPROXY, NGINX, or NGINX-based proxies.
+      parameters:
+      - $ref: '#/components/parameters/originalMethodParam'
+      - $ref: '#/components/parameters/originalURLParam'
+      responses:
+        '200':
+          description: Successful Operation
+          headers:
+            remote-user:
+              description: Username
+              schema:
+                type: string
+                examples:
+                - john
+            remote-name:
+              description: Name
+              schema:
+                type: string
+                examples:
+                - John Doe
+            remote-email:
+              description: Email
+              schema:
+                type: string
+                examples:
+                - john.doe@authelia.com
+            remote-groups:
+              description: Comma separated list of Groups
+              schema:
+                type: string
+                examples:
+                - admin,devs
+            set-cookie:
+              description: Sets a new cookie value
+              schema:
+                type: string
+        '400':
+          description: Bad Request
+        '401':
+          description: Unauthorized
+          headers:
+            location:
+              description: Redirect Location for user authorization
+              example: https://auth.example.com/?rd=https%3A%2F%2Fapp.example.com&rm=GET
+              schema:
+                type: string
+                format: uri
+            set-cookie:
+              description: Sets a new cookie value
+              schema:
+                type: string
+      security:
+      - authelia_auth: []
+    head:
+      operationId: headAuthzAuthRequest
+      tags:
+      - Authorization
+      summary: Authorization Verification (AuthRequest)
+      description: The AuthRequest authorization verification endpoint provides the ability to verify if a user has the necessary permissions to access a specified resource with the HAPROXY, NGINX, or NGINX-based proxies.
+      parameters:
+      - $ref: '#/components/parameters/originalMethodParam'
+      - $ref: '#/components/parameters/originalURLParam'
+      responses:
+        '200':
+          description: Successful Operation
+          headers:
+            remote-user:
+              description: Username
+              schema:
+                type: string
+                examples:
+                - john
+            remote-name:
+              description: Name
+              schema:
+                type: string
+                examples:
+                - John Doe
+            remote-email:
+              description: Email
+              schema:
+                type: string
+                examples:
+                - john.doe@authelia.com
+            remote-groups:
+              description: Comma separated list of Groups
+              schema:
+                type: string
+                examples:
+                - admin,devs
+            set-cookie:
+              description: Sets a new cookie value
+              schema:
+                type: string
+        '400':
+          description: Bad Request
+        '401':
+          description: Unauthorized
+          headers:
+            location:
+              description: Redirect Location for user authorization
+              example: https://auth.example.com/?rd=https%3A%2F%2Fapp.example.com&rm=GET
+              schema:
+                type: string
+                format: uri
+            set-cookie:
+              description: Sets a new cookie value
+              schema:
+                type: string
+      security:
+      - authelia_auth: []
+  /api/authz/ext-authz:
+    get:
+      operationId: getAuthzExtAuthz
+      tags:
+      - Authorization
+      summary: Authorization Verification (ExtAuthz)
+      description: 'The ExtAuthz authorization verification endpoint provides the ability to verify if a user has the necessary permissions to access a specified resource with the Envoy proxy.
+
+
+        Any arbitrary sub-path of this endpoint is also routed to the same handler, i.e. `/api/authz/ext-authz/{path}`, as Envoy forwards the original request path to this endpoint.'
+      parameters:
+      - $ref: '#/components/parameters/forwardedMethodParam'
+      - $ref: '#/components/parameters/forwardedProtoParam'
+      - $ref: '#/components/parameters/forwardedHostParam'
+      - $ref: '#/components/parameters/forwardedURIParam'
+      - $ref: '#/components/parameters/forwardedForParam'
+      - $ref: '#/components/parameters/autheliaURLParam'
+      responses:
+        '200':
+          description: Successful Operation
+          headers:
+            remote-user:
+              description: Username
+              schema:
+                type: string
+                examples:
+                - john
+            remote-name:
+              description: Name
+              schema:
+                type: string
+                examples:
+                - John Doe
+            remote-email:
+              description: Email
+              schema:
+                type: string
+                examples:
+                - john.doe@authelia.com
+            remote-groups:
+              description: Comma separated list of Groups
+              schema:
+                type: string
+                examples:
+                - admin,devs
+            set-cookie:
+              description: Sets a new cookie value
+              schema:
+                type: string
+        '302':
+          description: Found
+          headers:
+            location:
+              description: Redirect Location for user authorization
+              example: https://auth.example.com/?rd=https%3A%2F%2Fapp.example.com&rm=GET
+              schema:
+                type: string
+                format: uri
+            set-cookie:
+              description: Sets a new cookie value
+              schema:
+                type: string
+        '303':
+          description: See Other
+          headers:
+            location:
+              description: Redirect Location for user authorization
+              example: https://auth.example.com/?rd=https%3A%2F%2Fapp.example.com&rm=GET
+              schema:
+                type: string
+                format: uri
+            set-cookie:
+              description: Sets a new cookie value
+              schema:
+                type: string
+        '400':
+          description: Bad Request
+        '401':
+          description: Unauthorized
+      security:
+      - authelia_auth: []
+    head:
+      operationId: headAuthzExtAuthz
+      tags:
+      - Authorization
+      summary: Authorization Verification (ExtAuthz)
+      description: 'The ExtAuthz authorization verification endpoint provides the ability to verify if a user has the necessary permissions to access a specified resource with the Envoy proxy.
+
+
+        Any arbitrary sub-path of this endpoint is also routed to the same handler, i.e. `/api/authz/ext-authz/{path}`, as Envoy forwards the original request path to this endpoint.'
+      parameters:
+      - $ref: '#/components/parameters/forwardedMethodParam'
+      - $ref: '#/components/parameters/forwardedProtoParam'
+      - $ref: '#/components/parameters/forwardedHostParam'
+      - $ref: '#/components/parameters/forwardedURIParam'
+      - $ref: '#/components/parameters/forwardedForParam'
+      - $ref: '#/components/parameters/autheliaURLParam'
+      responses:
+        '200':
+          description: Successful Operation
+          headers:
+            remote-user:
+              description: Username
+              schema:
+                type: string
+                examples:
+                - john
+            remote-name:
+              description: Name
+              schema:
+                type: string
+                examples:
+                - John Doe
+            remote-email:
+              description: Email
+              schema:
+                type: string
+                examples:
+                - john.doe@authelia.com
+            remote-groups:
+              description: Comma separated list of Groups
+              schema:
+                type: string
+                examples:
+                - admin,devs
+            set-cookie:
+              description: Sets a new cookie value
+              schema:
+                type: string
+        '302':
+          description: Found
+          headers:
+            location:
+              description: Redirect Location for user authorization
+              example: https://auth.example.com/?rd=https%3A%2F%2Fapp.example.com&rm=GET
+              schema:
+                type: string
+                format: uri
+            set-cookie:
+              description: Sets a new cookie value
+              schema:
+                type: string
+        '303':
+          description: See Other
+          headers:
+            location:
+              description: Redirect Location for user authorization
+              example: https://auth.example.com/?rd=https%3A%2F%2Fapp.example.com&rm=GET
+              schema:
+                type: string
+                format: uri
+            set-cookie:
+              description: Sets a new cookie value
+              schema:
+                type: string
+        '400':
+          description: Bad Request
+        '401':
+          description: Unauthorized
+      security:
+      - authelia_auth: []
+    options:
+      operationId: optionsAuthzExtAuthz
+      tags:
+      - Authorization
+      summary: Authorization Verification (ExtAuthz)
+      description: 'The ExtAuthz authorization verification endpoint provides the ability to verify if a user has the necessary permissions to access a specified resource with the Envoy proxy.
+
+
+        Any arbitrary sub-path of this endpoint is also routed to the same handler, i.e. `/api/authz/ext-authz/{path}`, as Envoy forwards the original request path to this endpoint.'
+      parameters:
+      - $ref: '#/components/parameters/forwardedMethodParam'
+      - $ref: '#/components/parameters/forwardedProtoParam'
+      - $ref: '#/components/parameters/forwardedHostParam'
+      - $ref: '#/components/parameters/forwardedURIParam'
+      - $ref: '#/components/parameters/forwardedForParam'
+      - $ref: '#/components/parameters/autheliaURLParam'
+      responses:
+        '200':
+          description: Successful Operation
+          headers:
+            remote-user:
+              description: Username
+              schema:
+                type: string
+                examples:
+                - john
+            remote-name:
+              description: Name
+              schema:
+                type: string
+                examples:
+                - John Doe
+            remote-email:
+              description: Email
+              schema:
+                type: string
+                examples:
+                - john.doe@authelia.com
+            remote-groups:
+              description: Comma separated list of Groups
+              schema:
+                type: string
+                examples:
+                - admin,devs
+            set-cookie:
+              description: Sets a new cookie value
+              schema:
+                type: string
+        '302':
+          description: Found
+          headers:
+            location:
+              description: Redirect Location for user authorization
+              example: https://auth.example.com/?rd=https%3A%2F%2Fapp.example.com&rm=GET
+              schema:
+                type: string
+                format: uri
+            set-cookie:
+              description: Sets a new cookie value
+              schema:
+                type: string
+        '303':
+          description: See Other
+          headers:
+            location:
+              description: Redirect Location for user authorization
+              example: https://auth.example.com/?rd=https%3A%2F%2Fapp.example.com&rm=GET
+              schema:
+                type: string
+                format: uri
+            set-cookie:
+              description: Sets a new cookie value
+              schema:
+                type: string
+        '400':
+          description: Bad Request
+        '401':
+          description: Unauthorized
+      security:
+      - authelia_auth: []
+    post:
+      operationId: postAuthzExtAuthz
+      tags:
+      - Authorization
+      summary: Authorization Verification (ExtAuthz)
+      description: 'The ExtAuthz authorization verification endpoint provides the ability to verify if a user has the necessary permissions to access a specified resource with the Envoy proxy.
+
+
+        Any arbitrary sub-path of this endpoint is also routed to the same handler, i.e. `/api/authz/ext-authz/{path}`, as Envoy forwards the original request path to this endpoint.'
+      parameters:
+      - $ref: '#/components/parameters/forwardedMethodParam'
+      - $ref: '#/components/parameters/forwardedProtoParam'
+      - $ref: '#/components/parameters/forwardedHostParam'
+      - $ref: '#/components/parameters/forwardedURIParam'
+      - $ref: '#/components/parameters/forwardedForParam'
+      - $ref: '#/components/parameters/autheliaURLParam'
+      responses:
+        '200':
+          description: Successful Operation
+          headers:
+            remote-user:
+              description: Username
+              schema:
+                type: string
+                examples:
+                - john
+            remote-name:
+              description: Name
+              schema:
+                type: string
+                examples:
+                - John Doe
+            remote-email:
+              description: Email
+              schema:
+                type: string
+                examples:
+                - john.doe@authelia.com
+            remote-groups:
+              description: Comma separated list of Groups
+              schema:
+                type: string
+                examples:
+                - admin,devs
+            set-cookie:
+              description: Sets a new cookie value
+              schema:
+                type: string
+        '302':
+          description: Found
+          headers:
+            location:
+              description: Redirect Location for user authorization
+              example: https://auth.example.com/?rd=https%3A%2F%2Fapp.example.com&rm=GET
+              schema:
+                type: string
+                format: uri
+            set-cookie:
+              description: Sets a new cookie value
+              schema:
+                type: string
+        '303':
+          description: See Other
+          headers:
+            location:
+              description: Redirect Location for user authorization
+              example: https://auth.example.com/?rd=https%3A%2F%2Fapp.example.com&rm=GET
+              schema:
+                type: string
+                format: uri
+            set-cookie:
+              description: Sets a new cookie value
+              schema:
+                type: string
+        '400':
+          description: Bad Request
+        '401':
+          description: Unauthorized
+      security:
+      - authelia_auth: []
+    put:
+      operationId: putAuthzExtAuthz
+      tags:
+      - Authorization
+      summary: Authorization Verification (ExtAuthz)
+      description: 'The ExtAuthz authorization verification endpoint provides the ability to verify if a user has the necessary permissions to access a specified resource with the Envoy proxy.
+
+
+        Any arbitrary sub-path of this endpoint is also routed to the same handler, i.e. `/api/authz/ext-authz/{path}`, as Envoy forwards the original request path to this endpoint.'
+      parameters:
+      - $ref: '#/components/parameters/forwardedMethodParam'
+      - $ref: '#/components/parameters/forwardedProtoParam'
+      - $ref: '#/components/parameters/forwardedHostParam'
+      - $ref: '#/components/parameters/forwardedURIParam'
+      - $ref: '#/components/parameters/forwardedForParam'
+      - $ref: '#/components/parameters/autheliaURLParam'
+      responses:
+        '200':
+          description: Successful Operation
+          headers:
+            remote-user:
+              description: Username
+              schema:
+                type: string
+                examples:
+                - john
+            remote-name:
+              description: Name
+              schema:
+                type: string
+                examples:
+                - John Doe
+            remote-email:
+              description: Email
+              schema:
+                type: string
+                examples:
+                - john.doe@authelia.com
+            remote-groups:
+              description: Comma separated list of Groups
+              schema:
+                type: string
+                examples:
+                - admin,devs
+            set-cookie:
+              description: Sets a new cookie value
+              schema:
+                type: string
+        '302':
+          description: Found
+          headers:
+            location:
+              description: Redirect Location for user authorization
+              example: https://auth.example.com/?rd=https%3A%2F%2Fapp.example.com&rm=GET
+              schema:
+                type: string
+                format: uri
+            set-cookie:
+              description: Sets a new cookie value
+              schema:
+                type: string
+        '303':
+          description: See Other
+          headers:
+            location:
+              description: Redirect Location for user authorization
+              example: https://auth.example.com/?rd=https%3A%2F%2Fapp.example.com&rm=GET
+              schema:
+                type: string
+                format: uri
+            set-cookie:
+              description: Sets a new cookie value
+              schema:
+                type: string
+        '400':
+          description: Bad Request
+        '401':
+          description: Unauthorized
+      security:
+      - authelia_auth: []
+    patch:
+      operationId: patchAuthzExtAuthz
+      tags:
+      - Authorization
+      summary: Authorization Verification (ExtAuthz)
+      description: 'The ExtAuthz authorization verification endpoint provides the ability to verify if a user has the necessary permissions to access a specified resource with the Envoy proxy.
+
+
+        Any arbitrary sub-path of this endpoint is also routed to the same handler, i.e. `/api/authz/ext-authz/{path}`, as Envoy forwards the original request path to this endpoint.'
+      parameters:
+      - $ref: '#/components/parameters/forwardedMethodParam'
+      - $ref: '#/components/parameters/forwardedProtoParam'
+      - $ref: '#/components/parameters/forwardedHostParam'
+      - $ref: '#/components/parameters/forwardedURIParam'
+      - $ref: '#/components/parameters/forwardedForParam'
+      - $ref: '#/components/parameters/autheliaURLParam'
+      responses:
+        '200':
+          description: Successful Operation
+          headers:
+            remote-user:
+              description: Username
+              schema:
+                type: string
+                examples:
+                - john
+            remote-name:
+              description: Name
+              schema:
+                type: string
+                examples:
+                - John Doe
+            remote-email:
+              description: Email
+              schema:
+                type: string
+                examples:
+                - john.doe@authelia.com
+            remote-groups:
+              description: Comma separated list of Groups
+              schema:
+                type: string
+                examples:
+                - admin,devs
+            set-cookie:
+              description: Sets a new cookie value
+              schema:
+                type: string
+        '302':
+          description: Found
+          headers:
+            location:
+              description: Redirect Location for user authorization
+              example: https://auth.example.com/?rd=https%3A%2F%2Fapp.example.com&rm=GET
+              schema:
+                type: string
+                format: uri
+            set-cookie:
+              description: Sets a new cookie value
+              schema:
+                type: string
+        '303':
+          description: See Other
+          headers:
+            location:
+              description: Redirect Location for user authorization
+              example: https://auth.example.com/?rd=https%3A%2F%2Fapp.example.com&rm=GET
+              schema:
+                type: string
+                format: uri
+            set-cookie:
+              description: Sets a new cookie value
+              schema:
+                type: string
+        '400':
+          description: Bad Request
+        '401':
+          description: Unauthorized
+      security:
+      - authelia_auth: []
+    delete:
+      operationId: deleteAuthzExtAuthz
+      tags:
+      - Authorization
+      summary: Authorization Verification (ExtAuthz)
+      description: 'The ExtAuthz authorization verification endpoint provides the ability to verify if a user has the necessary permissions to access a specified resource with the Envoy proxy.
+
+
+        Any arbitrary sub-path of this endpoint is also routed to the same handler, i.e. `/api/authz/ext-authz/{path}`, as Envoy forwards the original request path to this endpoint.'
+      parameters:
+      - $ref: '#/components/parameters/forwardedMethodParam'
+      - $ref: '#/components/parameters/forwardedProtoParam'
+      - $ref: '#/components/parameters/forwardedHostParam'
+      - $ref: '#/components/parameters/forwardedURIParam'
+      - $ref: '#/components/parameters/forwardedForParam'
+      - $ref: '#/components/parameters/autheliaURLParam'
+      responses:
+        '200':
+          description: Successful Operation
+          headers:
+            remote-user:
+              description: Username
+              schema:
+                type: string
+                examples:
+                - john
+            remote-name:
+              description: Name
+              schema:
+                type: string
+                examples:
+                - John Doe
+            remote-email:
+              description: Email
+              schema:
+                type: string
+                examples:
+                - john.doe@authelia.com
+            remote-groups:
+              description: Comma separated list of Groups
+              schema:
+                type: string
+                examples:
+                - admin,devs
+            set-cookie:
+              description: Sets a new cookie value
+              schema:
+                type: string
+        '302':
+          description: Found
+          headers:
+            location:
+              description: Redirect Location for user authorization
+              example: https://auth.example.com/?rd=https%3A%2F%2Fapp.example.com&rm=GET
+              schema:
+                type: string
+                format: uri
+            set-cookie:
+              description: Sets a new cookie value
+              schema:
+                type: string
+        '303':
+          description: See Other
+          headers:
+            location:
+              description: Redirect Location for user authorization
+              example: https://auth.example.com/?rd=https%3A%2F%2Fapp.example.com&rm=GET
+              schema:
+                type: string
+                format: uri
+            set-cookie:
+              description: Sets a new cookie value
+              schema:
+                type: string
+        '400':
+          description: Bad Request
+        '401':
+          description: Unauthorized
+      security:
+      - authelia_auth: []
+    trace:
+      operationId: traceAuthzExtAuthz
+      tags:
+      - Authorization
+      summary: Authorization Verification (ExtAuthz)
+      description: 'The ExtAuthz authorization verification endpoint provides the ability to verify if a user has the necessary permissions to access a specified resource with the Envoy proxy.
+
+
+        Any arbitrary sub-path of this endpoint is also routed to the same handler, i.e. `/api/authz/ext-authz/{path}`, as Envoy forwards the original request path to this endpoint.'
+      parameters:
+      - $ref: '#/components/parameters/forwardedMethodParam'
+      - $ref: '#/components/parameters/forwardedProtoParam'
+      - $ref: '#/components/parameters/forwardedHostParam'
+      - $ref: '#/components/parameters/forwardedURIParam'
+      - $ref: '#/components/parameters/forwardedForParam'
+      - $ref: '#/components/parameters/autheliaURLParam'
+      responses:
+        '200':
+          description: Successful Operation
+          headers:
+            remote-user:
+              description: Username
+              schema:
+                type: string
+                examples:
+                - john
+            remote-name:
+              description: Name
+              schema:
+                type: string
+                examples:
+                - John Doe
+            remote-email:
+              description: Email
+              schema:
+                type: string
+                examples:
+                - john.doe@authelia.com
+            remote-groups:
+              description: Comma separated list of Groups
+              schema:
+                type: string
+                examples:
+                - admin,devs
+            set-cookie:
+              description: Sets a new cookie value
+              schema:
+                type: string
+        '302':
+          description: Found
+          headers:
+            location:
+              description: Redirect Location for user authorization
+              example: https://auth.example.com/?rd=https%3A%2F%2Fapp.example.com&rm=GET
+              schema:
+                type: string
+                format: uri
+            set-cookie:
+              description: Sets a new cookie value
+              schema:
+                type: string
+        '303':
+          description: See Other
+          headers:
+            location:
+              description: Redirect Location for user authorization
+              example: https://auth.example.com/?rd=https%3A%2F%2Fapp.example.com&rm=GET
+              schema:
+                type: string
+                format: uri
+            set-cookie:
+              description: Sets a new cookie value
+              schema:
+                type: string
+        '400':
+          description: Bad Request
+        '401':
+          description: Unauthorized
+      security:
+      - authelia_auth: []
+  /api/authz/forward-auth:
+    get:
+      operationId: getAuthzForwardAuth
+      tags:
+      - Authorization
+      summary: Authorization Verification (ForwardAuth)
+      description: The ForwardAuth authorization verification endpoint provides the ability to verify if a user has the necessary permissions to access a specified resource with the Traefik, Caddy, or Skipper proxies.
+      parameters:
+      - $ref: '#/components/parameters/forwardedMethodParam'
+      - $ref: '#/components/parameters/forwardedProtoParam'
+      - $ref: '#/components/parameters/forwardedHostParam'
+      - $ref: '#/components/parameters/forwardedURIParam'
+      - $ref: '#/components/parameters/forwardedForParam'
+      responses:
+        '200':
+          description: Successful Operation
+          headers:
+            remote-user:
+              description: Username
+              schema:
+                type: string
+                examples:
+                - john
+            remote-name:
+              description: Name
+              schema:
+                type: string
+                examples:
+                - John Doe
+            remote-email:
+              description: Email
+              schema:
+                type: string
+                examples:
+                - john.doe@authelia.com
+            remote-groups:
+              description: Comma separated list of Groups
+              schema:
+                type: string
+                examples:
+                - admin,devs
+            set-cookie:
+              description: Sets a new cookie value
+              schema:
+                type: string
+        '302':
+          description: Found
+          headers:
+            location:
+              description: Redirect Location for user authorization
+              example: https://auth.example.com/?rd=https%3A%2F%2Fapp.example.com&rm=GET
+              schema:
+                type: string
+                format: uri
+            set-cookie:
+              description: Sets a new cookie value
+              schema:
+                type: string
+        '303':
+          description: See Other
+          headers:
+            location:
+              description: Redirect Location for user authorization
+              example: https://auth.example.com/?rd=https%3A%2F%2Fapp.example.com&rm=GET
+              schema:
+                type: string
+                format: uri
+            set-cookie:
+              description: Sets a new cookie value
+              schema:
+                type: string
+        '400':
+          description: Bad Request
+        '401':
+          description: Unauthorized
+      security:
+      - authelia_auth: []
+    head:
+      operationId: headAuthzForwardAuth
+      tags:
+      - Authorization
+      summary: Authorization Verification (ForwardAuth)
+      description: The ForwardAuth authorization verification endpoint provides the ability to verify if a user has the necessary permissions to access a specified resource with the Traefik, Caddy, or Skipper proxies.
+      parameters:
+      - $ref: '#/components/parameters/forwardedMethodParam'
+      - $ref: '#/components/parameters/forwardedProtoParam'
+      - $ref: '#/components/parameters/forwardedHostParam'
+      - $ref: '#/components/parameters/forwardedURIParam'
+      - $ref: '#/components/parameters/forwardedForParam'
+      responses:
+        '200':
+          description: Successful Operation
+          headers:
+            remote-user:
+              description: Username
+              schema:
+                type: string
+                examples:
+                - john
+            remote-name:
+              description: Name
+              schema:
+                type: string
+                examples:
+                - John Doe
+            remote-email:
+              description: Email
+              schema:
+                type: string
+                examples:
+                - john.doe@authelia.com
+            remote-groups:
+              description: Comma separated list of Groups
+              schema:
+                type: string
+                examples:
+                - admin,devs
+            set-cookie:
+              description: Sets a new cookie value
+              schema:
+                type: string
+        '302':
+          description: Found
+          headers:
+            location:
+              description: Redirect Location for user authorization
+              example: https://auth.example.com/?rd=https%3A%2F%2Fapp.example.com&rm=GET
+              schema:
+                type: string
+                format: uri
+            set-cookie:
+              description: Sets a new cookie value
+              schema:
+                type: string
+        '303':
+          description: See Other
+          headers:
+            location:
+              description: Redirect Location for user authorization
+              example: https://auth.example.com/?rd=https%3A%2F%2Fapp.example.com&rm=GET
+              schema:
+                type: string
+                format: uri
+            set-cookie:
+              description: Sets a new cookie value
+              schema:
+                type: string
+        '400':
+          description: Bad Request
+        '401':
+          description: Unauthorized
+      security:
+      - authelia_auth: []
+  /api/verify:
+    get:
+      operationId: getAuthzLegacy
+      tags:
+      - Authorization
+      summary: Authorization Verification (Legacy)
+      description: 'The legacy authorization verification endpoint provides the ability to verify if a user has the necessary permissions to access a specified domain with several proxies. It''s generally recommended users use a proxy specific endpoint instead.
+
+
+        Any arbitrary sub-path of this endpoint is also routed to the same handler, i.e. `/api/verify/{path}`, which allows proxies that forward the original request path to this endpoint to be supported.'
+      parameters:
+      - name: X-Original-URL
+        in: header
+        description: Redirection URL
+        required: false
+        style: simple
+        explode: true
+        schema:
+          type: string
+      - $ref: '#/components/parameters/forwardedMethodParam'
+      - name: X-Forwarded-Proto
+        in: header
+        description: Redirection URL (Scheme / Protocol)
+        required: false
+        style: simple
+        explode: true
+        example: https
+        schema:
+          type: string
+      - name: X-Forwarded-Host
+        in: header
+        description: Redirection URL (Host)
+        required: false
+        style: simple
+        explode: true
+        example: example.com
+        schema:
+          type: string
+      - name: X-Forwarded-URI
+        in: header
+        description: Redirection URL (URI)
+        required: false
+        style: simple
+        explode: true
+        example: /path/example
+        schema:
+          type: string
+      - $ref: '#/components/parameters/forwardedForParam'
+      - $ref: '#/components/parameters/authParam'
+      responses:
+        '200':
+          description: Successful Operation
+          headers:
+            remote-user:
+              description: Username
+              schema:
+                type: string
+                examples:
+                - john
+            remote-name:
+              description: Name
+              schema:
+                type: string
+                examples:
+                - John Doe
+            remote-email:
+              description: Email
+              schema:
+                type: string
+                examples:
+                - john.doe@authelia.com
+            remote-groups:
+              description: Comma separated list of Groups
+              schema:
+                type: string
+                examples:
+                - admin,devs
+            set-cookie:
+              description: Sets a new cookie value
+              schema:
+                type: string
+        '302':
+          description: Found
+          headers:
+            location:
+              description: Redirect Location for user authorization
+              example: https://auth.example.com/?rd=https%3A%2F%2Fapp.example.com&rm=GET
+              schema:
+                type: string
+                format: uri
+            set-cookie:
+              description: Sets a new cookie value
+              schema:
+                type: string
+        '303':
+          description: See Other
+          headers:
+            location:
+              description: Redirect Location for user authorization
+              example: https://auth.example.com/?rd=https%3A%2F%2Fapp.example.com&rm=GET
+              schema:
+                type: string
+                format: uri
+            set-cookie:
+              description: Sets a new cookie value
+              schema:
+                type: string
+        '401':
+          description: Unauthorized
+          headers:
+            set-cookie:
+              description: Sets a new cookie value
+              schema:
+                type: string
+      security:
+      - authelia_auth: []
+    head:
+      operationId: headAuthzLegacy
+      tags:
+      - Authorization
+      summary: Authorization Verification (Legacy)
+      description: 'The legacy authorization verification endpoint provides the ability to verify if a user has the necessary permissions to access a specified domain with several proxies. It''s generally recommended users use a proxy specific endpoint instead.
+
+
+        Any arbitrary sub-path of this endpoint is also routed to the same handler, i.e. `/api/verify/{path}`, which allows proxies that forward the original request path to this endpoint to be supported.'
+      parameters:
+      - name: X-Original-URL
+        in: header
+        description: Redirection URL
+        required: false
+        style: simple
+        explode: true
+        schema:
+          type: string
+      - $ref: '#/components/parameters/forwardedMethodParam'
+      - name: X-Forwarded-Proto
+        in: header
+        description: Redirection URL (Scheme / Protocol)
+        required: false
+        style: simple
+        explode: true
+        example: https
+        schema:
+          type: string
+      - name: X-Forwarded-Host
+        in: header
+        description: Redirection URL (Host)
+        required: false
+        style: simple
+        explode: true
+        example: example.com
+        schema:
+          type: string
+      - name: X-Forwarded-URI
+        in: header
+        description: Redirection URL (URI)
+        required: false
+        style: simple
+        explode: true
+        example: /path/example
+        schema:
+          type: string
+      - $ref: '#/components/parameters/forwardedForParam'
+      - $ref: '#/components/parameters/authParam'
+      responses:
+        '200':
+          description: Successful Operation
+          headers:
+            remote-user:
+              description: Username
+              schema:
+                type: string
+                examples:
+                - john
+            remote-name:
+              description: Name
+              schema:
+                type: string
+                examples:
+                - John Doe
+            remote-email:
+              description: Email
+              schema:
+                type: string
+                examples:
+                - john.doe@authelia.com
+            remote-groups:
+              description: Comma separated list of Groups
+              schema:
+                type: string
+                examples:
+                - admin,devs
+            set-cookie:
+              description: Sets a new cookie value
+              schema:
+                type: string
+        '302':
+          description: Found
+          headers:
+            location:
+              description: Redirect Location for user authorization
+              example: https://auth.example.com/?rd=https%3A%2F%2Fapp.example.com&rm=GET
+              schema:
+                type: string
+                format: uri
+            set-cookie:
+              description: Sets a new cookie value
+              schema:
+                type: string
+        '303':
+          description: See Other
+          headers:
+            location:
+              description: Redirect Location for user authorization
+              example: https://auth.example.com/?rd=https%3A%2F%2Fapp.example.com&rm=GET
+              schema:
+                type: string
+                format: uri
+            set-cookie:
+              description: Sets a new cookie value
+              schema:
+                type: string
+        '401':
+          description: Unauthorized
+          headers:
+            set-cookie:
+              description: Sets a new cookie value
+              schema:
+                type: string
+      security:
+      - authelia_auth: []
+    options:
+      operationId: optionsAuthzLegacy
+      tags:
+      - Authorization
+      summary: Authorization Verification (Legacy)
+      description: 'The legacy authorization verification endpoint provides the ability to verify if a user has the necessary permissions to access a specified domain with several proxies. It''s generally recommended users use a proxy specific endpoint instead.
+
+
+        Any arbitrary sub-path of this endpoint is also routed to the same handler, i.e. `/api/verify/{path}`, which allows proxies that forward the original request path to this endpoint to be supported.'
+      parameters:
+      - name: X-Original-URL
+        in: header
+        description: Redirection URL
+        required: false
+        style: simple
+        explode: true
+        schema:
+          type: string
+      - $ref: '#/components/parameters/forwardedMethodParam'
+      - name: X-Forwarded-Proto
+        in: header
+        description: Redirection URL (Scheme / Protocol)
+        required: false
+        style: simple
+        explode: true
+        example: https
+        schema:
+          type: string
+      - name: X-Forwarded-Host
+        in: header
+        description: Redirection URL (Host)
+        required: false
+        style: simple
+        explode: true
+        example: example.com
+        schema:
+          type: string
+      - name: X-Forwarded-URI
+        in: header
+        description: Redirection URL (URI)
+        required: false
+        style: simple
+        explode: true
+        example: /path/example
+        schema:
+          type: string
+      - $ref: '#/components/parameters/forwardedForParam'
+      - $ref: '#/components/parameters/authParam'
+      responses:
+        '200':
+          description: Successful Operation
+          headers:
+            remote-user:
+              description: Username
+              schema:
+                type: string
+                examples:
+                - john
+            remote-name:
+              description: Name
+              schema:
+                type: string
+                examples:
+                - John Doe
+            remote-email:
+              description: Email
+              schema:
+                type: string
+                examples:
+                - john.doe@authelia.com
+            remote-groups:
+              description: Comma separated list of Groups
+              schema:
+                type: string
+                examples:
+                - admin,devs
+            set-cookie:
+              description: Sets a new cookie value
+              schema:
+                type: string
+        '302':
+          description: Found
+          headers:
+            location:
+              description: Redirect Location for user authorization
+              example: https://auth.example.com/?rd=https%3A%2F%2Fapp.example.com&rm=GET
+              schema:
+                type: string
+                format: uri
+            set-cookie:
+              description: Sets a new cookie value
+              schema:
+                type: string
+        '303':
+          description: See Other
+          headers:
+            location:
+              description: Redirect Location for user authorization
+              example: https://auth.example.com/?rd=https%3A%2F%2Fapp.example.com&rm=GET
+              schema:
+                type: string
+                format: uri
+            set-cookie:
+              description: Sets a new cookie value
+              schema:
+                type: string
+        '401':
+          description: Unauthorized
+          headers:
+            set-cookie:
+              description: Sets a new cookie value
+              schema:
+                type: string
+      security:
+      - authelia_auth: []
+    post:
+      operationId: postAuthzLegacy
+      tags:
+      - Authorization
+      summary: Authorization Verification (Legacy)
+      description: 'The legacy authorization verification endpoint provides the ability to verify if a user has the necessary permissions to access a specified domain with several proxies. It''s generally recommended users use a proxy specific endpoint instead.
+
+
+        Any arbitrary sub-path of this endpoint is also routed to the same handler, i.e. `/api/verify/{path}`, which allows proxies that forward the original request path to this endpoint to be supported.'
+      parameters:
+      - name: X-Original-URL
+        in: header
+        description: Redirection URL
+        required: false
+        style: simple
+        explode: true
+        schema:
+          type: string
+      - $ref: '#/components/parameters/forwardedMethodParam'
+      - name: X-Forwarded-Proto
+        in: header
+        description: Redirection URL (Scheme / Protocol)
+        required: false
+        style: simple
+        explode: true
+        example: https
+        schema:
+          type: string
+      - name: X-Forwarded-Host
+        in: header
+        description: Redirection URL (Host)
+        required: false
+        style: simple
+        explode: true
+        example: example.com
+        schema:
+          type: string
+      - name: X-Forwarded-URI
+        in: header
+        description: Redirection URL (URI)
+        required: false
+        style: simple
+        explode: true
+        example: /path/example
+        schema:
+          type: string
+      - $ref: '#/components/parameters/forwardedForParam'
+      - $ref: '#/components/parameters/authParam'
+      responses:
+        '200':
+          description: Successful Operation
+          headers:
+            remote-user:
+              description: Username
+              schema:
+                type: string
+                examples:
+                - john
+            remote-name:
+              description: Name
+              schema:
+                type: string
+                examples:
+                - John Doe
+            remote-email:
+              description: Email
+              schema:
+                type: string
+                examples:
+                - john.doe@authelia.com
+            remote-groups:
+              description: Comma separated list of Groups
+              schema:
+                type: string
+                examples:
+                - admin,devs
+            set-cookie:
+              description: Sets a new cookie value
+              schema:
+                type: string
+        '302':
+          description: Found
+          headers:
+            location:
+              description: Redirect Location for user authorization
+              example: https://auth.example.com/?rd=https%3A%2F%2Fapp.example.com&rm=GET
+              schema:
+                type: string
+                format: uri
+            set-cookie:
+              description: Sets a new cookie value
+              schema:
+                type: string
+        '303':
+          description: See Other
+          headers:
+            location:
+              description: Redirect Location for user authorization
+              example: https://auth.example.com/?rd=https%3A%2F%2Fapp.example.com&rm=GET
+              schema:
+                type: string
+                format: uri
+            set-cookie:
+              description: Sets a new cookie value
+              schema:
+                type: string
+        '401':
+          description: Unauthorized
+          headers:
+            set-cookie:
+              description: Sets a new cookie value
+              schema:
+                type: string
+      security:
+      - authelia_auth: []
+    put:
+      operationId: putAuthzLegacy
+      tags:
+      - Authorization
+      summary: Authorization Verification (Legacy)
+      description: 'The legacy authorization verification endpoint provides the ability to verify if a user has the necessary permissions to access a specified domain with several proxies. It''s generally recommended users use a proxy specific endpoint instead.
+
+
+        Any arbitrary sub-path of this endpoint is also routed to the same handler, i.e. `/api/verify/{path}`, which allows proxies that forward the original request path to this endpoint to be supported.'
+      parameters:
+      - name: X-Original-URL
+        in: header
+        description: Redirection URL
+        required: false
+        style: simple
+        explode: true
+        schema:
+          type: string
+      - $ref: '#/components/parameters/forwardedMethodParam'
+      - name: X-Forwarded-Proto
+        in: header
+        description: Redirection URL (Scheme / Protocol)
+        required: false
+        style: simple
+        explode: true
+        example: https
+        schema:
+          type: string
+      - name: X-Forwarded-Host
+        in: header
+        description: Redirection URL (Host)
+        required: false
+        style: simple
+        explode: true
+        example: example.com
+        schema:
+          type: string
+      - name: X-Forwarded-URI
+        in: header
+        description: Redirection URL (URI)
+        required: false
+        style: simple
+        explode: true
+        example: /path/example
+        schema:
+          type: string
+      - $ref: '#/components/parameters/forwardedForParam'
+      - $ref: '#/components/parameters/authParam'
+      responses:
+        '200':
+          description: Successful Operation
+          headers:
+            remote-user:
+              description: Username
+              schema:
+                type: string
+                examples:
+                - john
+            remote-name:
+              description: Name
+              schema:
+                type: string
+                examples:
+                - John Doe
+            remote-email:
+              description: Email
+              schema:
+                type: string
+                examples:
+                - john.doe@authelia.com
+            remote-groups:
+              description: Comma separated list of Groups
+              schema:
+                type: string
+                examples:
+                - admin,devs
+            set-cookie:
+              description: Sets a new cookie value
+              schema:
+                type: string
+        '302':
+          description: Found
+          headers:
+            location:
+              description: Redirect Location for user authorization
+              example: https://auth.example.com/?rd=https%3A%2F%2Fapp.example.com&rm=GET
+              schema:
+                type: string
+                format: uri
+            set-cookie:
+              description: Sets a new cookie value
+              schema:
+                type: string
+        '303':
+          description: See Other
+          headers:
+            location:
+              description: Redirect Location for user authorization
+              example: https://auth.example.com/?rd=https%3A%2F%2Fapp.example.com&rm=GET
+              schema:
+                type: string
+                format: uri
+            set-cookie:
+              description: Sets a new cookie value
+              schema:
+                type: string
+        '401':
+          description: Unauthorized
+          headers:
+            set-cookie:
+              description: Sets a new cookie value
+              schema:
+                type: string
+      security:
+      - authelia_auth: []
+    patch:
+      operationId: patchAuthzLegacy
+      tags:
+      - Authorization
+      summary: Authorization Verification (Legacy)
+      description: 'The legacy authorization verification endpoint provides the ability to verify if a user has the necessary permissions to access a specified domain with several proxies. It''s generally recommended users use a proxy specific endpoint instead.
+
+
+        Any arbitrary sub-path of this endpoint is also routed to the same handler, i.e. `/api/verify/{path}`, which allows proxies that forward the original request path to this endpoint to be supported.'
+      parameters:
+      - name: X-Original-URL
+        in: header
+        description: Redirection URL
+        required: false
+        style: simple
+        explode: true
+        schema:
+          type: string
+      - $ref: '#/components/parameters/forwardedMethodParam'
+      - name: X-Forwarded-Proto
+        in: header
+        description: Redirection URL (Scheme / Protocol)
+        required: false
+        style: simple
+        explode: true
+        example: https
+        schema:
+          type: string
+      - name: X-Forwarded-Host
+        in: header
+        description: Redirection URL (Host)
+        required: false
+        style: simple
+        explode: true
+        example: example.com
+        schema:
+          type: string
+      - name: X-Forwarded-URI
+        in: header
+        description: Redirection URL (URI)
+        required: false
+        style: simple
+        explode: true
+        example: /path/example
+        schema:
+          type: string
+      - $ref: '#/components/parameters/forwardedForParam'
+      - $ref: '#/components/parameters/authParam'
+      responses:
+        '200':
+          description: Successful Operation
+          headers:
+            remote-user:
+              description: Username
+              schema:
+                type: string
+                examples:
+                - john
+            remote-name:
+              description: Name
+              schema:
+                type: string
+                examples:
+                - John Doe
+            remote-email:
+              description: Email
+              schema:
+                type: string
+                examples:
+                - john.doe@authelia.com
+            remote-groups:
+              description: Comma separated list of Groups
+              schema:
+                type: string
+                examples:
+                - admin,devs
+            set-cookie:
+              description: Sets a new cookie value
+              schema:
+                type: string
+        '302':
+          description: Found
+          headers:
+            location:
+              description: Redirect Location for user authorization
+              example: https://auth.example.com/?rd=https%3A%2F%2Fapp.example.com&rm=GET
+              schema:
+                type: string
+                format: uri
+            set-cookie:
+              description: Sets a new cookie value
+              schema:
+                type: string
+        '303':
+          description: See Other
+          headers:
+            location:
+              description: Redirect Location for user authorization
+              example: https://auth.example.com/?rd=https%3A%2F%2Fapp.example.com&rm=GET
+              schema:
+                type: string
+                format: uri
+            set-cookie:
+              description: Sets a new cookie value
+              schema:
+                type: string
+        '401':
+          description: Unauthorized
+          headers:
+            set-cookie:
+              description: Sets a new cookie value
+              schema:
+                type: string
+      security:
+      - authelia_auth: []
+    delete:
+      operationId: deleteAuthzLegacy
+      tags:
+      - Authorization
+      summary: Authorization Verification (Legacy)
+      description: 'The legacy authorization verification endpoint provides the ability to verify if a user has the necessary permissions to access a specified domain with several proxies. It''s generally recommended users use a proxy specific endpoint instead.
+
+
+        Any arbitrary sub-path of this endpoint is also routed to the same handler, i.e. `/api/verify/{path}`, which allows proxies that forward the original request path to this endpoint to be supported.'
+      parameters:
+      - name: X-Original-URL
+        in: header
+        description: Redirection URL
+        required: false
+        style: simple
+        explode: true
+        schema:
+          type: string
+      - $ref: '#/components/parameters/forwardedMethodParam'
+      - name: X-Forwarded-Proto
+        in: header
+        description: Redirection URL (Scheme / Protocol)
+        required: false
+        style: simple
+        explode: true
+        example: https
+        schema:
+          type: string
+      - name: X-Forwarded-Host
+        in: header
+        description: Redirection URL (Host)
+        required: false
+        style: simple
+        explode: true
+        example: example.com
+        schema:
+          type: string
+      - name: X-Forwarded-URI
+        in: header
+        description: Redirection URL (URI)
+        required: false
+        style: simple
+        explode: true
+        example: /path/example
+        schema:
+          type: string
+      - $ref: '#/components/parameters/forwardedForParam'
+      - $ref: '#/components/parameters/authParam'
+      responses:
+        '200':
+          description: Successful Operation
+          headers:
+            remote-user:
+              description: Username
+              schema:
+                type: string
+                examples:
+                - john
+            remote-name:
+              description: Name
+              schema:
+                type: string
+                examples:
+                - John Doe
+            remote-email:
+              description: Email
+              schema:
+                type: string
+                examples:
+                - john.doe@authelia.com
+            remote-groups:
+              description: Comma separated list of Groups
+              schema:
+                type: string
+                examples:
+                - admin,devs
+            set-cookie:
+              description: Sets a new cookie value
+              schema:
+                type: string
+        '302':
+          description: Found
+          headers:
+            location:
+              description: Redirect Location for user authorization
+              example: https://auth.example.com/?rd=https%3A%2F%2Fapp.example.com&rm=GET
+              schema:
+                type: string
+                format: uri
+            set-cookie:
+              description: Sets a new cookie value
+              schema:
+                type: string
+        '303':
+          description: See Other
+          headers:
+            location:
+              description: Redirect Location for user authorization
+              example: https://auth.example.com/?rd=https%3A%2F%2Fapp.example.com&rm=GET
+              schema:
+                type: string
+                format: uri
+            set-cookie:
+              description: Sets a new cookie value
+              schema:
+                type: string
+        '401':
+          description: Unauthorized
+          headers:
+            set-cookie:
+              description: Sets a new cookie value
+              schema:
+                type: string
+      security:
+      - authelia_auth: []
+    trace:
+      operationId: traceAuthzLegacy
+      tags:
+      - Authorization
+      summary: Authorization Verification (Legacy)
+      description: 'The legacy authorization verification endpoint provides the ability to verify if a user has the necessary permissions to access a specified domain with several proxies. It''s generally recommended users use a proxy specific endpoint instead.
+
+
+        Any arbitrary sub-path of this endpoint is also routed to the same handler, i.e. `/api/verify/{path}`, which allows proxies that forward the original request path to this endpoint to be supported.'
+      parameters:
+      - name: X-Original-URL
+        in: header
+        description: Redirection URL
+        required: false
+        style: simple
+        explode: true
+        schema:
+          type: string
+      - $ref: '#/components/parameters/forwardedMethodParam'
+      - name: X-Forwarded-Proto
+        in: header
+        description: Redirection URL (Scheme / Protocol)
+        required: false
+        style: simple
+        explode: true
+        example: https
+        schema:
+          type: string
+      - name: X-Forwarded-Host
+        in: header
+        description: Redirection URL (Host)
+        required: false
+        style: simple
+        explode: true
+        example: example.com
+        schema:
+          type: string
+      - name: X-Forwarded-URI
+        in: header
+        description: Redirection URL (URI)
+        required: false
+        style: simple
+        explode: true
+        example: /path/example
+        schema:
+          type: string
+      - $ref: '#/components/parameters/forwardedForParam'
+      - $ref: '#/components/parameters/authParam'
+      responses:
+        '200':
+          description: Successful Operation
+          headers:
+            remote-user:
+              description: Username
+              schema:
+                type: string
+                examples:
+                - john
+            remote-name:
+              description: Name
+              schema:
+                type: string
+                examples:
+                - John Doe
+            remote-email:
+              description: Email
+              schema:
+                type: string
+                examples:
+                - john.doe@authelia.com
+            remote-groups:
+              description: Comma separated list of Groups
+              schema:
+                type: string
+                examples:
+                - admin,devs
+            set-cookie:
+              description: Sets a new cookie value
+              schema:
+                type: string
+        '302':
+          description: Found
+          headers:
+            location:
+              description: Redirect Location for user authorization
+              example: https://auth.example.com/?rd=https%3A%2F%2Fapp.example.com&rm=GET
+              schema:
+                type: string
+                format: uri
+            set-cookie:
+              description: Sets a new cookie value
+              schema:
+                type: string
+        '303':
+          description: See Other
+          headers:
+            location:
+              description: Redirect Location for user authorization
+              example: https://auth.example.com/?rd=https%3A%2F%2Fapp.example.com&rm=GET
+              schema:
+                type: string
+                format: uri
+            set-cookie:
+              description: Sets a new cookie value
+              schema:
+                type: string
+        '401':
+          description: Unauthorized
+          headers:
+            set-cookie:
+              description: Sets a new cookie value
+              schema:
+                type: string
+      security:
+      - authelia_auth: []
+components:
+  parameters:
+    autheliaURLParam:
+      name: X-Authelia-URL
+      in: header
+      description: Authelia Portal URL
+      required: false
+      style: simple
+      explode: true
+      example: https://auth.example.com/
+      schema:
+        type: string
+    forwardedForParam:
+      name: X-Forwarded-For
+      in: header
+      description: Clients IP address or IP address chain
+      required: false
+      style: simple
+      explode: true
+      example: 192.168.0.55,192.168.0.20
+      schema:
+        type: string
+    originalURLParam:
+      name: X-Original-URL
+      in: header
+      description: Redirection URL
+      required: true
+      style: simple
+      explode: true
+      schema:
+        type: string
+    originalMethodParam:
+      name: X-Original-Method
+      in: header
+      description: Request Method
+      required: true
+      style: simple
+      explode: true
+      schema:
+        type: string
+        enum:
+        - GET
+        - HEAD
+        - POST
+        - PUT
+        - PATCH
+        - DELETE
+        - TRACE
+        - CONNECT
+        - OPTIONS
+        - COPY
+        - LOCK
+        - MKCOL
+        - MOVE
+        - PROPFIND
+        - PROPPATCH
+        - UNLOCK
+    forwardedProtoParam:
+      name: X-Forwarded-Proto
+      in: header
+      description: Redirection URL (Scheme / Protocol)
+      required: true
+      style: simple
+      explode: true
+      example: https
+      schema:
+        type: string
+    forwardedURIParam:
+      name: X-Forwarded-URI
+      in: header
+      description: Redirection URL (URI)
+      required: true
+      style: simple
+      explode: true
+      example: /path/example
+      schema:
+        type: string
+    forwardedMethodParam:
+      name: X-Forwarded-Method
+      in: header
+      description: Request Method
+      required: false
+      style: simple
+      explode: true
+      schema:
+        type: string
+        enum:
+        - GET
+        - HEAD
+        - POST
+        - PUT
+        - PATCH
+        - DELETE
+        - TRACE
+        - CONNECT
+        - OPTIONS
+        - COPY
+        - LOCK
+        - MKCOL
+        - MOVE
+        - PROPFIND
+        - PROPPATCH
+        - UNLOCK
+    authParam:
+      name: auth
+      in: query
+      description: Switch authorization header and prompt for basic auth
+      required: false
+      schema:
+        type: string
+        enum:
+        - basic
+    forwardedHostParam:
+      name: X-Forwarded-Host
+      in: header
+      description: Redirection URL (Host)
+      required: true
+      style: simple
+      explode: true
+      example: example.com
+      schema:
+        type: string
+  securitySchemes:
+    authelia_auth:
+      type: apiKey
+      name: authelia_session
+      in: cookie
+    openid:
+      type: openIdConnect
+      openIdConnectUrl: https://auth.example.com/.well-known/openid-configuration

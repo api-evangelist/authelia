@@ -1,0 +1,67 @@
+openapi: 3.2.0
+info:
+  title: Authelia Utilities API
+  description: Authelia is an open-source authentication and authorization server and portal fulfilling the identity and access management (IAM) role of information security in providing multi-factor authentication and single sign-on (SSO) for your applications via a web portal. Authelia is an OpenID Connect 1.0 Provider which is OpenID Certified™ allowing comprehensive integrations, and acts as a companion for common reverse proxies.
+  contact:
+    name: Support
+    url: https://www.authelia.com/contact/
+    email: team@authelia.com
+  license:
+    name: Apache 2.0
+    url: https://www.apache.org/licenses/LICENSE-2.0
+  version: 1.0.0
+servers:
+- url: https://auth.example.com
+  description: Authelia API
+tags:
+- name: Utilities
+  description: General utilities used in several operations
+paths:
+  /api/checks/safe-redirection:
+    post:
+      operationId: postCheckSafeRedirection
+      tags:
+      - Utilities
+      summary: Check whether URI is safe to redirect to
+      description: End users usually needs to be redirected to a target website after authentication. This endpoint aims to check if target URL is safe to redirect to. This prevents open redirect attacks.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/handlers.checkURIWithinDomainRequestBody'
+      responses:
+        '200':
+          description: Successful Operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/handlers.checkURIWithinDomainResponseBody'
+        '401':
+          description: Unauthorized
+      security:
+      - authelia_auth: []
+components:
+  schemas:
+    handlers.checkURIWithinDomainResponseBody:
+      type: object
+      properties:
+        ok:
+          type: boolean
+          examples:
+          - true
+          description: If redirection URL is safe.
+    handlers.checkURIWithinDomainRequestBody:
+      type: object
+      properties:
+        uri:
+          type: string
+          examples:
+          - https://secure.example.com
+  securitySchemes:
+    authelia_auth:
+      type: apiKey
+      name: authelia_session
+      in: cookie
+    openid:
+      type: openIdConnect
+      openIdConnectUrl: https://auth.example.com/.well-known/openid-configuration

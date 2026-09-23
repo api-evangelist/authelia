@@ -1,0 +1,467 @@
+openapi: 3.2.0
+info:
+  title: Authelia First Factor API
+  description: Authelia is an open-source authentication and authorization server and portal fulfilling the identity and access management (IAM) role of information security in providing multi-factor authentication and single sign-on (SSO) for your applications via a web portal. Authelia is an OpenID Connect 1.0 Provider which is OpenID Certified™ allowing comprehensive integrations, and acts as a companion for common reverse proxies.
+  contact:
+    name: Support
+    url: https://www.authelia.com/contact/
+    email: team@authelia.com
+  license:
+    name: Apache 2.0
+    url: https://www.apache.org/licenses/LICENSE-2.0
+  version: 1.0.0
+servers:
+- url: https://auth.example.com
+  description: Authelia API
+tags:
+- name: First Factor
+  description: First Factor Authentication
+  externalDocs:
+    url: https://www.authelia.com/configuration/first-factor/introduction/
+paths:
+  /api/firstfactor:
+    post:
+      operationId: postFirstFactor
+      tags:
+      - First Factor
+      summary: Login
+      description: The firstfactor endpoint allows a user to login and generates an authentication cookie for authorization.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/handlers.bodyFirstFactorRequest'
+      responses:
+        '200':
+          description: Successful Operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/handlers.redirectResponse'
+        '401':
+          description: Unauthorized
+  /api/firstfactor/reauthenticate:
+    post:
+      operationId: postFirstFactorReauthenticate
+      tags:
+      - First Factor
+      summary: Reauthenticate
+      description: The firstfactor reauthenticate endpoint allows an already authenticated user to prove they still know their password without providing their username.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/handlers.bodyFirstFactorReauthenticateRequest'
+      responses:
+        '200':
+          description: Successful Operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/handlers.redirectResponse'
+        '401':
+          description: Unauthorized
+      security:
+      - authelia_auth: []
+  /api/firstfactor/passkey:
+    get:
+      operationId: getFirstFactorPasskey
+      tags:
+      - First Factor
+      summary: First Factor Authentication - Passkey
+      description: The WebAuthn endpoint starts the first factor authentication process with the FIDO2 WebAuthn credential.
+      responses:
+        '200':
+          description: Successful Operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/webauthn.PublicKeyCredentialRequestOptions'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/middlewares.Response.KO'
+    post:
+      operationId: postFirstFactorPasskey
+      tags:
+      - First Factor
+      summary: First Factor Authentication - Passkey
+      description: The WebAuthn endpoint completes the first factor authentication process with the FIDO2 WebAuthn credential.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/webauthn.PasskeyCredentialAssertionResponse'
+      responses:
+        '200':
+          description: Successful Operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/handlers.redirectResponse'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/middlewares.Response.KO'
+components:
+  schemas:
+    webauthn.CredentialDescriptor:
+      allOf:
+      - $ref: '#/components/schemas/webauthn.Transports'
+      - type: object
+        required:
+        - id
+        - type
+        properties:
+          id:
+            type: string
+            contentEncoding: base64url
+          type:
+            type: string
+            examples:
+            - public-key
+            enum:
+            - public-key
+    middlewares.Response.KO:
+      type: object
+      required:
+      - status
+      properties:
+        status:
+          enum:
+          - KO
+          type: string
+          examples:
+          - KO
+        message:
+          type: string
+          examples:
+          - Operation Failed.
+    webauthn.PublicKeyCredentialRequestOptions:
+      type: object
+      properties:
+        status:
+          type: string
+          examples:
+          - OK
+        data:
+          type: object
+          properties:
+            publicKey:
+              allOf:
+              - $ref: '#/components/schemas/webauthn.UserVerification'
+              - type: object
+                required:
+                - challenge
+                properties:
+                  challenge:
+                    type: string
+                    contentEncoding: base64url
+                  timeout:
+                    type: integer
+                    examples:
+                    - 60000
+                  rpId:
+                    type: string
+                    examples:
+                    - auth.example.com
+                  allowCredentials:
+                    type: array
+                    items:
+                      allOf:
+                      - $ref: '#/components/schemas/webauthn.CredentialDescriptor'
+                  extensions:
+                    type: object
+                    properties:
+                      appid:
+                        type: string
+                        examples:
+                        - https://auth.example.com/
+    webauthn.PublicKeyCredentialAssertion:
+      description: 'The FIDO2 WebAuthn credential assertion response as produced by the browser.
+
+        '
+      allOf:
+      - $ref: '#/components/schemas/webauthn.PublicKeyCredential'
+      - $ref: '#/components/schemas/webauthn.AuthenticationExtensionsClientOutputs'
+      - type: object
+        required:
+        - response
+        properties:
+          response:
+            allOf:
+            - $ref: '#/components/schemas/webauthn.AuthenticatorResponse'
+            - type: object
+              required:
+              - authenticatorData
+              - signature
+              properties:
+                authenticatorData:
+                  type: string
+                  contentEncoding: base64url
+                signature:
+                  type: string
+                  contentEncoding: base64url
+                userHandle:
+                  type: string
+                  contentEncoding: base64url
+    handlers.redirectResponse:
+      type: object
+      properties:
+        status:
+          type: string
+          examples:
+          - OK
+        data:
+          type: object
+          properties:
+            redirect:
+              type: string
+              examples:
+              - https://home.example.com
+    webauthn.CredentialAssertionResponse:
+      type: object
+      required:
+      - response
+      properties:
+        response:
+          $ref: '#/components/schemas/webauthn.PublicKeyCredentialAssertion'
+        targetURL:
+          type: string
+          examples:
+          - https://secure.example.com
+        flowID:
+          type: string
+          format: uuid
+          pattern: ^[0-9a-fA-F]{8}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{12}$
+          examples:
+          - 3ebcfbc5-b0fd-4ee0-9d3c-080ae1e7298c
+        flow:
+          type: string
+          examples:
+          - openid_connect
+          enum:
+          - openid_connect
+        subflow:
+          description: The name of the subflow if applicable.
+          type: string
+          examples:
+          - device_authorization
+          enum:
+          - device_authorization
+        userCode:
+          description: The user code from the Device Authorization Flow if applicable.
+          type: string
+          examples:
+          - XGQWWFMM
+    handlers.bodyFirstFactorRequest:
+      required:
+      - username
+      - password
+      type: object
+      properties:
+        username:
+          type: string
+          examples:
+          - john
+        password:
+          type: string
+          examples:
+          - password
+        targetURL:
+          type: string
+          examples:
+          - https://home.example.com
+        flowID:
+          type: string
+          format: uuid
+          pattern: ^[0-9a-fA-F]{8}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{12}$
+          examples:
+          - 3ebcfbc5-b0fd-4ee0-9d3c-080ae1e7298c
+        flow:
+          type: string
+          examples:
+          - openid_connect
+          enum:
+          - openid_connect
+        subflow:
+          description: The name of the subflow if applicable.
+          type: string
+          examples:
+          - device_authorization
+          enum:
+          - device_authorization
+        userCode:
+          description: The user code from the Device Authorization Flow if applicable.
+          type: string
+          examples:
+          - XGQWWFMM
+        requestMethod:
+          type: string
+          examples:
+          - GET
+        keepMeLoggedIn:
+          type: boolean
+          examples:
+          - true
+    webauthn.AuthenticationExtensionsClientOutputs:
+      type: object
+      properties:
+        clientExtensionResults:
+          type: object
+          properties:
+            appid:
+              type: boolean
+              examples:
+              - true
+            appidExclude:
+              type: boolean
+              examples:
+              - false
+            uvm:
+              type: array
+              items:
+                type: string
+                contentEncoding: base64url
+            credProps:
+              type: object
+              properties:
+                rk:
+                  type: boolean
+                  examples:
+                  - false
+            largeBlob:
+              type: object
+              properties:
+                supported:
+                  type: boolean
+                  examples:
+                  - false
+                blob:
+                  type: string
+                written:
+                  type: boolean
+                  examples:
+                  - false
+    webauthn.Transports:
+      type: object
+      properties:
+        transports:
+          type: array
+          examples:
+          - - usb
+            - nfc
+          items:
+            type: string
+            enum:
+            - usb
+            - nfc
+            - ble
+            - smart-card
+            - hybrid
+            - internal
+    webauthn.AuthenticatorResponse:
+      type: object
+      required:
+      - clientDataJSON
+      properties:
+        clientDataJSON:
+          type: string
+          contentEncoding: base64url
+    handlers.bodyFirstFactorReauthenticateRequest:
+      required:
+      - password
+      type: object
+      properties:
+        password:
+          type: string
+          examples:
+          - password
+        targetURL:
+          type: string
+          examples:
+          - https://home.example.com
+        requestMethod:
+          type: string
+          examples:
+          - GET
+        flowID:
+          type: string
+          format: uuid
+          pattern: ^[0-9a-fA-F]{8}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{12}$
+          examples:
+          - 3ebcfbc5-b0fd-4ee0-9d3c-080ae1e7298c
+        flow:
+          type: string
+          examples:
+          - openid_connect
+          enum:
+          - openid_connect
+        subflow:
+          description: The name of the subflow if applicable.
+          type: string
+          examples:
+          - device_authorization
+          enum:
+          - device_authorization
+        userCode:
+          description: The user code from the Device Authorization Flow if applicable.
+          type: string
+          examples:
+          - XGQWWFMM
+    webauthn.PasskeyCredentialAssertionResponse:
+      allOf:
+      - $ref: '#/components/schemas/webauthn.CredentialAssertionResponse'
+      - type: object
+        properties:
+          requestMethod:
+            type: string
+            examples:
+            - GET
+          keepMeLoggedIn:
+            type: boolean
+            examples:
+            - true
+    webauthn.UserVerification:
+      type: object
+      properties:
+        userVerification:
+          type: string
+          examples:
+          - preferred
+          enum:
+          - required
+          - preferred
+          - discouraged
+    webauthn.PublicKeyCredential:
+      type: object
+      required:
+      - id
+      - rawId
+      - type
+      properties:
+        rawId:
+          type: string
+          contentEncoding: base64url
+        id:
+          type: string
+        type:
+          type: string
+          examples:
+          - public-key
+          enum:
+          - public-key
+  securitySchemes:
+    authelia_auth:
+      type: apiKey
+      name: authelia_session
+      in: cookie
+    openid:
+      type: openIdConnect
+      openIdConnectUrl: https://auth.example.com/.well-known/openid-configuration

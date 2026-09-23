@@ -1,0 +1,206 @@
+openapi: 3.2.0
+info:
+  title: Authelia State API
+  description: Authelia is an open-source authentication and authorization server and portal fulfilling the identity and access management (IAM) role of information security in providing multi-factor authentication and single sign-on (SSO) for your applications via a web portal. Authelia is an OpenID Connect 1.0 Provider which is OpenID Certified™ allowing comprehensive integrations, and acts as a companion for common reverse proxies.
+  contact:
+    name: Support
+    url: https://www.authelia.com/contact/
+    email: team@authelia.com
+  license:
+    name: Apache 2.0
+    url: https://www.apache.org/licenses/LICENSE-2.0
+  version: 1.0.0
+servers:
+- url: https://auth.example.com
+  description: Authelia API
+tags:
+- name: State
+  description: Configuration, health and state endpoints
+paths:
+  /api/configuration:
+    get:
+      operationId: getConfiguration
+      tags:
+      - State
+      summary: Application Configuration
+      description: The configuration endpoint provides detailed information including available second factor methods, if any second factor policies exist and the TOTP period configuration.
+      responses:
+        '200':
+          description: Successful Operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/handlers.configuration.ConfigurationBody'
+        '403':
+          description: Forbidden
+      security:
+      - authelia_auth: []
+  /api/configuration/password-policy:
+    get:
+      operationId: getPasswordPolicyConfiguration
+      tags:
+      - State
+      summary: Password Policy Configuration
+      description: The password policy configuration endpoint provides a password policy for resetting passwords.
+      responses:
+        '200':
+          description: Successful Operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/handlers.configuration.PasswordPolicyConfigurationBody'
+  /api/health:
+    head:
+      operationId: headHealth
+      tags:
+      - State
+      summary: Application Health
+      description: The health check endpoint provides information about the health of Authelia.
+      responses:
+        '200':
+          description: Successful Operation
+    get:
+      operationId: getHealth
+      tags:
+      - State
+      summary: Application Health
+      description: The health check endpoint provides information about the health of Authelia.
+      responses:
+        '200':
+          description: Successful Operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/middlewares.Response.OK'
+  /api/state:
+    get:
+      operationId: getState
+      tags:
+      - State
+      summary: User Application State
+      description: The state endpoint provides detailed information including the user, current authenticate level and Authelia's configured default redirection URL.
+      responses:
+        '200':
+          description: Successful Operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/handlers.StateResponse'
+components:
+  schemas:
+    handlers.configuration.ConfigurationBody:
+      type: object
+      properties:
+        status:
+          type: string
+          examples:
+          - OK
+        data:
+          type: object
+          properties:
+            available_methods:
+              type: array
+              description: List of available 2FA methods. If no methods exist 2FA is disabled.
+              items:
+                type: string
+                enum:
+                - totp
+                - webauthn
+                - mobile_push
+              examples:
+              - - totp
+                - webauthn
+                - mobile_push
+            password_change_disabled:
+              type: boolean
+              description: Value which indicates if users are allowed to change their password from account settings.
+            password_reset_disabled:
+              type: boolean
+              description: Value which indicates if users are allowed to reset their password.
+    middlewares.Response.OK:
+      type: object
+      required:
+      - status
+      properties:
+        status:
+          enum:
+          - OK
+          type: string
+          examples:
+          - OK
+        data:
+          type: object
+          description: The data content for the response.
+    handlers.configuration.PasswordPolicyConfigurationBody:
+      type: object
+      properties:
+        status:
+          type: string
+          examples:
+          - OK
+        data:
+          type: object
+          properties:
+            mode:
+              type: string
+              description: The password policy mode.
+              enum:
+              - disabled
+              - standard
+              - zxcvbn
+            min_length:
+              type: integer
+              description: The minimum password length when using the standard mode.
+            max_length:
+              type: integer
+              description: The maximum password length when using the standard mode.
+            min_score:
+              type: integer
+              description: The minimum password score when using the zxcvbn mode.
+            require_uppercase:
+              type: boolean
+              description: If uppercase characters are required when using the standard mode.
+            require_lowercase:
+              type: boolean
+              description: If lowercase characters are required when using the standard mode.
+            require_number:
+              type: boolean
+              description: If numeric characters are required when using the standard mode.
+            require_special:
+              type: boolean
+              description: If special characters are required when using the standard mode.
+    handlers.StateResponse:
+      type: object
+      properties:
+        status:
+          type: string
+          examples:
+          - OK
+        data:
+          type: object
+          properties:
+            username:
+              type: string
+              examples:
+              - john
+            authentication_level:
+              type: integer
+              examples:
+              - 1
+            factor_knowledge:
+              type: boolean
+              description: Indicates the knowledge factor has been satisfied.
+              examples:
+              - true
+            default_redirection_url:
+              type: string
+              examples:
+              - https://home.example.com
+  securitySchemes:
+    authelia_auth:
+      type: apiKey
+      name: authelia_session
+      in: cookie
+    openid:
+      type: openIdConnect
+      openIdConnectUrl: https://auth.example.com/.well-known/openid-configuration

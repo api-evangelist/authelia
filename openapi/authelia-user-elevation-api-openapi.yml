@@ -1,0 +1,222 @@
+openapi: 3.2.0
+info:
+  title: Authelia User Elevation API
+  description: Authelia is an open-source authentication and authorization server and portal fulfilling the identity and access management (IAM) role of information security in providing multi-factor authentication and single sign-on (SSO) for your applications via a web portal. Authelia is an OpenID Connect 1.0 Provider which is OpenID Certified™ allowing comprehensive integrations, and acts as a companion for common reverse proxies.
+  contact:
+    name: Support
+    url: https://www.authelia.com/contact/
+    email: team@authelia.com
+  license:
+    name: Apache 2.0
+    url: https://www.apache.org/licenses/LICENSE-2.0
+  version: 1.0.0
+servers:
+- url: https://auth.example.com
+  description: Authelia API
+tags:
+- name: User Elevation
+  description: User session elevation endpoints
+paths:
+  /api/user/session/elevation:
+    get:
+      operationId: getUserSessionElevation
+      tags:
+      - User Elevation
+      summary: User Session Elevation
+      description: The user session elevation endpoint returns information indicating if the current user session has elevated privileges from identity verification.
+      responses:
+        '200':
+          description: Successful Operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/handlers.ElevationStatus.Response'
+        '403':
+          description: Forbidden
+      security:
+      - authelia_auth: []
+    post:
+      operationId: postUserSessionElevation
+      tags:
+      - User Elevation
+      summary: User Session Elevation
+      description: The user session elevation endpoint generates a new One-Time Code for the purpose of elevating a user session. The One-Time Code is sent to a users email.
+      responses:
+        '200':
+          description: Successful Operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/handlers.ElevationStart.Response'
+        '403':
+          description: Forbidden
+        '429':
+          description: Too Many Requests
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/middlewares.Response.KO'
+          headers:
+            Retry-After:
+              schema:
+                type: string
+                format: http-date
+              description: The date time that the request can be retried.
+      security:
+      - authelia_auth: []
+    put:
+      operationId: putUserSessionElevation
+      tags:
+      - User Elevation
+      summary: User Session Elevation
+      description: The user session elevation endpoint verifies and consumes a One-Time Code, and configures the session elevation.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/handlers.ElevationVerify.Request'
+      responses:
+        '200':
+          description: Successful Operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/middlewares.Response.OK'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/middlewares.Response.KO'
+        '403':
+          description: Forbidden
+        '429':
+          description: Too Many Requests
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/middlewares.Response.KO'
+          headers:
+            Retry-After:
+              schema:
+                type: string
+                format: http-date
+              description: The date time that the request can be retried.
+      security:
+      - authelia_auth: []
+  /api/user/session/elevation/{id}:
+    delete:
+      operationId: deleteUserSessionElevation
+      tags:
+      - User Elevation
+      summary: User Session Elevation
+      description: The user session elevation endpoint deletes a pending One-Time Code from the database so that it can't be used. This can be invoked by a user either by cancelling the One-Time Code window or via the revoke link in the generated email.
+      parameters:
+      - in: path
+        name: id
+        description: The Delete ID of the pending User Session Elevation.
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Successful Operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/middlewares.Response.API'
+      security:
+      - authelia_auth: []
+components:
+  schemas:
+    middlewares.Response.KO:
+      type: object
+      required:
+      - status
+      properties:
+        status:
+          enum:
+          - KO
+          type: string
+          examples:
+          - KO
+        message:
+          type: string
+          examples:
+          - Operation Failed.
+    handlers.ElevationVerify.Request:
+      type: object
+      properties:
+        otc:
+          description: The One-Time Code sent to the users email address.
+          type: string
+    handlers.ElevationStatus.Response:
+      type: object
+      properties:
+        status:
+          type: string
+          examples:
+          - OK
+        data:
+          type: object
+          properties:
+            require_second_factor:
+              description: Indicates if the elevation requires a second factor.
+              type: boolean
+            skip_second_factor:
+              description: Indicates if the requirement for a One-Time Code can be skipped if satisfying the 2FA rule.
+              type: boolean
+            can_skip_second_factor:
+              description: Indicates if the user is capable of satisfying the 2FA rule to skip the One-Time Code.
+              type: boolean
+            factor_knowledge:
+              description: Indicates if the knowledge factor of 2FA has been satisfied.
+              type: boolean
+            elevated:
+              description: Indicates if the session is elevated.
+              type: boolean
+            expires:
+              description: The number of seconds the elevation is still valid for.
+              type: integer
+              examples:
+              - 300
+    handlers.ElevationStart.Response:
+      type: object
+      properties:
+        status:
+          type: string
+          examples:
+          - OK
+        data:
+          type: object
+          properties:
+            delete_id:
+              description: The value required to delete the pending elevation.
+              type: string
+    middlewares.Response.OK:
+      type: object
+      required:
+      - status
+      properties:
+        status:
+          enum:
+          - OK
+          type: string
+          examples:
+          - OK
+        data:
+          type: object
+          description: The data content for the response.
+    middlewares.Response.API:
+      oneOf:
+      - $ref: '#/components/schemas/middlewares.Response.OK'
+      - $ref: '#/components/schemas/middlewares.Response.KO'
+  securitySchemes:
+    authelia_auth:
+      type: apiKey
+      name: authelia_session
+      in: cookie
+    openid:
+      type: openIdConnect
+      openIdConnectUrl: https://auth.example.com/.well-known/openid-configuration

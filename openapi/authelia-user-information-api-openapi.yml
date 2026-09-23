@@ -1,0 +1,155 @@
+openapi: 3.2.0
+info:
+  title: Authelia User Information API
+  description: Authelia is an open-source authentication and authorization server and portal fulfilling the identity and access management (IAM) role of information security in providing multi-factor authentication and single sign-on (SSO) for your applications via a web portal. Authelia is an OpenID Connect 1.0 Provider which is OpenID Certified™ allowing comprehensive integrations, and acts as a companion for common reverse proxies.
+  contact:
+    name: Support
+    url: https://www.authelia.com/contact/
+    email: team@authelia.com
+  license:
+    name: Apache 2.0
+    url: https://www.apache.org/licenses/LICENSE-2.0
+  version: 1.0.0
+servers:
+- url: https://auth.example.com
+  description: Authelia API
+tags:
+- name: User Information
+  description: User configuration endpoints
+paths:
+  /api/user/info:
+    get:
+      operationId: getUserInfo
+      tags:
+      - User Information
+      summary: User Configuration
+      description: The user info endpoint provides detailed information including a users display name, preferred and registered second factor method(s).
+      responses:
+        '200':
+          description: Successful Operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/handlers.UserInfo'
+        '403':
+          description: Forbidden
+      security:
+      - authelia_auth: []
+    post:
+      operationId: postUserInfo
+      tags:
+      - User Information
+      summary: User Configuration
+      description: The user info endpoint provides detailed information including a users display name, preferred and registered second factor method(s). The POST method also ensures the preferred method is configured correctly.
+      responses:
+        '200':
+          description: Successful Operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/handlers.UserInfo'
+        '403':
+          description: Forbidden
+      security:
+      - authelia_auth: []
+  /api/user/info/2fa_method:
+    post:
+      operationId: postUserInfoSecondFactorMethod
+      tags:
+      - User Information
+      summary: User Configuration
+      description: The user info 2fa_method endpoint sets the users preferred second factor method.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/handlers.UserInfo.MethodBody'
+      responses:
+        '200':
+          description: Successful Operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/middlewares.Response.OK'
+        '403':
+          description: Forbidden
+      security:
+      - authelia_auth: []
+components:
+  schemas:
+    middlewares.Response.OK:
+      type: object
+      required:
+      - status
+      properties:
+        status:
+          enum:
+          - OK
+          type: string
+          examples:
+          - OK
+        data:
+          type: object
+          description: The data content for the response.
+    handlers.UserInfo.MethodBody:
+      required:
+      - method
+      type: object
+      properties:
+        method:
+          type: string
+          enum:
+          - totp
+          - webauthn
+          - mobile_push
+          examples:
+          - totp
+    handlers.UserInfo:
+      type: object
+      properties:
+        status:
+          type: string
+          examples:
+          - OK
+        data:
+          type: object
+          properties:
+            display_name:
+              type: string
+              examples:
+              - John Doe
+            emails:
+              description: The users email addresses in a partially redacted form.
+              type: array
+              items:
+                type: string
+              examples:
+              - - j******e@example.com
+            method:
+              type: string
+              enum:
+              - totp
+              - webauthn
+              - mobile_push
+              examples:
+              - totp
+            has_webauthn:
+              type: boolean
+              examples:
+              - false
+            has_totp:
+              type: boolean
+              examples:
+              - true
+            has_duo:
+              type: boolean
+              examples:
+              - true
+  securitySchemes:
+    authelia_auth:
+      type: apiKey
+      name: authelia_session
+      in: cookie
+    openid:
+      type: openIdConnect
+      openIdConnectUrl: https://auth.example.com/.well-known/openid-configuration
