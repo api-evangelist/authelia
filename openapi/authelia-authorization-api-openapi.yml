@@ -1851,61 +1851,6 @@ paths:
       - authelia_auth: []
 components:
   parameters:
-    autheliaURLParam:
-      name: X-Authelia-URL
-      in: header
-      description: Authelia Portal URL
-      required: false
-      style: simple
-      explode: true
-      example: https://auth.example.com/
-      schema:
-        type: string
-    forwardedForParam:
-      name: X-Forwarded-For
-      in: header
-      description: Clients IP address or IP address chain
-      required: false
-      style: simple
-      explode: true
-      example: 192.168.0.55,192.168.0.20
-      schema:
-        type: string
-    originalURLParam:
-      name: X-Original-URL
-      in: header
-      description: Redirection URL
-      required: true
-      style: simple
-      explode: true
-      schema:
-        type: string
-    originalMethodParam:
-      name: X-Original-Method
-      in: header
-      description: Request Method
-      required: true
-      style: simple
-      explode: true
-      schema:
-        type: string
-        enum:
-        - GET
-        - HEAD
-        - POST
-        - PUT
-        - PATCH
-        - DELETE
-        - TRACE
-        - CONNECT
-        - OPTIONS
-        - COPY
-        - LOCK
-        - MKCOL
-        - MOVE
-        - PROPFIND
-        - PROPPATCH
-        - UNLOCK
     forwardedProtoParam:
       name: X-Forwarded-Proto
       in: header
@@ -1914,16 +1859,6 @@ components:
       style: simple
       explode: true
       example: https
-      schema:
-        type: string
-    forwardedURIParam:
-      name: X-Forwarded-URI
-      in: header
-      description: Redirection URL (URI)
-      required: true
-      style: simple
-      explode: true
-      example: /path/example
       schema:
         type: string
     forwardedMethodParam:
@@ -1952,6 +1887,52 @@ components:
         - PROPFIND
         - PROPPATCH
         - UNLOCK
+    forwardedURIParam:
+      name: X-Forwarded-URI
+      in: header
+      description: Redirection URL (URI)
+      required: true
+      style: simple
+      explode: true
+      example: /path/example
+      schema:
+        type: string
+    originalMethodParam:
+      name: X-Original-Method
+      in: header
+      description: Request Method
+      required: true
+      style: simple
+      explode: true
+      schema:
+        type: string
+        enum:
+        - GET
+        - HEAD
+        - POST
+        - PUT
+        - PATCH
+        - DELETE
+        - TRACE
+        - CONNECT
+        - OPTIONS
+        - COPY
+        - LOCK
+        - MKCOL
+        - MOVE
+        - PROPFIND
+        - PROPPATCH
+        - UNLOCK
+    forwardedForParam:
+      name: X-Forwarded-For
+      in: header
+      description: Clients IP address or IP address chain
+      required: false
+      style: simple
+      explode: true
+      example: 192.168.0.55,192.168.0.20
+      schema:
+        type: string
     authParam:
       name: auth
       in: query
@@ -1961,6 +1942,25 @@ components:
         type: string
         enum:
         - basic
+    autheliaURLParam:
+      name: X-Authelia-URL
+      in: header
+      description: Authelia Portal URL
+      required: false
+      style: simple
+      explode: true
+      example: https://auth.example.com/
+      schema:
+        type: string
+    originalURLParam:
+      name: X-Original-URL
+      in: header
+      description: Redirection URL
+      required: true
+      style: simple
+      explode: true
+      schema:
+        type: string
     forwardedHostParam:
       name: X-Forwarded-Host
       in: header

@@ -88,6 +88,47 @@ paths:
                 $ref: '#/components/schemas/handlers.StateResponse'
 components:
   schemas:
+    handlers.StateResponse:
+      type: object
+      properties:
+        status:
+          type: string
+          examples:
+          - OK
+        data:
+          type: object
+          properties:
+            username:
+              type: string
+              examples:
+              - john
+            authentication_level:
+              type: integer
+              examples:
+              - 1
+            factor_knowledge:
+              type: boolean
+              description: Indicates the knowledge factor has been satisfied.
+              examples:
+              - true
+            default_redirection_url:
+              type: string
+              examples:
+              - https://home.example.com
+    middlewares.Response.OK:
+      type: object
+      required:
+      - status
+      properties:
+        status:
+          enum:
+          - OK
+          type: string
+          examples:
+          - OK
+        data:
+          type: object
+          description: The data content for the response.
     handlers.configuration.ConfigurationBody:
       type: object
       properties:
@@ -117,20 +158,6 @@ components:
             password_reset_disabled:
               type: boolean
               description: Value which indicates if users are allowed to reset their password.
-    middlewares.Response.OK:
-      type: object
-      required:
-      - status
-      properties:
-        status:
-          enum:
-          - OK
-          type: string
-          examples:
-          - OK
-        data:
-          type: object
-          description: The data content for the response.
     handlers.configuration.PasswordPolicyConfigurationBody:
       type: object
       properties:
@@ -169,33 +196,6 @@ components:
             require_special:
               type: boolean
               description: If special characters are required when using the standard mode.
-    handlers.StateResponse:
-      type: object
-      properties:
-        status:
-          type: string
-          examples:
-          - OK
-        data:
-          type: object
-          properties:
-            username:
-              type: string
-              examples:
-              - john
-            authentication_level:
-              type: integer
-              examples:
-              - 1
-            factor_knowledge:
-              type: boolean
-              description: Indicates the knowledge factor has been satisfied.
-              examples:
-              - true
-            default_redirection_url:
-              type: string
-              examples:
-              - https://home.example.com
   securitySchemes:
     authelia_auth:
       type: apiKey

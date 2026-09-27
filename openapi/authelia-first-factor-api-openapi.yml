@@ -111,6 +111,160 @@ paths:
                 $ref: '#/components/schemas/middlewares.Response.KO'
 components:
   schemas:
+    handlers.redirectResponse:
+      type: object
+      properties:
+        status:
+          type: string
+          examples:
+          - OK
+        data:
+          type: object
+          properties:
+            redirect:
+              type: string
+              examples:
+              - https://home.example.com
+    webauthn.AuthenticatorResponse:
+      type: object
+      required:
+      - clientDataJSON
+      properties:
+        clientDataJSON:
+          type: string
+          contentEncoding: base64url
+    webauthn.PublicKeyCredentialAssertion:
+      description: 'The FIDO2 WebAuthn credential assertion response as produced by the browser.
+
+        '
+      allOf:
+      - $ref: '#/components/schemas/webauthn.PublicKeyCredential'
+      - $ref: '#/components/schemas/webauthn.AuthenticationExtensionsClientOutputs'
+      - type: object
+        required:
+        - response
+        properties:
+          response:
+            allOf:
+            - $ref: '#/components/schemas/webauthn.AuthenticatorResponse'
+            - type: object
+              required:
+              - authenticatorData
+              - signature
+              properties:
+                authenticatorData:
+                  type: string
+                  contentEncoding: base64url
+                signature:
+                  type: string
+                  contentEncoding: base64url
+                userHandle:
+                  type: string
+                  contentEncoding: base64url
+    handlers.bodyFirstFactorReauthenticateRequest:
+      required:
+      - password
+      type: object
+      properties:
+        password:
+          type: string
+          examples:
+          - password
+        targetURL:
+          type: string
+          examples:
+          - https://home.example.com
+        requestMethod:
+          type: string
+          examples:
+          - GET
+        flowID:
+          type: string
+          format: uuid
+          pattern: ^[0-9a-fA-F]{8}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{12}$
+          examples:
+          - 3ebcfbc5-b0fd-4ee0-9d3c-080ae1e7298c
+        flow:
+          type: string
+          examples:
+          - openid_connect
+          enum:
+          - openid_connect
+        subflow:
+          description: The name of the subflow if applicable.
+          type: string
+          examples:
+          - device_authorization
+          enum:
+          - device_authorization
+        userCode:
+          description: The user code from the Device Authorization Flow if applicable.
+          type: string
+          examples:
+          - XGQWWFMM
+    middlewares.Response.KO:
+      type: object
+      required:
+      - status
+      properties:
+        status:
+          enum:
+          - KO
+          type: string
+          examples:
+          - KO
+        message:
+          type: string
+          examples:
+          - Operation Failed.
+    webauthn.PasskeyCredentialAssertionResponse:
+      allOf:
+      - $ref: '#/components/schemas/webauthn.CredentialAssertionResponse'
+      - type: object
+        properties:
+          requestMethod:
+            type: string
+            examples:
+            - GET
+          keepMeLoggedIn:
+            type: boolean
+            examples:
+            - true
+    webauthn.CredentialAssertionResponse:
+      type: object
+      required:
+      - response
+      properties:
+        response:
+          $ref: '#/components/schemas/webauthn.PublicKeyCredentialAssertion'
+        targetURL:
+          type: string
+          examples:
+          - https://secure.example.com
+        flowID:
+          type: string
+          format: uuid
+          pattern: ^[0-9a-fA-F]{8}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{12}$
+          examples:
+          - 3ebcfbc5-b0fd-4ee0-9d3c-080ae1e7298c
+        flow:
+          type: string
+          examples:
+          - openid_connect
+          enum:
+          - openid_connect
+        subflow:
+          description: The name of the subflow if applicable.
+          type: string
+          examples:
+          - device_authorization
+          enum:
+          - device_authorization
+        userCode:
+          description: The user code from the Device Authorization Flow if applicable.
+          type: string
+          examples:
+          - XGQWWFMM
     webauthn.CredentialDescriptor:
       allOf:
       - $ref: '#/components/schemas/webauthn.Transports'
@@ -128,21 +282,6 @@ components:
             - public-key
             enum:
             - public-key
-    middlewares.Response.KO:
-      type: object
-      required:
-      - status
-      properties:
-        status:
-          enum:
-          - KO
-          type: string
-          examples:
-          - KO
-        message:
-          type: string
-          examples:
-          - Operation Failed.
     webauthn.PublicKeyCredentialRequestOptions:
       type: object
       properties:
@@ -183,83 +322,6 @@ components:
                         type: string
                         examples:
                         - https://auth.example.com/
-    webauthn.PublicKeyCredentialAssertion:
-      description: 'The FIDO2 WebAuthn credential assertion response as produced by the browser.
-
-        '
-      allOf:
-      - $ref: '#/components/schemas/webauthn.PublicKeyCredential'
-      - $ref: '#/components/schemas/webauthn.AuthenticationExtensionsClientOutputs'
-      - type: object
-        required:
-        - response
-        properties:
-          response:
-            allOf:
-            - $ref: '#/components/schemas/webauthn.AuthenticatorResponse'
-            - type: object
-              required:
-              - authenticatorData
-              - signature
-              properties:
-                authenticatorData:
-                  type: string
-                  contentEncoding: base64url
-                signature:
-                  type: string
-                  contentEncoding: base64url
-                userHandle:
-                  type: string
-                  contentEncoding: base64url
-    handlers.redirectResponse:
-      type: object
-      properties:
-        status:
-          type: string
-          examples:
-          - OK
-        data:
-          type: object
-          properties:
-            redirect:
-              type: string
-              examples:
-              - https://home.example.com
-    webauthn.CredentialAssertionResponse:
-      type: object
-      required:
-      - response
-      properties:
-        response:
-          $ref: '#/components/schemas/webauthn.PublicKeyCredentialAssertion'
-        targetURL:
-          type: string
-          examples:
-          - https://secure.example.com
-        flowID:
-          type: string
-          format: uuid
-          pattern: ^[0-9a-fA-F]{8}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{12}$
-          examples:
-          - 3ebcfbc5-b0fd-4ee0-9d3c-080ae1e7298c
-        flow:
-          type: string
-          examples:
-          - openid_connect
-          enum:
-          - openid_connect
-        subflow:
-          description: The name of the subflow if applicable.
-          type: string
-          examples:
-          - device_authorization
-          enum:
-          - device_authorization
-        userCode:
-          description: The user code from the Device Authorization Flow if applicable.
-          type: string
-          examples:
-          - XGQWWFMM
     handlers.bodyFirstFactorRequest:
       required:
       - username
@@ -349,96 +411,6 @@ components:
                   type: boolean
                   examples:
                   - false
-    webauthn.Transports:
-      type: object
-      properties:
-        transports:
-          type: array
-          examples:
-          - - usb
-            - nfc
-          items:
-            type: string
-            enum:
-            - usb
-            - nfc
-            - ble
-            - smart-card
-            - hybrid
-            - internal
-    webauthn.AuthenticatorResponse:
-      type: object
-      required:
-      - clientDataJSON
-      properties:
-        clientDataJSON:
-          type: string
-          contentEncoding: base64url
-    handlers.bodyFirstFactorReauthenticateRequest:
-      required:
-      - password
-      type: object
-      properties:
-        password:
-          type: string
-          examples:
-          - password
-        targetURL:
-          type: string
-          examples:
-          - https://home.example.com
-        requestMethod:
-          type: string
-          examples:
-          - GET
-        flowID:
-          type: string
-          format: uuid
-          pattern: ^[0-9a-fA-F]{8}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{12}$
-          examples:
-          - 3ebcfbc5-b0fd-4ee0-9d3c-080ae1e7298c
-        flow:
-          type: string
-          examples:
-          - openid_connect
-          enum:
-          - openid_connect
-        subflow:
-          description: The name of the subflow if applicable.
-          type: string
-          examples:
-          - device_authorization
-          enum:
-          - device_authorization
-        userCode:
-          description: The user code from the Device Authorization Flow if applicable.
-          type: string
-          examples:
-          - XGQWWFMM
-    webauthn.PasskeyCredentialAssertionResponse:
-      allOf:
-      - $ref: '#/components/schemas/webauthn.CredentialAssertionResponse'
-      - type: object
-        properties:
-          requestMethod:
-            type: string
-            examples:
-            - GET
-          keepMeLoggedIn:
-            type: boolean
-            examples:
-            - true
-    webauthn.UserVerification:
-      type: object
-      properties:
-        userVerification:
-          type: string
-          examples:
-          - preferred
-          enum:
-          - required
-          - preferred
-          - discouraged
     webauthn.PublicKeyCredential:
       type: object
       required:
@@ -457,6 +429,34 @@ components:
           - public-key
           enum:
           - public-key
+    webauthn.UserVerification:
+      type: object
+      properties:
+        userVerification:
+          type: string
+          examples:
+          - preferred
+          enum:
+          - required
+          - preferred
+          - discouraged
+    webauthn.Transports:
+      type: object
+      properties:
+        transports:
+          type: array
+          examples:
+          - - usb
+            - nfc
+          items:
+            type: string
+            enum:
+            - usb
+            - nfc
+            - ble
+            - smart-card
+            - hybrid
+            - internal
   securitySchemes:
     authelia_auth:
       type: apiKey

@@ -37,10 +37,11 @@ tags:
 - Authorization
 - LDAP
 - MFA
-- Open-Source
+- Open Source
 - OpenID Connect
 - Self-Hosted
 - SSO
+- Identity Federation
 tags_raw:
 - Authentication
 - Authorization
@@ -50,6 +51,8 @@ tags_raw:
 - OpenID Connect
 - Self-Hosted
 - SSO
+- Identity Federation
+- Open-Source
 url: >-
   https://raw.githubusercontent.com/api-evangelist/authelia/refs/heads/main/apis.yml
 created: '2026-03-25'

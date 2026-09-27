@@ -725,58 +725,58 @@ paths:
       - authelia_auth: []
 components:
   schemas:
-    openid.spec.Scopes:
-      type: string
-      enum:
-      - openid
-      - offline_access
-      - profile
-      - email
-      - address
-      - phone
-    openid.spec.AccessRequest.ClientAuth.None:
-      description: 'Client authentication for public clients registered with the ''none'' client authentication method.
-
-        '
+    openid.spec.AccessResponse:
       type: object
       required:
-      - client_id
+      - access_token
+      - token_type
+      - expires_in
       properties:
-        client_id:
-          description: The client identifier as described in Section 2.2 of [RFC6749].
+        access_token:
+          description: The access token issued by the authorization server.
           examples:
-          - my_client
+          - authelia_at_6-8jeA8y9Y744pAHCRwGtJrsD9ABOVWyzL3uWB1ntbI.foaDPNLT0T7VVQ9on5F1rOfHs0Lbc09FGO2xF_pzmNY
           type: string
-    openid.spec.ResponseMode:
-      description: 'Informs the Authorization Server of the mechanism to be used for returning parameters from the Authorization Endpoint. This use of this parameter is NOT RECOMMENDED when the Response Mode that would be requested is the default mode specified for the Response Type.
+        id_token:
+          description: The id token issued by the authorization server.
+          examples:
+          - eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c
+          type: string
+        refresh_token:
+          description: 'The refresh token, which can be used to obtain new access tokens using the same authorization grant as described in Section 6.
 
-        '
-      enum:
-      - form_post
-      - query
-      - fragment
-      - jwt
-      - form_post.jwt
-      - query.jwt
-      - fragment.jwt
-      examples:
-      - query
-      type: string
-    jose.spec.JWK.EC.Private:
-      description: Elliptic Curve Private Key in JSON Web Key format as defined by RFC7517 and RFC7518.
-      allOf:
-      - $ref: '#/components/schemas/jose.spec.JWK.base'
-      - $ref: '#/components/schemas/jose.spec.JWK.EC'
-      - type: object
-        required:
-        - d
-        properties:
-          d:
-            description: 'ECC Private Key: The "d" (ECC private key) parameter contains the Elliptic Curve private key value. It is represented as the base64url encoding of the octet string representation of the private key value, as defined in Section 2.3.7 of SEC1 [SEC1]. The length of this octet string MUST be ceiling(log-base-2(n)/8) octets (where n is the order of the curve).
+            '
+          examples:
+          - authelia_rt_MgALbONdFPIwo3o2QukHry7W451xrO6jza31IS8Vh4M.IArqzOzLwY6HWqom1vmp9DUWBuOQel_fGnRw5MyT-jo
+          type: string
+        token_type:
+          description: 'The access token type provides the client with the information required to successfully utilize the access token to make a protected resource request (along with type-specific attributes). The client MUST NOT use an access token if it does not understand the token type.
 
-              '
-            type: string
-            contentEncoding: base64url
+            '
+          enum:
+          - bearer
+          examples:
+          - bearer
+          type: string
+        expires_in:
+          description: 'The lifetime in seconds of the access token. For example, the value "3600" denotes that the access token will expire in one hour from the time the response was generated. If omitted, the authorization server SHOULD provide the expiration time via other means or document the default value.
+
+            '
+          examples:
+          - 3600
+          type: integer
+        state:
+          description: Exactly the state value passed in the authorization request if present.
+          examples:
+          - 5dVZhNfri5XZS6wadskuzUk4MHYCvEcUgidjMeBjsktAhY7EKB
+          type: string
+        scope:
+          description: 'The scope of the access token as described by Section 3.3 if it differs from the requested scope.
+
+            '
+          examples:
+          - openid profile groups
+          type: string
     openid.spec.AccessRequest.RefreshTokenFlow:
       allOf:
       - $ref: '#/components/schemas/openid.spec.AccessRequest.ClientAuth'
@@ -802,11 +802,285 @@ components:
             examples:
             - openid profile groups
             type: string
-    jose.spec.None:
+    jose.spec.JWK:
+      description: A key in the JSON Web Key format as defined by RFC7517.
+      anyOf:
+      - $ref: '#/components/schemas/jose.spec.JWK.RSA'
+      - $ref: '#/components/schemas/jose.spec.JWK.RSA.Private'
+      - $ref: '#/components/schemas/jose.spec.JWK.EC'
+      - $ref: '#/components/schemas/jose.spec.JWK.EC.Private'
+      - $ref: '#/components/schemas/jose.spec.JWK.Symmetric'
+    openid.spec.AccessRequest.AuthorizationCodeFlow:
+      allOf:
+      - $ref: '#/components/schemas/openid.spec.AccessRequest.ClientAuth'
+      - type: object
+        required:
+        - code
+        - grant_type
+        properties:
+          grant_type:
+            description: Value MUST be set to "code".
+            enum:
+            - authorization_code
+            type: string
+          code:
+            description: The Authorization Code.
+            examples:
+            - authelia_ac_VdQ5Ts3BCDtN4X-aCUW6esVl_PmMklup81bqyZ8PQJc.mQ7qgtwQu6_JdXR_OPJX3YDGOATBK6Bt6BgnsndFJQs
+            type: string
+          code_verifier:
+            description: The Authorization Code Verifier (PKCE).
+            examples:
+            - 88a25754f7c0b3b3b88cf6cd4e29e8356b160524fdc1cb329a94471825628fd3
+            type: string
+          redirect_uri:
+            description: The original Redirect URI used in the Authorization Request.
+            examples:
+            - https://app.example.com/oidc/callback
+            type: string
+    openid.implementation.Scopes.Object:
+      description: The scope.
+      type: string
+      oneOf:
+      - $ref: '#/components/schemas/openid.spec.Scopes'
+      - type: string
+        enum:
+        - groups
+    jose.spec.JWK.EC.Private:
+      description: Elliptic Curve Private Key in JSON Web Key format as defined by RFC7517 and RFC7518.
+      allOf:
+      - $ref: '#/components/schemas/jose.spec.JWK.base'
+      - $ref: '#/components/schemas/jose.spec.JWK.EC'
+      - type: object
+        required:
+        - d
+        properties:
+          d:
+            description: 'ECC Private Key: The "d" (ECC private key) parameter contains the Elliptic Curve private key value. It is represented as the base64url encoding of the octet string representation of the private key value, as defined in Section 2.3.7 of SEC1 [SEC1]. The length of this octet string MUST be ceiling(log-base-2(n)/8) octets (where n is the order of the curve).
+
+              '
+            type: string
+            contentEncoding: base64url
+    jose.spec.JWE.alg:
+      description: The JSON Web Encryption Algorithm (CEK)
+      enum:
+      - RSA1_5
+      - RSA-OAEP
+      - RSA-OAEP-256
+      - A128KW
+      - A192KW
+      - A256KW
+      - dir
+      - ECDH-ES
+      - ECDH-ES+A128KW
+      - ECDH-ES+A192KW
+      - ECDH-ES+A256KW
+      - A128GCMKW
+      - A192GCMKW
+      - A256GCMKW
+      - PBES2-HS256+A128KW
+      - PBES2-HS384+A192KW
+      - PBES2-HS512+A256KW
+      type: string
+    jose.spec.JWS:
       description: The JSON Web Signature Algorithm
+      enum:
+      - HS256
+      - HS384
+      - HS512
+      - RS256
+      - RS384
+      - RS512
+      - ES256
+      - ES384
+      - ES512
+      - PS256
+      - PS384
+      - PS512
+      type: string
+    openid.implementation.Claims.Name:
+      description: The name of an OpenID Connect 1.0 Claim.
       type: string
       enum:
+      - amr
+      - aud
+      - azp
+      - client_id
+      - exp
+      - iat
+      - iss
+      - jti
+      - rat
+      - auth_time
+      - nonce
+      - groups
+      - sub
+      - name
+      - given_name
+      - family_name
+      - middle_name
+      - nickname
+      - preferred_username
+      - profile
+      - picture
+      - website
+      - email
+      - email_verified
+      - alt_emails
+      - gender
+      - birthdate
+      - zoneinfo
+      - locale
+      - phone_number
+      - phone_number_verified
+      - address
+      - updated_at
+    openid.spec.ClientAuthMethod:
+      description: The OAuth 2.0 / OpenID Connect 1.0 Client Authentication Method.
+      enum:
       - none
+      - client_secret_post
+      - client_secret_basic
+      - client_secret_jwt
+      - private_key_jwt
+      - tls_client_auth
+      - self_signed_tls_client_auth
+      type: string
+    jose.spec.JWS.None:
+      description: The JSON Web Signature Algorithm
+      oneOf:
+      - $ref: '#/components/schemas/jose.spec.None'
+      - $ref: '#/components/schemas/jose.spec.JWS'
+      type: string
+    openid.spec.ResponseType:
+      description: The OAuth 2.0 / OpenID Connect 1.0 Response Type.
+      enum:
+      - code
+      - id_token
+      - token
+      - code token
+      - code id_token
+      - id_token token
+      - code id_token token
+      - none
+      examples:
+      - code
+      type: string
+    openid.spec.AccessServerTokenAssertionRequest:
+      required:
+      - token
+      type: object
+      properties:
+        token:
+          description: 'The string value of the token. For access tokens, this is the ''access_token" value returned from the token endpoint defined in OAuth 2.0 [RFC6749], Section 5.1. For refresh tokens, this is the "refresh_token" value returned from the token endpoint as defined in OAuth 2.0 [RFC6749], Section 5.1. Other token types are outside the scope of this specification.
+
+            '
+          examples:
+          - authelia_at_6-8jeA8y9Y744pAHCRwGtJrsD9ABOVWyzL3uWB1ntbI.foaDPNLT0T7VVQ9on5F1rOfHs0Lbc09FGO2xF_pzmNY
+          type: string
+        token_type_hint:
+          description: 'A hint about the type of the token submitted for introspection. The protected resource MAY pass this parameter to help the authorization server optimize the token lookup. If the server is unable to locate the token using the given hint, it MUST extend its search across all of its supported token types. An authorization server MAY ignore this parameter, particularly if it is able to detect the token type automatically. Values for this field are defined in the "OAuth Token Type Hints" registry defined in OAuth Token Revocation [RFC7009].
+
+            '
+          enum:
+          - access_token
+          - refresh_token
+          examples:
+          - access_token
+          type: string
+    openid.spec.AuthorizeRequest:
+      type: object
+      required:
+      - scope
+      - response_type
+      - client_id
+      - redirect_uri
+      properties:
+        scope:
+          description: The requested scope.
+          examples:
+          - openid profile groups
+          type: string
+        response_type:
+          $ref: '#/components/schemas/openid.spec.ResponseType'
+        client_id:
+          description: The OAuth 2.0 client identifier.
+          examples:
+          - app
+          type: string
+        redirect_uri:
+          description: 'Redirection URI to which the response will be sent. This URI MUST exactly match one of the Redirection URI values for the Client pre-registered at the OpenID Provider, with the matching performed as described in Section 6.2.1 of [RFC3986] (Simple String Comparison). When using this flow, the Redirection URI SHOULD use the https scheme; however, it MAY use the http scheme, provided that the Client Type is confidential, as defined in Section 2.1 of OAuth 2.0, and provided the OP allows the use of http Redirection URIs in this case. The Redirection URI MAY use an alternate scheme, such as one that is intended to identify a callback into a native application.
+
+            '
+          examples:
+          - https://app.example.com
+          type: string
+          format: uri
+        state:
+          description: 'Opaque value used to maintain state between the request and the callback. Typically, Cross-Site Request Forgery (CSRF, XSRF) mitigation is done by cryptographically binding the value of this parameter with a browser cookie.
+
+            '
+          examples:
+          - oV84Vsy7wyCgRk2h4aZBmXZq4q3g2f
+          type: string
+        response_mode:
+          $ref: '#/components/schemas/openid.spec.ResponseMode'
+        nonce:
+          description: 'String value used to associate a Client session with an ID Token, and to mitigate replay attacks. The value is passed through unmodified from the Authentication Request to the ID Token. Sufficient entropy MUST be present in the nonce values used to prevent attackers from guessing values. For implementation notes, see Section 15.5.2.
+
+            '
+          examples:
+          - TRMLqchoKGQNcooXvBvUy9PtmLdJGf
+          type: string
+        display:
+          $ref: '#/components/schemas/openid.spec.DisplayType'
+        prompt:
+          $ref: '#/components/schemas/openid.spec.Prompt'
+        max_age:
+          description: 'Maximum Authentication Age. Specifies the allowable elapsed time in seconds since the last time the End-User was actively authenticated by the OP. If the elapsed time is greater than this value, the OP MUST attempt to actively re-authenticate the End-User. (The max_age request parameter corresponds to the OpenID 2.0 PAPE [OpenID.PAPE] max_auth_age request parameter.) When max_age is used, the ID Token returned MUST include an auth_time Claim Value.
+
+            '
+          type: integer
+        ui_locales:
+          description: 'Not Supported: End-User''s preferred languages and scripts for the user interface, represented as a space-separated list of BCP47 [RFC5646] language tag values, ordered by preference. For instance, the value "fr-CA fr en" represents a preference for French as spoken in Canada, then French (without a region designation), followed by English (without a region designation). An error SHOULD NOT result if some or all of the requested locales are not supported by the OpenID Provider.
+
+            '
+          type: string
+        claims_locales:
+          description: 'Not Supported: End-User''s preferred languages and scripts for Claims being returned, represented as a space-separated list of BCP47 [RFC5646] language tag values, ordered by preference. An error SHOULD NOT result if some or all of the requested locales are not supported by the OpenID Provider.
+
+            '
+          type: string
+        id_token_hint:
+          description: 'Not Supported: ID Token previously issued by the Authorization Server being passed as a hint about the End-User''s current or past authenticated session with the Client. If the End-User identified by the ID Token is logged in or is logged in by the request, then the Authorization Server returns a positive response; otherwise, it SHOULD return an error, such as login_required. When possible, an id_token_hint SHOULD be present when prompt=none is used and an invalid_request error MAY be returned if it is not; however, the server SHOULD respond successfully when possible, even if it is not present. The Authorization Server need not be listed as an audience of the ID Token when it is used as an id_token_hint value. If the ID Token received by the RP from the OP is encrypted, to use it as an id_token_hint, the Client MUST decrypt the signed ID Token contained within the encrypted ID Token. The Client MAY re-encrypt the signed ID token to the Authentication Server using a key that enables the server to decrypt the ID Token, and use the re-encrypted ID token as the id_token_hint value.
+
+            '
+          type: string
+        login_hint:
+          description: 'Not Supported: Hint to the Authorization Server about the login identifier the End-User might use to log in (if necessary). This hint can be used by an RP if it first asks the End-User for their e-mail address (or other identifier) and then wants to pass that value as a hint to the discovered authorization service. It is RECOMMENDED that the hint value match the value used for discovery. This value MAY also be a phone number in the format specified for the phone_number Claim. The use of this parameter is left to the OP''s discretion.
+
+            '
+          type: string
+        acr_values:
+          description: 'Not Supported: Requested Authentication Context Class Reference values. Space-separated string that specifies the acr values that the Authorization Server is being requested to use for processing this Authentication Request, with the values appearing in order of preference. The Authentication Context Class satisfied by the authentication performed is returned as the acr Claim Value, as specified in Section 2. The acr Claim is requested as a Voluntary Claim by this parameter.
+
+            '
+          type: string
+        claims:
+          description: 'The claims parameter value, as specified in Section 5.5.
+
+            '
+          type: string
+        registration:
+          description: 'Not Supported: This parameter is used by the Client to provide information about itself to a Self-Issued OP that would normally be provided to an OP during Dynamic Client Registration, as specified in Section 7.2.1.
+
+            '
+          type: string
+        request:
+          description: 'Request Object value, as specified in Section 6.1. The Request Object MAY be encrypted to the Self-Issued OP by the Client. In this case, the sub (subject) of a previously issued ID Token for this Client MUST be sent as the kid (Key ID) of the JWE. Encrypting content to Self-Issued OPs is currently only supported when the OP''s JWK key type is RSA and the encryption algorithm used is RSA1_5.
+
+            '
+          type: string
     openid.spec.Metadata.OpenIDConfiguration:
       type: object
       required:
@@ -1535,150 +1809,67 @@ components:
             - A256GCM
           items:
             $ref: '#/components/schemas/jose.spec.JWE.enc'
-    openid.spec.CodeChallengeMethod:
-      description: The RFC7636 Code Challenge Verifier Method.
-      enum:
-      - plain
-      - S256
-      examples:
-      - S256
-      type: string
-    openid.spec.GrantType:
-      description: The OAuth 2.0 / OpenID Connect 1.0 Grant Type.
-      enum:
-      - authorization_code
-      - refresh_token
-      - implicit
-      - client_credentials
-      - urn:ietf:params:oauth:grant-type:device_code
-      examples:
-      - authorization_code
-      type: string
-    jose.spec.JWK:
-      description: A key in the JSON Web Key format as defined by RFC7517.
-      anyOf:
-      - $ref: '#/components/schemas/jose.spec.JWK.RSA'
-      - $ref: '#/components/schemas/jose.spec.JWK.RSA.Private'
-      - $ref: '#/components/schemas/jose.spec.JWK.EC'
-      - $ref: '#/components/schemas/jose.spec.JWK.EC.Private'
-      - $ref: '#/components/schemas/jose.spec.JWK.Symmetric'
-    openid.spec.DisplayType:
-      description: 'ASCII string value that specifies how the Authorization Server displays the authentication and consent user interface pages to the End-User.
-
-        '
-      enum:
-      - page
-      - popup
-      - touch
-      - wap
-      examples:
-      - page
-      type: string
-    jose.spec.JWS:
-      description: The JSON Web Signature Algorithm
-      enum:
-      - HS256
-      - HS384
-      - HS512
-      - RS256
-      - RS384
-      - RS512
-      - ES256
-      - ES384
-      - ES512
-      - PS256
-      - PS384
-      - PS512
-      type: string
-    openid.implementation.Claims.Name:
-      description: The name of an OpenID Connect 1.0 Claim.
-      type: string
-      enum:
-      - amr
-      - aud
-      - azp
-      - client_id
-      - exp
-      - iat
-      - iss
-      - jti
-      - rat
-      - auth_time
-      - nonce
-      - groups
-      - sub
-      - name
-      - given_name
-      - family_name
-      - middle_name
-      - nickname
-      - preferred_username
-      - profile
-      - picture
-      - website
-      - email
-      - email_verified
-      - alt_emails
-      - gender
-      - birthdate
-      - zoneinfo
-      - locale
-      - phone_number
-      - phone_number_verified
-      - address
-      - updated_at
-    jose.spec.JWK.RSA:
-      description: RSA Public Key in JSON Web Key format as defined by RFC7517 and RFC7518.
-      allOf:
-      - $ref: '#/components/schemas/jose.spec.JWK.base'
-      - required:
-        - kty
-        - n
-        - e
-        type: object
-        properties:
-          kty:
-            description: 'The "kty" (key type) parameter identifies the cryptographic algorithm family used with the key.
-
-              '
-            type: string
-            examples:
-            - RSA
-            enum:
-            - RSA
-          alg:
-            description: The JSON Web Signature Algorithm
-            type: string
-            examples:
-            - RS256
-            enum:
-            - RS256
-            - RS384
-            - RS512
-            - PS256
-            - PS384
-            - PS512
-          n:
-            description: 'RSA Public Key: The "n" (modulus) parameter contains the modulus value for the RSA public key. It is represented as a Base64urlUInt-encoded value.
-
-              '
-            type: string
-            contentEncoding: base64url
-          e:
-            description: 'RSA Public Key: The "e" (exponent) parameter contains the exponent value for the RSA public key. It is represented as a Base64urlUInt-encoded value.
-
-              '
-            type: string
-            contentEncoding: base64url
-    jose.spec.JWKs:
+    openid.response.consent:
       type: object
-      description: The JSON Web Key Sets Document as defined by RFC7517.
       properties:
-        keys:
-          description: List of JSON Wek Key's in the JSON Web Key format as defined by RFC7517.
-          type: array
-          items:
-            $ref: '#/components/schemas/jose.spec.JWK'
+        status:
+          type: string
+          examples:
+          - OK
+        data:
+          type: object
+          properties:
+            flow_id:
+              description: The identifier of the consent flow session.
+              type: string
+              format: uuid
+              pattern: ^[0-9a-fA-F]{8}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{12}$
+              examples:
+              - 713ef767-81bc-4a27-9b83-5fe2e101b2b4
+            redirect_uri:
+              description: The URI the user should be redirected to.
+              type: string
+              format: uri
+    jose.spec.JWE.enc:
+      description: The JSON Web Encryption Algorithm (Claims)
+      enum:
+      - A128CBC-HS256
+      - A192CBC-HS384
+      - A256CBC-HS512
+      - A128GCM
+      - A192GCM
+      - A256GCM
+      type: string
+    openid.spec.DeviceAuthorizeRequest.Parameters:
+      type: object
+      required:
+      - scope
+      properties:
+        scope:
+          description: The requested scope.
+          examples:
+          - openid profile groups
+          type: string
+        acr_values:
+          description: 'Not Supported: Requested Authentication Context Class Reference values. Space-separated string that specifies the acr values that the Authorization Server is being requested to use for processing this Authentication Request, with the values appearing in order of preference. The Authentication Context Class satisfied by the authentication performed is returned as the acr Claim Value, as specified in Section 2. The acr Claim is requested as a Voluntary Claim by this parameter.
+
+            '
+          type: string
+        claims:
+          description: 'The claims parameter value, as specified in Section 5.5.
+
+            '
+          type: string
+        claims_locales:
+          description: 'Not Supported: End-User''s preferred languages and scripts for Claims being returned, represented as a space-separated list of BCP47 [RFC5646] language tag values, ordered by preference. An error SHOULD NOT result if some or all of the requested locales are not supported by the OpenID Provider.
+
+            '
+          type: string
+        ui_locales:
+          description: 'Not Supported: End-User''s preferred languages and scripts for the user interface, represented as a space-separated list of BCP47 [RFC5646] language tag values, ordered by preference. For instance, the value "fr-CA fr en" represents a preference for French as spoken in Canada, then French (without a region designation), followed by English (without a region designation). An error SHOULD NOT result if some or all of the requested locales are not supported by the OpenID Provider.
+
+            '
+          type: string
     jose.spec.JWK.EC:
       description: Elliptic Curve Public Key in JSON Web Key format as defined by RFC7517 and RFC7518.
       allOf:
@@ -1735,366 +1926,6 @@ components:
             - X25519
             - X448
             - secp256k1
-    openid.implementation.Scopes.Object:
-      description: The scope.
-      type: string
-      oneOf:
-      - $ref: '#/components/schemas/openid.spec.Scopes'
-      - type: string
-        enum:
-        - groups
-    openid.request.consent.body:
-      description: The consent decision submitted by the user during the consent workflow.
-      type: object
-      properties:
-        flow_id:
-          description: 'The identifier of the consent flow session. Required unless the device_authorization subflow is being used, in which case the user_code is used instead.
-
-            '
-          type: string
-          format: uuid
-          pattern: ^[0-9a-fA-F]{8}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{12}$
-          examples:
-          - 713ef767-81bc-4a27-9b83-5fe2e101b2b4
-        client_id:
-          description: The identifier of the client the user is providing consent for.
-          type: string
-          examples:
-          - app
-        consent:
-          description: If the user granted consent for the request.
-          type: boolean
-          examples:
-          - true
-        pre_configure:
-          description: If the user elected to pre-configure this consent for future requests.
-          type: boolean
-          examples:
-          - false
-        claims:
-          description: The list of requested optional claims the user granted.
-          type: array
-          items:
-            type: string
-        subflow:
-          description: The name of the subflow if applicable.
-          type: string
-          examples:
-          - device_authorization
-          enum:
-          - device_authorization
-        user_code:
-          description: The user code from the Device Authorization Flow if applicable.
-          type: string
-          examples:
-          - XGQWWFMM
-    openid.spec.AccessRequest.DeviceCodeFlow:
-      allOf:
-      - $ref: '#/components/schemas/openid.spec.AccessRequest.ClientAuth'
-      - type: object
-        required:
-        - grant_type
-        - device_code
-        properties:
-          grant_type:
-            description: Value MUST be set to "urn:ietf:params:oauth:grant-type:device_code".
-            enum:
-            - urn:ietf:params:oauth:grant-type:device_code
-            type: string
-          device_code:
-            description: The Device Authorization Code.
-            examples:
-            - authelia_dc_oqLXXUv2pvCDgBJLBav63ZduL4CxKP7JpYZ6ldHp39Y.u3XxwV3O-uYOA5TSv44iQyB27YjUGawJLlwOMuC770E
-            type: string
-    openid.spec.AuthorizeRequest:
-      type: object
-      required:
-      - scope
-      - response_type
-      - client_id
-      - redirect_uri
-      properties:
-        scope:
-          description: The requested scope.
-          examples:
-          - openid profile groups
-          type: string
-        response_type:
-          $ref: '#/components/schemas/openid.spec.ResponseType'
-        client_id:
-          description: The OAuth 2.0 client identifier.
-          examples:
-          - app
-          type: string
-        redirect_uri:
-          description: 'Redirection URI to which the response will be sent. This URI MUST exactly match one of the Redirection URI values for the Client pre-registered at the OpenID Provider, with the matching performed as described in Section 6.2.1 of [RFC3986] (Simple String Comparison). When using this flow, the Redirection URI SHOULD use the https scheme; however, it MAY use the http scheme, provided that the Client Type is confidential, as defined in Section 2.1 of OAuth 2.0, and provided the OP allows the use of http Redirection URIs in this case. The Redirection URI MAY use an alternate scheme, such as one that is intended to identify a callback into a native application.
-
-            '
-          examples:
-          - https://app.example.com
-          type: string
-          format: uri
-        state:
-          description: 'Opaque value used to maintain state between the request and the callback. Typically, Cross-Site Request Forgery (CSRF, XSRF) mitigation is done by cryptographically binding the value of this parameter with a browser cookie.
-
-            '
-          examples:
-          - oV84Vsy7wyCgRk2h4aZBmXZq4q3g2f
-          type: string
-        response_mode:
-          $ref: '#/components/schemas/openid.spec.ResponseMode'
-        nonce:
-          description: 'String value used to associate a Client session with an ID Token, and to mitigate replay attacks. The value is passed through unmodified from the Authentication Request to the ID Token. Sufficient entropy MUST be present in the nonce values used to prevent attackers from guessing values. For implementation notes, see Section 15.5.2.
-
-            '
-          examples:
-          - TRMLqchoKGQNcooXvBvUy9PtmLdJGf
-          type: string
-        display:
-          $ref: '#/components/schemas/openid.spec.DisplayType'
-        prompt:
-          $ref: '#/components/schemas/openid.spec.Prompt'
-        max_age:
-          description: 'Maximum Authentication Age. Specifies the allowable elapsed time in seconds since the last time the End-User was actively authenticated by the OP. If the elapsed time is greater than this value, the OP MUST attempt to actively re-authenticate the End-User. (The max_age request parameter corresponds to the OpenID 2.0 PAPE [OpenID.PAPE] max_auth_age request parameter.) When max_age is used, the ID Token returned MUST include an auth_time Claim Value.
-
-            '
-          type: integer
-        ui_locales:
-          description: 'Not Supported: End-User''s preferred languages and scripts for the user interface, represented as a space-separated list of BCP47 [RFC5646] language tag values, ordered by preference. For instance, the value "fr-CA fr en" represents a preference for French as spoken in Canada, then French (without a region designation), followed by English (without a region designation). An error SHOULD NOT result if some or all of the requested locales are not supported by the OpenID Provider.
-
-            '
-          type: string
-        claims_locales:
-          description: 'Not Supported: End-User''s preferred languages and scripts for Claims being returned, represented as a space-separated list of BCP47 [RFC5646] language tag values, ordered by preference. An error SHOULD NOT result if some or all of the requested locales are not supported by the OpenID Provider.
-
-            '
-          type: string
-        id_token_hint:
-          description: 'Not Supported: ID Token previously issued by the Authorization Server being passed as a hint about the End-User''s current or past authenticated session with the Client. If the End-User identified by the ID Token is logged in or is logged in by the request, then the Authorization Server returns a positive response; otherwise, it SHOULD return an error, such as login_required. When possible, an id_token_hint SHOULD be present when prompt=none is used and an invalid_request error MAY be returned if it is not; however, the server SHOULD respond successfully when possible, even if it is not present. The Authorization Server need not be listed as an audience of the ID Token when it is used as an id_token_hint value. If the ID Token received by the RP from the OP is encrypted, to use it as an id_token_hint, the Client MUST decrypt the signed ID Token contained within the encrypted ID Token. The Client MAY re-encrypt the signed ID token to the Authentication Server using a key that enables the server to decrypt the ID Token, and use the re-encrypted ID token as the id_token_hint value.
-
-            '
-          type: string
-        login_hint:
-          description: 'Not Supported: Hint to the Authorization Server about the login identifier the End-User might use to log in (if necessary). This hint can be used by an RP if it first asks the End-User for their e-mail address (or other identifier) and then wants to pass that value as a hint to the discovered authorization service. It is RECOMMENDED that the hint value match the value used for discovery. This value MAY also be a phone number in the format specified for the phone_number Claim. The use of this parameter is left to the OP''s discretion.
-
-            '
-          type: string
-        acr_values:
-          description: 'Not Supported: Requested Authentication Context Class Reference values. Space-separated string that specifies the acr values that the Authorization Server is being requested to use for processing this Authentication Request, with the values appearing in order of preference. The Authentication Context Class satisfied by the authentication performed is returned as the acr Claim Value, as specified in Section 2. The acr Claim is requested as a Voluntary Claim by this parameter.
-
-            '
-          type: string
-        claims:
-          description: 'The claims parameter value, as specified in Section 5.5.
-
-            '
-          type: string
-        registration:
-          description: 'Not Supported: This parameter is used by the Client to provide information about itself to a Self-Issued OP that would normally be provided to an OP during Dynamic Client Registration, as specified in Section 7.2.1.
-
-            '
-          type: string
-        request:
-          description: 'Request Object value, as specified in Section 6.1. The Request Object MAY be encrypted to the Self-Issued OP by the Client. In this case, the sub (subject) of a previously issued ID Token for this Client MUST be sent as the kid (Key ID) of the JWE. Encrypting content to Self-Issued OPs is currently only supported when the OP''s JWK key type is RSA and the encryption algorithm used is RSA1_5.
-
-            '
-          type: string
-    openid.spec.ResponseType:
-      description: The OAuth 2.0 / OpenID Connect 1.0 Response Type.
-      enum:
-      - code
-      - id_token
-      - token
-      - code token
-      - code id_token
-      - id_token token
-      - code id_token token
-      - none
-      examples:
-      - code
-      type: string
-    openid.spec.AccessResponse:
-      type: object
-      required:
-      - access_token
-      - token_type
-      - expires_in
-      properties:
-        access_token:
-          description: The access token issued by the authorization server.
-          examples:
-          - authelia_at_6-8jeA8y9Y744pAHCRwGtJrsD9ABOVWyzL3uWB1ntbI.foaDPNLT0T7VVQ9on5F1rOfHs0Lbc09FGO2xF_pzmNY
-          type: string
-        id_token:
-          description: The id token issued by the authorization server.
-          examples:
-          - eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c
-          type: string
-        refresh_token:
-          description: 'The refresh token, which can be used to obtain new access tokens using the same authorization grant as described in Section 6.
-
-            '
-          examples:
-          - authelia_rt_MgALbONdFPIwo3o2QukHry7W451xrO6jza31IS8Vh4M.IArqzOzLwY6HWqom1vmp9DUWBuOQel_fGnRw5MyT-jo
-          type: string
-        token_type:
-          description: 'The access token type provides the client with the information required to successfully utilize the access token to make a protected resource request (along with type-specific attributes). The client MUST NOT use an access token if it does not understand the token type.
-
-            '
-          enum:
-          - bearer
-          examples:
-          - bearer
-          type: string
-        expires_in:
-          description: 'The lifetime in seconds of the access token. For example, the value "3600" denotes that the access token will expire in one hour from the time the response was generated. If omitted, the authorization server SHOULD provide the expiration time via other means or document the default value.
-
-            '
-          examples:
-          - 3600
-          type: integer
-        state:
-          description: Exactly the state value passed in the authorization request if present.
-          examples:
-          - 5dVZhNfri5XZS6wadskuzUk4MHYCvEcUgidjMeBjsktAhY7EKB
-          type: string
-        scope:
-          description: 'The scope of the access token as described by Section 3.3 if it differs from the requested scope.
-
-            '
-          examples:
-          - openid profile groups
-          type: string
-    openid.spec.AccessServerTokenAssertionRequest:
-      required:
-      - token
-      type: object
-      properties:
-        token:
-          description: 'The string value of the token. For access tokens, this is the ''access_token" value returned from the token endpoint defined in OAuth 2.0 [RFC6749], Section 5.1. For refresh tokens, this is the "refresh_token" value returned from the token endpoint as defined in OAuth 2.0 [RFC6749], Section 5.1. Other token types are outside the scope of this specification.
-
-            '
-          examples:
-          - authelia_at_6-8jeA8y9Y744pAHCRwGtJrsD9ABOVWyzL3uWB1ntbI.foaDPNLT0T7VVQ9on5F1rOfHs0Lbc09FGO2xF_pzmNY
-          type: string
-        token_type_hint:
-          description: 'A hint about the type of the token submitted for introspection. The protected resource MAY pass this parameter to help the authorization server optimize the token lookup. If the server is unable to locate the token using the given hint, it MUST extend its search across all of its supported token types. An authorization server MAY ignore this parameter, particularly if it is able to detect the token type automatically. Values for this field are defined in the "OAuth Token Type Hints" registry defined in OAuth Token Revocation [RFC7009].
-
-            '
-          enum:
-          - access_token
-          - refresh_token
-          examples:
-          - access_token
-          type: string
-    openid.spec.ClaimType:
-      description: The representation of claims.
-      enum:
-      - normal
-      - aggregated
-      - distributed
-      examples:
-      - normal
-      type: string
-    openid.spec.AccessRequest.ClientAuth.Secret:
-      required:
-      - client_id
-      - client_secret
-      type: object
-      properties:
-        client_id:
-          description: 'REQUIRED if the client is not authenticating with the authorization server as described in Section 3.2.1. of [RFC6749]. The client identifier as described in Section 2.2 of [RFC6749].
-
-            '
-          examples:
-          - my_client
-          type: string
-        client_secret:
-          description: 'REQUIRED. The client secret. The client MAY omit the parameter if the client secret is an empty string.
-
-            '
-          format: password
-          type: string
-    openid.spec.AccessRequest.ClientCredentialsFlow:
-      allOf:
-      - $ref: '#/components/schemas/openid.spec.AccessRequest.ClientAuth'
-      - type: object
-        required:
-        - grant_type
-        properties:
-          grant_type:
-            description: Value MUST be set to "client_credentials".
-            enum:
-            - client_credentials
-            type: string
-          scope:
-            description: 'The scope of the access request as described by Section 3.3. The requested scope MUST NOT include any scope not originally granted by the resource owner, and if omitted is treated as equal to the scope originally granted by the resource owner.
-
-              '
-            examples:
-            - openid profile groups
-            type: string
-    jose.spec.JWK.base:
-      type: object
-      properties:
-        use:
-          description: 'The "use" (public key use) parameter identifies the intended use of the public key. The "use" parameter is employed to indicate whether a public key is used for encrypting data or verifying the signature on data.
-
-            '
-          enum:
-          - sig
-          - enc
-          examples:
-          - sig
-          type: string
-        key_ops:
-          description: 'The "key_ops" (key operations) parameter identifies the operation(s) for which the key is intended to be used. The "key_ops" parameter is intended for use cases in which public, private, or symmetric keys may be present.
-
-            '
-          examples:
-          - - sign
-          type: array
-          items:
-            enum:
-            - sign
-            - verify
-            - encrypt
-            - decrypt
-            - wrapKey
-            - unwrapKey
-            - deriveKey
-            - deriveBits
-            type: string
-        kid:
-          description: 'The "kid" (key ID) parameter is used to match a specific key. This is used, for instance, to choose among a set of keys within a JWK Set during key rollover. The structure of the "kid" value is unspecified. When "kid" values are used within a JWK Set, different keys within the JWK Set SHOULD use distinct "kid" values. (One example in which different keys might use the same "kid" value is if they have different "kty" (key type) values but are considered to be equivalent alternatives by the application using them.) The "kid" value is a case-sensitive string. Use of this member is OPTIONAL. When used with JWS or JWE, the "kid" value is used to match a JWS or JWE "kid" Header Parameter value.
-
-            '
-          type: string
-        x5u:
-          description: 'The "x5u" (X.509 URL) parameter is a URI [RFC3986] that refers to a resource for an X.509 public key certificate or certificate chain [RFC5280]. The identified resource MUST provide a representation of the certificate or certificate chain that conforms to RFC 5280 [RFC5280] in PEM-encoded form, with each certificate delimited as specified in Section 6.1 of RFC 4945 [RFC4945]. The key in the first certificate MUST match the public key represented by other members of the JWK. The protocol used to acquire the resource MUST provide integrity protection; an HTTP GET request to retrieve the certificate MUST use TLS [RFC2818] [RFC5246]; the identity of the server MUST be validated, as per Section 6 of RFC 6125 [RFC6125]. Use of this member is OPTIONAL.
-
-            '
-          type: string
-        x5c:
-          description: 'The "x5c" (X.509 certificate chain) parameter contains a chain of one or more PKIX certificates [RFC5280]. The certificate chain is represented as a JSON array of certificate value strings. Each string in the array is a base64-encoded (Section 4 of [RFC4648] -- not base64url-encoded) DER [ITU.X690.1994] PKIX certificate value. The PKIX certificate containing the key value MUST be the first certificate. This MAY be followed by additional certificates, with each subsequent certificate being the one used to certify the previous one. The key in the first certificate MUST match the public key represented by other members of the JWK. Use of this member is OPTIONAL.
-
-            '
-          type: array
-          items:
-            contentEncoding: base64
-            type: string
-        x5t:
-          description: 'The "x5t" (X.509 certificate SHA-1 thumbprint) parameter is a base64url-encoded SHA-1 thumbprint (a.k.a. digest) of the DER encoding of an X.509 certificate [RFC5280]. Note that certificate thumbprints are also sometimes known as certificate fingerprints. The key in the certificate MUST match the public key represented by other members of the JWK. Use of this member is OPTIONAL.
-
-            '
-          contentEncoding: base64url
-          type: string
-        x5t#S256:
-          description: 'The "x5t#S256" (X.509 certificate SHA-256 thumbprint) parameter is a base64url-encoded SHA-256 thumbprint (a.k.a. digest) of the DER encoding of an X.509 certificate [RFC5280]. Note that certificate thumbprints are also sometimes known as certificate fingerprints. The key in the certificate MUST match the public key represented by other members of the JWK. Use of this member is OPTIONAL.
-
-            '
-          contentEncoding: base64url
-          type: string
     openid.spec.ErrorResponseGeneric:
       description: 'An OpenID Connect 1.0 and OAuth 2.0 error response Note this is a generic error response and may describe a possible response for a given endpoint that is not entirely accurate or possible. This is only meant to represent all of the potential response types. The enum may also not be exhaustive as the relevant specifications are incredibly vast.
 
@@ -2149,188 +1980,56 @@ components:
 
             '
           type: string
-    openid.request.consent:
+    openid.request.consent.body:
+      description: The consent decision submitted by the user during the consent workflow.
       type: object
       properties:
-        status:
+        flow_id:
+          description: 'The identifier of the consent flow session. Required unless the device_authorization subflow is being used, in which case the user_code is used instead.
+
+            '
           type: string
+          format: uuid
+          pattern: ^[0-9a-fA-F]{8}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{12}$
           examples:
-          - OK
-        data:
-          type: object
-          properties:
-            client_id:
-              type: string
-              description: The identifier of the client for the user to provide consent for.
-              examples:
-              - app
-            client_description:
-              description: The descriptive name of the client for the user to provide consent for.
-              type: string
-              examples:
-              - App Platform
-            scopes:
-              description: The list of the requested scopes for the user to provide consent for.
-              type: array
-              items:
-                type: string
-                enum:
-                - openid
-                - offline_access
-                - groups
-                - email
-                - profile
-            audience:
-              description: The list of the requested audiences for the user to provide consent for.
-              type: array
-              items:
-                type: string
-            pre_configuration:
-              description: Indicates if this client supports pre-configuration.
-              type: boolean
-              examples:
-              - true
-            claims:
-              description: List of requested optional claims.
-              type: array
-              items:
-                type: string
-            essential_claims:
-              description: List of requested essential claims.
-              type: array
-              items:
-                type: string
-            require_login:
-              description: If the user must perform a login event before proceeding to provide consent.
-              type: boolean
-              examples:
-              - true
-    openid.spec.IntrospectionResponse:
-      type: object
-      required:
-      - active
-      properties:
-        active:
-          type: boolean
-          description: 'REQUIRED. Boolean indicator of whether or not the presented token is currently active. The specifics of a token''s "active" state will vary depending on the implementation of the authorization server and the information it keeps about its tokens, but a "true" value return for the "active" property will generally indicate that a given token has been issued by this authorization server, has not been revoked by the resource owner, and is within its given time window of validity (e.g., after its issuance time and before its expiration time).  See Section 4 for information on implementation of such checks.
-
-            '
-        scope:
-          type: string
-          description: 'OPTIONAL. A JSON string containing a space-separated list of scopes associated with this token, in the format described in Section 3.3 of OAuth 2.0 [RFC6749].
-
-            '
+          - 713ef767-81bc-4a27-9b83-5fe2e101b2b4
         client_id:
+          description: The identifier of the client the user is providing consent for.
           type: string
-          description: OPTIONAL. Client identifier for the OAuth 2.0 client that requested this token.
-        username:
+          examples:
+          - app
+        consent:
+          description: If the user granted consent for the request.
+          type: boolean
+          examples:
+          - true
+        pre_configure:
+          description: If the user elected to pre-configure this consent for future requests.
+          type: boolean
+          examples:
+          - false
+        claims:
+          description: The list of requested optional claims the user granted.
+          type: array
+          items:
+            type: string
+        subflow:
+          description: The name of the subflow if applicable.
           type: string
-          description: OPTIONAL. Human-readable identifier for the resource owner who authorized this token.
-        token_type:
-          type: string
+          examples:
+          - device_authorization
           enum:
-          - bearer
-          examples:
-          - bearer
-          description: OPTIONAL. Type of the token as defined in Section 5.1 of OAuth 2.0 [RFC6749].
-        exp:
-          type: integer
-          description: 'OPTIONAL. Integer timestamp, measured in the number of seconds since January 1 1970 UTC, indicating when this token will expire, as defined in JWT [RFC7519].
-
-            '
-        iat:
-          type: integer
-          description: 'OPTIONAL. Integer timestamp, measured in the number of seconds since January 1 1970 UTC, indicating when this token was originally issued, as defined in JWT [RFC7519].
-
-            '
-        nbf:
-          type: integer
-          description: 'OPTIONAL. Integer timestamp, measured in the number of seconds since January 1 1970 UTC, indicating when this token is not to be used before, as defined in JWT [RFC7519].
-
-            '
-        sub:
-          type: string
-          description: 'OPTIONAL. Subject of the token, as defined in JWT [RFC7519]. Usually a machine-readable identifier of the resource owner who authorized this token.
-
-            '
-        aud:
-          oneOf:
-          - type: array
-            items:
-              type: string
-              description: 'OPTIONAL. Service-specific string identifier or list of string identifiers representing the intended audience for this token, as defined in JWT [RFC7519].
-
-                '
-          - type: string
-            description: 'OPTIONAL. Service-specific string identifier or list of string identifiers representing the intended audience for this token, as defined in JWT [RFC7519].
-
-              '
-        iss:
-          type: string
-          description: OPTIONAL. String representing the issuer of this token, as defined in JWT [RFC7519].
-        jti:
-          type: string
-          description: OPTIONAL. String identifier for the token, as defined in JWT [RFC7519].
-    openid.response.consent:
-      type: object
-      properties:
-        status:
+          - device_authorization
+        user_code:
+          description: The user code from the Device Authorization Flow if applicable.
           type: string
           examples:
-          - OK
-        data:
-          type: object
-          properties:
-            flow_id:
-              description: The identifier of the consent flow session.
-              type: string
-              format: uuid
-              pattern: ^[0-9a-fA-F]{8}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{12}$
-              examples:
-              - 713ef767-81bc-4a27-9b83-5fe2e101b2b4
-            redirect_uri:
-              description: The URI the user should be redirected to.
-              type: string
-              format: uri
-    openid.spec.AccessRequest.AuthorizationCodeFlow:
-      allOf:
-      - $ref: '#/components/schemas/openid.spec.AccessRequest.ClientAuth'
-      - type: object
-        required:
-        - code
-        - grant_type
-        properties:
-          grant_type:
-            description: Value MUST be set to "code".
-            enum:
-            - authorization_code
-            type: string
-          code:
-            description: The Authorization Code.
-            examples:
-            - authelia_ac_VdQ5Ts3BCDtN4X-aCUW6esVl_PmMklup81bqyZ8PQJc.mQ7qgtwQu6_JdXR_OPJX3YDGOATBK6Bt6BgnsndFJQs
-            type: string
-          code_verifier:
-            description: The Authorization Code Verifier (PKCE).
-            examples:
-            - 88a25754f7c0b3b3b88cf6cd4e29e8356b160524fdc1cb329a94471825628fd3
-            type: string
-          redirect_uri:
-            description: The original Redirect URI used in the Authorization Request.
-            examples:
-            - https://app.example.com/oidc/callback
-            type: string
-    openid.spec.ClientAuthMethod:
-      description: The OAuth 2.0 / OpenID Connect 1.0 Client Authentication Method.
+          - XGQWWFMM
+    jose.spec.None:
+      description: The JSON Web Signature Algorithm
+      type: string
       enum:
       - none
-      - client_secret_post
-      - client_secret_basic
-      - client_secret_jwt
-      - private_key_jwt
-      - tls_client_auth
-      - self_signed_tls_client_auth
-      type: string
     jose.spec.JWK.Symmetric:
       description: Symmetric Key in JSON Web Key format as defined by RFC7517 and RFC7518.
       allOf:
@@ -2354,130 +2053,38 @@ components:
               '
             type: string
             contentEncoding: base64url
-    openid.spec.AccessRequest.ClientAuth:
-      description: 'The client authentication parameters included in the request body. Clients using the client_secret_basic method authenticate via the Authorization header rather than the request body.
+    jose.spec.JWKs:
+      type: object
+      description: The JSON Web Key Sets Document as defined by RFC7517.
+      properties:
+        keys:
+          description: List of JSON Wek Key's in the JSON Web Key format as defined by RFC7517.
+          type: array
+          items:
+            $ref: '#/components/schemas/jose.spec.JWK'
+    openid.spec.AccessRequest.ClientAuth.None:
+      description: 'Client authentication for public clients registered with the ''none'' client authentication method.
 
         '
-      anyOf:
-      - $ref: '#/components/schemas/openid.spec.AccessRequest.ClientAuth.None'
-      - $ref: '#/components/schemas/openid.spec.AccessRequest.ClientAuth.Secret'
-      - $ref: '#/components/schemas/openid.spec.AccessRequest.ClientAuth.JWT'
-    jose.spec.JWK.RSA.Private:
-      description: RSA Private Key in JSON Web Key format as defined by RFC7517 and RFC7518.
-      allOf:
-      - $ref: '#/components/schemas/jose.spec.JWK.base'
-      - $ref: '#/components/schemas/jose.spec.JWK.RSA'
-      - type: object
-        required:
-        - d
-        properties:
-          d:
-            description: 'RSA Private Key: The "d" (private exponent) parameter contains the private exponent value for the RSA private key. It is represented as a Base64urlUInt-encoded value.
-
-              '
-            type: string
-            contentEncoding: base64url
-          p:
-            description: 'RSA Private Key: The "p" (first prime factor) parameter contains the first prime factor. It is represented as a Base64urlUInt-encoded value.
-
-              '
-            type: string
-            contentEncoding: base64url
-          q:
-            description: 'RSA Private Key: The "q" (second prime factor) parameter contains the second prime factor. It is represented as a Base64urlUInt-encoded value.
-
-              '
-            type: string
-            contentEncoding: base64url
-          dp:
-            description: 'RSA Private Key: The "dp" (first factor CRT exponent) parameter contains the Chinese Remainder Theorem (CRT) exponent of the first factor. It is represented as a Base64urlUInt-encoded value.
-
-              '
-            type: string
-          dq:
-            description: 'RSA Private Key: The "dq" (second factor CRT exponent) parameter contains the CRT exponent of the second factor. It is represented as a Base64urlUInt-encoded value.
-
-              '
-            type: string
-          qi:
-            description: 'RSA Private Key: The "qi" (first CRT coefficient) parameter contains the CRT coefficient of the second factor. It is represented as a Base64urlUInt-encoded value.
-
-              '
-            type: string
-            contentEncoding: base64url
-          oth:
-            description: 'The "oth" (other primes info) parameter contains an array of information about any third and subsequent primes, should they exist.
-
-              '
-            type: array
-            items:
-              type: object
-              required:
-              - r
-              - d
-              - t
-              properties:
-                r:
-                  description: 'The "r" (prime factor) parameter within an "oth" array member represents the value of a subsequent prime factor. It is represented as a Base64urlUInt-encoded value.
-
-                    '
-                  type: string
-                  contentEncoding: base64url
-                d:
-                  description: 'The "d" (factor CRT exponent) parameter within an "oth" array member represents the CRT exponent of the corresponding prime factor. It is represented as a Base64urlUInt-encoded value.
-
-                    '
-                  type: string
-                  contentEncoding: base64url
-                t:
-                  description: 'The "t" (factor CRT coefficient) parameter within an "oth" array member represents the CRT coefficient of the corresponding prime factor. It is represented as a Base64urlUInt-encoded value.
-
-                    '
-                  type: string
-                  contentEncoding: base64url
-    openid.spec.AccessRequest.ClientAuth.JWT:
       type: object
       required:
-      - client_assertion
-      - client_assertion_type
+      - client_id
       properties:
         client_id:
-          description: 'REQUIRED if the client is not authenticating with the authorization server as described in Section 3.2.1. of [RFC6749]. The client identifier as described in Section 2.2 of [RFC6749].
-
-            '
+          description: The client identifier as described in Section 2.2 of [RFC6749].
           examples:
           - my_client
           type: string
-        client_assertion:
-          description: 'A JWT signed with HS256 using the client secret value or RS256 using a registered public key. Theoretically a properly formed JWT signed using HS256 with the client secret as the HMAC key should work but this has not been tested.
-
-            '
-          format: password
-          type: string
-        client_assertion_type:
-          description: 'The value of the client_assertion_type parameter MUST be "urn:ietf:params:oauth:client-assertion-type:jwt-bearer"
-
-            '
-          type: string
-          enum:
-          - urn:ietf:params:oauth:client-assertion-type:jwt-bearer
-          examples:
-          - urn:ietf:params:oauth:client-assertion-type:jwt-bearer
-    jose.spec.JWE.enc:
-      description: The JSON Web Encryption Algorithm (Claims)
+    openid.spec.GrantType:
+      description: The OAuth 2.0 / OpenID Connect 1.0 Grant Type.
       enum:
-      - A128CBC-HS256
-      - A192CBC-HS384
-      - A256CBC-HS512
-      - A128GCM
-      - A192GCM
-      - A256GCM
-      type: string
-    jose.spec.JWS.None:
-      description: The JSON Web Signature Algorithm
-      oneOf:
-      - $ref: '#/components/schemas/jose.spec.None'
-      - $ref: '#/components/schemas/jose.spec.JWS'
+      - authorization_code
+      - refresh_token
+      - implicit
+      - client_credentials
+      - urn:ietf:params:oauth:grant-type:device_code
+      examples:
+      - authorization_code
       type: string
     openid.implementation.Claims.Object:
       description: OpenID Connect 1.0 User Claims.
@@ -2578,65 +2185,285 @@ components:
           type: integer
         auth_time:
           type: integer
-    jose.spec.JWE.alg:
-      description: The JSON Web Encryption Algorithm (CEK)
-      enum:
-      - RSA1_5
-      - RSA-OAEP
-      - RSA-OAEP-256
-      - A128KW
-      - A192KW
-      - A256KW
-      - dir
-      - ECDH-ES
-      - ECDH-ES+A128KW
-      - ECDH-ES+A192KW
-      - ECDH-ES+A256KW
-      - A128GCMKW
-      - A192GCMKW
-      - A256GCMKW
-      - PBES2-HS256+A128KW
-      - PBES2-HS384+A192KW
-      - PBES2-HS512+A256KW
+    jose.spec.JWK.RSA.Private:
+      description: RSA Private Key in JSON Web Key format as defined by RFC7517 and RFC7518.
+      allOf:
+      - $ref: '#/components/schemas/jose.spec.JWK.base'
+      - $ref: '#/components/schemas/jose.spec.JWK.RSA'
+      - type: object
+        required:
+        - d
+        properties:
+          d:
+            description: 'RSA Private Key: The "d" (private exponent) parameter contains the private exponent value for the RSA private key. It is represented as a Base64urlUInt-encoded value.
+
+              '
+            type: string
+            contentEncoding: base64url
+          p:
+            description: 'RSA Private Key: The "p" (first prime factor) parameter contains the first prime factor. It is represented as a Base64urlUInt-encoded value.
+
+              '
+            type: string
+            contentEncoding: base64url
+          q:
+            description: 'RSA Private Key: The "q" (second prime factor) parameter contains the second prime factor. It is represented as a Base64urlUInt-encoded value.
+
+              '
+            type: string
+            contentEncoding: base64url
+          dp:
+            description: 'RSA Private Key: The "dp" (first factor CRT exponent) parameter contains the Chinese Remainder Theorem (CRT) exponent of the first factor. It is represented as a Base64urlUInt-encoded value.
+
+              '
+            type: string
+          dq:
+            description: 'RSA Private Key: The "dq" (second factor CRT exponent) parameter contains the CRT exponent of the second factor. It is represented as a Base64urlUInt-encoded value.
+
+              '
+            type: string
+          qi:
+            description: 'RSA Private Key: The "qi" (first CRT coefficient) parameter contains the CRT coefficient of the second factor. It is represented as a Base64urlUInt-encoded value.
+
+              '
+            type: string
+            contentEncoding: base64url
+          oth:
+            description: 'The "oth" (other primes info) parameter contains an array of information about any third and subsequent primes, should they exist.
+
+              '
+            type: array
+            items:
+              type: object
+              required:
+              - r
+              - d
+              - t
+              properties:
+                r:
+                  description: 'The "r" (prime factor) parameter within an "oth" array member represents the value of a subsequent prime factor. It is represented as a Base64urlUInt-encoded value.
+
+                    '
+                  type: string
+                  contentEncoding: base64url
+                d:
+                  description: 'The "d" (factor CRT exponent) parameter within an "oth" array member represents the CRT exponent of the corresponding prime factor. It is represented as a Base64urlUInt-encoded value.
+
+                    '
+                  type: string
+                  contentEncoding: base64url
+                t:
+                  description: 'The "t" (factor CRT coefficient) parameter within an "oth" array member represents the CRT coefficient of the corresponding prime factor. It is represented as a Base64urlUInt-encoded value.
+
+                    '
+                  type: string
+                  contentEncoding: base64url
+    openid.spec.Scopes:
       type: string
-    openid.spec.SubjectIdentifier:
-      description: 'A Subject Identifier is a locally unique and never reassigned identifier within the Issuer for the End-User, which is intended to be consumed by the Client.
+      enum:
+      - openid
+      - offline_access
+      - profile
+      - email
+      - address
+      - phone
+    openid.spec.AccessRequest.ClientAuth.JWT:
+      type: object
+      required:
+      - client_assertion
+      - client_assertion_type
+      properties:
+        client_id:
+          description: 'REQUIRED if the client is not authenticating with the authorization server as described in Section 3.2.1. of [RFC6749]. The client identifier as described in Section 2.2 of [RFC6749].
+
+            '
+          examples:
+          - my_client
+          type: string
+        client_assertion:
+          description: 'A JWT signed with HS256 using the client secret value or RS256 using a registered public key. Theoretically a properly formed JWT signed using HS256 with the client secret as the HMAC key should work but this has not been tested.
+
+            '
+          format: password
+          type: string
+        client_assertion_type:
+          description: 'The value of the client_assertion_type parameter MUST be "urn:ietf:params:oauth:client-assertion-type:jwt-bearer"
+
+            '
+          type: string
+          enum:
+          - urn:ietf:params:oauth:client-assertion-type:jwt-bearer
+          examples:
+          - urn:ietf:params:oauth:client-assertion-type:jwt-bearer
+    jose.spec.JWK.base:
+      type: object
+      properties:
+        use:
+          description: 'The "use" (public key use) parameter identifies the intended use of the public key. The "use" parameter is employed to indicate whether a public key is used for encrypting data or verifying the signature on data.
+
+            '
+          enum:
+          - sig
+          - enc
+          examples:
+          - sig
+          type: string
+        key_ops:
+          description: 'The "key_ops" (key operations) parameter identifies the operation(s) for which the key is intended to be used. The "key_ops" parameter is intended for use cases in which public, private, or symmetric keys may be present.
+
+            '
+          examples:
+          - - sign
+          type: array
+          items:
+            enum:
+            - sign
+            - verify
+            - encrypt
+            - decrypt
+            - wrapKey
+            - unwrapKey
+            - deriveKey
+            - deriveBits
+            type: string
+        kid:
+          description: 'The "kid" (key ID) parameter is used to match a specific key. This is used, for instance, to choose among a set of keys within a JWK Set during key rollover. The structure of the "kid" value is unspecified. When "kid" values are used within a JWK Set, different keys within the JWK Set SHOULD use distinct "kid" values. (One example in which different keys might use the same "kid" value is if they have different "kty" (key type) values but are considered to be equivalent alternatives by the application using them.) The "kid" value is a case-sensitive string. Use of this member is OPTIONAL. When used with JWS or JWE, the "kid" value is used to match a JWS or JWE "kid" Header Parameter value.
+
+            '
+          type: string
+        x5u:
+          description: 'The "x5u" (X.509 URL) parameter is a URI [RFC3986] that refers to a resource for an X.509 public key certificate or certificate chain [RFC5280]. The identified resource MUST provide a representation of the certificate or certificate chain that conforms to RFC 5280 [RFC5280] in PEM-encoded form, with each certificate delimited as specified in Section 6.1 of RFC 4945 [RFC4945]. The key in the first certificate MUST match the public key represented by other members of the JWK. The protocol used to acquire the resource MUST provide integrity protection; an HTTP GET request to retrieve the certificate MUST use TLS [RFC2818] [RFC5246]; the identity of the server MUST be validated, as per Section 6 of RFC 6125 [RFC6125]. Use of this member is OPTIONAL.
+
+            '
+          type: string
+        x5c:
+          description: 'The "x5c" (X.509 certificate chain) parameter contains a chain of one or more PKIX certificates [RFC5280]. The certificate chain is represented as a JSON array of certificate value strings. Each string in the array is a base64-encoded (Section 4 of [RFC4648] -- not base64url-encoded) DER [ITU.X690.1994] PKIX certificate value. The PKIX certificate containing the key value MUST be the first certificate. This MAY be followed by additional certificates, with each subsequent certificate being the one used to certify the previous one. The key in the first certificate MUST match the public key represented by other members of the JWK. Use of this member is OPTIONAL.
+
+            '
+          type: array
+          items:
+            contentEncoding: base64
+            type: string
+        x5t:
+          description: 'The "x5t" (X.509 certificate SHA-1 thumbprint) parameter is a base64url-encoded SHA-1 thumbprint (a.k.a. digest) of the DER encoding of an X.509 certificate [RFC5280]. Note that certificate thumbprints are also sometimes known as certificate fingerprints. The key in the certificate MUST match the public key represented by other members of the JWK. Use of this member is OPTIONAL.
+
+            '
+          contentEncoding: base64url
+          type: string
+        x5t#S256:
+          description: 'The "x5t#S256" (X.509 certificate SHA-256 thumbprint) parameter is a base64url-encoded SHA-256 thumbprint (a.k.a. digest) of the DER encoding of an X.509 certificate [RFC5280]. Note that certificate thumbprints are also sometimes known as certificate fingerprints. The key in the certificate MUST match the public key represented by other members of the JWK. Use of this member is OPTIONAL.
+
+            '
+          contentEncoding: base64url
+          type: string
+    openid.spec.AccessRequest.ClientAuth:
+      description: 'The client authentication parameters included in the request body. Clients using the client_secret_basic method authenticate via the Authorization header rather than the request body.
+
+        '
+      anyOf:
+      - $ref: '#/components/schemas/openid.spec.AccessRequest.ClientAuth.None'
+      - $ref: '#/components/schemas/openid.spec.AccessRequest.ClientAuth.Secret'
+      - $ref: '#/components/schemas/openid.spec.AccessRequest.ClientAuth.JWT'
+    openid.spec.AccessRequest.ClientCredentialsFlow:
+      allOf:
+      - $ref: '#/components/schemas/openid.spec.AccessRequest.ClientAuth'
+      - type: object
+        required:
+        - grant_type
+        properties:
+          grant_type:
+            description: Value MUST be set to "client_credentials".
+            enum:
+            - client_credentials
+            type: string
+          scope:
+            description: 'The scope of the access request as described by Section 3.3. The requested scope MUST NOT include any scope not originally granted by the resource owner, and if omitted is treated as equal to the scope originally granted by the resource owner.
+
+              '
+            examples:
+            - openid profile groups
+            type: string
+    openid.spec.IntrospectionResponse:
+      type: object
+      required:
+      - active
+      properties:
+        active:
+          type: boolean
+          description: 'REQUIRED. Boolean indicator of whether or not the presented token is currently active. The specifics of a token''s "active" state will vary depending on the implementation of the authorization server and the information it keeps about its tokens, but a "true" value return for the "active" property will generally indicate that a given token has been issued by this authorization server, has not been revoked by the resource owner, and is within its given time window of validity (e.g., after its issuance time and before its expiration time).  See Section 4 for information on implementation of such checks.
+
+            '
+        scope:
+          type: string
+          description: 'OPTIONAL. A JSON string containing a space-separated list of scopes associated with this token, in the format described in Section 3.3 of OAuth 2.0 [RFC6749].
+
+            '
+        client_id:
+          type: string
+          description: OPTIONAL. Client identifier for the OAuth 2.0 client that requested this token.
+        username:
+          type: string
+          description: OPTIONAL. Human-readable identifier for the resource owner who authorized this token.
+        token_type:
+          type: string
+          enum:
+          - bearer
+          examples:
+          - bearer
+          description: OPTIONAL. Type of the token as defined in Section 5.1 of OAuth 2.0 [RFC6749].
+        exp:
+          type: integer
+          description: 'OPTIONAL. Integer timestamp, measured in the number of seconds since January 1 1970 UTC, indicating when this token will expire, as defined in JWT [RFC7519].
+
+            '
+        iat:
+          type: integer
+          description: 'OPTIONAL. Integer timestamp, measured in the number of seconds since January 1 1970 UTC, indicating when this token was originally issued, as defined in JWT [RFC7519].
+
+            '
+        nbf:
+          type: integer
+          description: 'OPTIONAL. Integer timestamp, measured in the number of seconds since January 1 1970 UTC, indicating when this token is not to be used before, as defined in JWT [RFC7519].
+
+            '
+        sub:
+          type: string
+          description: 'OPTIONAL. Subject of the token, as defined in JWT [RFC7519]. Usually a machine-readable identifier of the resource owner who authorized this token.
+
+            '
+        aud:
+          oneOf:
+          - type: array
+            items:
+              type: string
+              description: 'OPTIONAL. Service-specific string identifier or list of string identifiers representing the intended audience for this token, as defined in JWT [RFC7519].
+
+                '
+          - type: string
+            description: 'OPTIONAL. Service-specific string identifier or list of string identifiers representing the intended audience for this token, as defined in JWT [RFC7519].
+
+              '
+        iss:
+          type: string
+          description: OPTIONAL. String representing the issuer of this token, as defined in JWT [RFC7519].
+        jti:
+          type: string
+          description: OPTIONAL. String identifier for the token, as defined in JWT [RFC7519].
+    openid.spec.ResponseMode:
+      description: 'Informs the Authorization Server of the mechanism to be used for returning parameters from the Authorization Endpoint. This use of this parameter is NOT RECOMMENDED when the Response Mode that would be requested is the default mode specified for the Response Type.
 
         '
       enum:
-      - public
-      - pairwise
+      - form_post
+      - query
+      - fragment
+      - jwt
+      - form_post.jwt
+      - query.jwt
+      - fragment.jwt
+      examples:
+      - query
       type: string
-    openid.spec.DeviceAuthorizeRequest.Parameters:
-      type: object
-      required:
-      - scope
-      properties:
-        scope:
-          description: The requested scope.
-          examples:
-          - openid profile groups
-          type: string
-        acr_values:
-          description: 'Not Supported: Requested Authentication Context Class Reference values. Space-separated string that specifies the acr values that the Authorization Server is being requested to use for processing this Authentication Request, with the values appearing in order of preference. The Authentication Context Class satisfied by the authentication performed is returned as the acr Claim Value, as specified in Section 2. The acr Claim is requested as a Voluntary Claim by this parameter.
-
-            '
-          type: string
-        claims:
-          description: 'The claims parameter value, as specified in Section 5.5.
-
-            '
-          type: string
-        claims_locales:
-          description: 'Not Supported: End-User''s preferred languages and scripts for Claims being returned, represented as a space-separated list of BCP47 [RFC5646] language tag values, ordered by preference. An error SHOULD NOT result if some or all of the requested locales are not supported by the OpenID Provider.
-
-            '
-          type: string
-        ui_locales:
-          description: 'Not Supported: End-User''s preferred languages and scripts for the user interface, represented as a space-separated list of BCP47 [RFC5646] language tag values, ordered by preference. For instance, the value "fr-CA fr en" represents a preference for French as spoken in Canada, then French (without a region designation), followed by English (without a region designation). An error SHOULD NOT result if some or all of the requested locales are not supported by the OpenID Provider.
-
-            '
-          type: string
     openid.spec.Prompt:
       description: 'Not Supported: Space delimited, case sensitive list of ASCII string values that specifies whether the Authorization Server prompts the End-User for reauthentication and consent.
 
@@ -2652,10 +2479,183 @@ components:
       examples:
       - none
       type: string
+    openid.spec.DisplayType:
+      description: 'ASCII string value that specifies how the Authorization Server displays the authentication and consent user interface pages to the End-User.
+
+        '
+      enum:
+      - page
+      - popup
+      - touch
+      - wap
+      examples:
+      - page
+      type: string
+    openid.spec.ClaimType:
+      description: The representation of claims.
+      enum:
+      - normal
+      - aggregated
+      - distributed
+      examples:
+      - normal
+      type: string
     openid.spec.DeviceAuthorizeRequest:
       allOf:
       - $ref: '#/components/schemas/openid.spec.AccessRequest.ClientAuth'
       - $ref: '#/components/schemas/openid.spec.DeviceAuthorizeRequest.Parameters'
+    openid.request.consent:
+      type: object
+      properties:
+        status:
+          type: string
+          examples:
+          - OK
+        data:
+          type: object
+          properties:
+            client_id:
+              type: string
+              description: The identifier of the client for the user to provide consent for.
+              examples:
+              - app
+            client_description:
+              description: The descriptive name of the client for the user to provide consent for.
+              type: string
+              examples:
+              - App Platform
+            scopes:
+              description: The list of the requested scopes for the user to provide consent for.
+              type: array
+              items:
+                type: string
+                enum:
+                - openid
+                - offline_access
+                - groups
+                - email
+                - profile
+            audience:
+              description: The list of the requested audiences for the user to provide consent for.
+              type: array
+              items:
+                type: string
+            pre_configuration:
+              description: Indicates if this client supports pre-configuration.
+              type: boolean
+              examples:
+              - true
+            claims:
+              description: List of requested optional claims.
+              type: array
+              items:
+                type: string
+            essential_claims:
+              description: List of requested essential claims.
+              type: array
+              items:
+                type: string
+            require_login:
+              description: If the user must perform a login event before proceeding to provide consent.
+              type: boolean
+              examples:
+              - true
+    openid.spec.AccessRequest.ClientAuth.Secret:
+      required:
+      - client_id
+      - client_secret
+      type: object
+      properties:
+        client_id:
+          description: 'REQUIRED if the client is not authenticating with the authorization server as described in Section 3.2.1. of [RFC6749]. The client identifier as described in Section 2.2 of [RFC6749].
+
+            '
+          examples:
+          - my_client
+          type: string
+        client_secret:
+          description: 'REQUIRED. The client secret. The client MAY omit the parameter if the client secret is an empty string.
+
+            '
+          format: password
+          type: string
+    jose.spec.JWK.RSA:
+      description: RSA Public Key in JSON Web Key format as defined by RFC7517 and RFC7518.
+      allOf:
+      - $ref: '#/components/schemas/jose.spec.JWK.base'
+      - required:
+        - kty
+        - n
+        - e
+        type: object
+        properties:
+          kty:
+            description: 'The "kty" (key type) parameter identifies the cryptographic algorithm family used with the key.
+
+              '
+            type: string
+            examples:
+            - RSA
+            enum:
+            - RSA
+          alg:
+            description: The JSON Web Signature Algorithm
+            type: string
+            examples:
+            - RS256
+            enum:
+            - RS256
+            - RS384
+            - RS512
+            - PS256
+            - PS384
+            - PS512
+          n:
+            description: 'RSA Public Key: The "n" (modulus) parameter contains the modulus value for the RSA public key. It is represented as a Base64urlUInt-encoded value.
+
+              '
+            type: string
+            contentEncoding: base64url
+          e:
+            description: 'RSA Public Key: The "e" (exponent) parameter contains the exponent value for the RSA public key. It is represented as a Base64urlUInt-encoded value.
+
+              '
+            type: string
+            contentEncoding: base64url
+    openid.spec.SubjectIdentifier:
+      description: 'A Subject Identifier is a locally unique and never reassigned identifier within the Issuer for the End-User, which is intended to be consumed by the Client.
+
+        '
+      enum:
+      - public
+      - pairwise
+      type: string
+    openid.spec.AccessRequest.DeviceCodeFlow:
+      allOf:
+      - $ref: '#/components/schemas/openid.spec.AccessRequest.ClientAuth'
+      - type: object
+        required:
+        - grant_type
+        - device_code
+        properties:
+          grant_type:
+            description: Value MUST be set to "urn:ietf:params:oauth:grant-type:device_code".
+            enum:
+            - urn:ietf:params:oauth:grant-type:device_code
+            type: string
+          device_code:
+            description: The Device Authorization Code.
+            examples:
+            - authelia_dc_oqLXXUv2pvCDgBJLBav63ZduL4CxKP7JpYZ6ldHp39Y.u3XxwV3O-uYOA5TSv44iQyB27YjUGawJLlwOMuC770E
+            type: string
+    openid.spec.CodeChallengeMethod:
+      description: The RFC7636 Code Challenge Verifier Method.
+      enum:
+      - plain
+      - S256
+      examples:
+      - S256
+      type: string
   parameters:
     userCodeParam:
       name: user_code

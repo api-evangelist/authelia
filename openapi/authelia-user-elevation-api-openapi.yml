@@ -145,42 +145,6 @@ components:
           type: string
           examples:
           - Operation Failed.
-    handlers.ElevationVerify.Request:
-      type: object
-      properties:
-        otc:
-          description: The One-Time Code sent to the users email address.
-          type: string
-    handlers.ElevationStatus.Response:
-      type: object
-      properties:
-        status:
-          type: string
-          examples:
-          - OK
-        data:
-          type: object
-          properties:
-            require_second_factor:
-              description: Indicates if the elevation requires a second factor.
-              type: boolean
-            skip_second_factor:
-              description: Indicates if the requirement for a One-Time Code can be skipped if satisfying the 2FA rule.
-              type: boolean
-            can_skip_second_factor:
-              description: Indicates if the user is capable of satisfying the 2FA rule to skip the One-Time Code.
-              type: boolean
-            factor_knowledge:
-              description: Indicates if the knowledge factor of 2FA has been satisfied.
-              type: boolean
-            elevated:
-              description: Indicates if the session is elevated.
-              type: boolean
-            expires:
-              description: The number of seconds the elevation is still valid for.
-              type: integer
-              examples:
-              - 300
     handlers.ElevationStart.Response:
       type: object
       properties:
@@ -212,6 +176,42 @@ components:
       oneOf:
       - $ref: '#/components/schemas/middlewares.Response.OK'
       - $ref: '#/components/schemas/middlewares.Response.KO'
+    handlers.ElevationStatus.Response:
+      type: object
+      properties:
+        status:
+          type: string
+          examples:
+          - OK
+        data:
+          type: object
+          properties:
+            require_second_factor:
+              description: Indicates if the elevation requires a second factor.
+              type: boolean
+            skip_second_factor:
+              description: Indicates if the requirement for a One-Time Code can be skipped if satisfying the 2FA rule.
+              type: boolean
+            can_skip_second_factor:
+              description: Indicates if the user is capable of satisfying the 2FA rule to skip the One-Time Code.
+              type: boolean
+            factor_knowledge:
+              description: Indicates if the knowledge factor of 2FA has been satisfied.
+              type: boolean
+            elevated:
+              description: Indicates if the session is elevated.
+              type: boolean
+            expires:
+              description: The number of seconds the elevation is still valid for.
+              type: integer
+              examples:
+              - 300
+    handlers.ElevationVerify.Request:
+      type: object
+      properties:
+        otc:
+          description: The One-Time Code sent to the users email address.
+          type: string
   securitySchemes:
     authelia_auth:
       type: apiKey
