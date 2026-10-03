@@ -130,21 +130,6 @@ paths:
       - authelia_auth: []
 components:
   schemas:
-    middlewares.Response.KO:
-      type: object
-      required:
-      - status
-      properties:
-        status:
-          enum:
-          - KO
-          type: string
-          examples:
-          - KO
-        message:
-          type: string
-          examples:
-          - Operation Failed.
     handlers.ElevationStart.Response:
       type: object
       properties:
@@ -158,24 +143,6 @@ components:
             delete_id:
               description: The value required to delete the pending elevation.
               type: string
-    middlewares.Response.OK:
-      type: object
-      required:
-      - status
-      properties:
-        status:
-          enum:
-          - OK
-          type: string
-          examples:
-          - OK
-        data:
-          type: object
-          description: The data content for the response.
-    middlewares.Response.API:
-      oneOf:
-      - $ref: '#/components/schemas/middlewares.Response.OK'
-      - $ref: '#/components/schemas/middlewares.Response.KO'
     handlers.ElevationStatus.Response:
       type: object
       properties:
@@ -206,12 +173,45 @@ components:
               type: integer
               examples:
               - 300
+    middlewares.Response.API:
+      oneOf:
+      - $ref: '#/components/schemas/middlewares.Response.OK'
+      - $ref: '#/components/schemas/middlewares.Response.KO'
     handlers.ElevationVerify.Request:
       type: object
       properties:
         otc:
           description: The One-Time Code sent to the users email address.
           type: string
+    middlewares.Response.OK:
+      type: object
+      required:
+      - status
+      properties:
+        status:
+          enum:
+          - OK
+          type: string
+          examples:
+          - OK
+        data:
+          type: object
+          description: The data content for the response.
+    middlewares.Response.KO:
+      type: object
+      required:
+      - status
+      properties:
+        status:
+          enum:
+          - KO
+          type: string
+          examples:
+          - KO
+        message:
+          type: string
+          examples:
+          - Operation Failed.
   securitySchemes:
     authelia_auth:
       type: apiKey

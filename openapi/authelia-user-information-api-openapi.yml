@@ -91,19 +91,6 @@ components:
         data:
           type: object
           description: The data content for the response.
-    handlers.UserInfo.MethodBody:
-      required:
-      - method
-      type: object
-      properties:
-        method:
-          type: string
-          enum:
-          - totp
-          - webauthn
-          - mobile_push
-          examples:
-          - totp
     handlers.UserInfo:
       type: object
       properties:
@@ -145,6 +132,19 @@ components:
               type: boolean
               examples:
               - true
+    handlers.UserInfo.MethodBody:
+      required:
+      - method
+      type: object
+      properties:
+        method:
+          type: string
+          enum:
+          - totp
+          - webauthn
+          - mobile_push
+          examples:
+          - totp
   securitySchemes:
     authelia_auth:
       type: apiKey

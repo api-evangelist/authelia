@@ -1851,16 +1851,6 @@ paths:
       - authelia_auth: []
 components:
   parameters:
-    forwardedProtoParam:
-      name: X-Forwarded-Proto
-      in: header
-      description: Redirection URL (Scheme / Protocol)
-      required: true
-      style: simple
-      explode: true
-      example: https
-      schema:
-        type: string
     forwardedMethodParam:
       name: X-Forwarded-Method
       in: header
@@ -1887,6 +1877,25 @@ components:
         - PROPFIND
         - PROPPATCH
         - UNLOCK
+    originalURLParam:
+      name: X-Original-URL
+      in: header
+      description: Redirection URL
+      required: true
+      style: simple
+      explode: true
+      schema:
+        type: string
+    forwardedProtoParam:
+      name: X-Forwarded-Proto
+      in: header
+      description: Redirection URL (Scheme / Protocol)
+      required: true
+      style: simple
+      explode: true
+      example: https
+      schema:
+        type: string
     forwardedURIParam:
       name: X-Forwarded-URI
       in: header
@@ -1895,6 +1904,16 @@ components:
       style: simple
       explode: true
       example: /path/example
+      schema:
+        type: string
+    forwardedHostParam:
+      name: X-Forwarded-Host
+      in: header
+      description: Redirection URL (Host)
+      required: true
+      style: simple
+      explode: true
+      example: example.com
       schema:
         type: string
     originalMethodParam:
@@ -1950,25 +1969,6 @@ components:
       style: simple
       explode: true
       example: https://auth.example.com/
-      schema:
-        type: string
-    originalURLParam:
-      name: X-Original-URL
-      in: header
-      description: Redirection URL
-      required: true
-      style: simple
-      explode: true
-      schema:
-        type: string
-    forwardedHostParam:
-      name: X-Forwarded-Host
-      in: header
-      description: Redirection URL (Host)
-      required: true
-      style: simple
-      explode: true
-      example: example.com
       schema:
         type: string
   securitySchemes:

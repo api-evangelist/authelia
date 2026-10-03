@@ -581,14 +581,63 @@ paths:
       - authelia_auth: []
 components:
   schemas:
-    webauthn.AuthenticatorResponse:
+    webauthn.PublicKeyCredentialAttestation:
+      description: 'The FIDO2 WebAuthn credential creation response as produced by the browser.
+
+        '
+      allOf:
+      - $ref: '#/components/schemas/webauthn.PublicKeyCredential'
+      - $ref: '#/components/schemas/webauthn.AuthenticationExtensionsClientOutputs'
+      - type: object
+        required:
+        - response
+        properties:
+          response:
+            allOf:
+            - $ref: '#/components/schemas/webauthn.AuthenticatorResponse'
+            - $ref: '#/components/schemas/webauthn.Transports'
+            - type: object
+              required:
+              - attestationObject
+              properties:
+                attestationObject:
+                  type: string
+                  contentEncoding: base64url
+    handlers.bodySignTOTPRequest:
       type: object
-      required:
-      - clientDataJSON
       properties:
-        clientDataJSON:
+        token:
           type: string
-          contentEncoding: base64url
+          examples:
+          - '123456'
+        targetURL:
+          type: string
+          examples:
+          - https://secure.example.com
+        flowID:
+          type: string
+          format: uuid
+          pattern: ^[0-9a-fA-F]{8}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{12}$
+          examples:
+          - 3ebcfbc5-b0fd-4ee0-9d3c-080ae1e7298c
+        flow:
+          type: string
+          examples:
+          - openid_connect
+          enum:
+          - openid_connect
+        subflow:
+          description: The name of the subflow if applicable.
+          type: string
+          examples:
+          - device_authorization
+          enum:
+          - device_authorization
+        userCode:
+          description: The user code from the Device Authorization Flow if applicable.
+          type: string
+          examples:
+          - XGQWWFMM
     webauthn.PublicKeyCredentialAssertion:
       description: 'The FIDO2 WebAuthn credential assertion response as produced by the browser.
 
@@ -617,7 +666,33 @@ components:
                 userHandle:
                   type: string
                   contentEncoding: base64url
-    handlers.TOTPRegisterStartResponse:
+    webauthn.CredentialEntity:
+      type: object
+      required:
+      - id
+      - name
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        icon:
+          type: string
+    handlers.DuoDeviceBody:
+      required:
+      - device
+      - method
+      type: object
+      properties:
+        device:
+          type: string
+          examples:
+          - ABCDE123456789FGHIJK
+        method:
+          type: string
+          examples:
+          - push
+    handlers.redirectResponse:
       type: object
       properties:
         status:
@@ -627,29 +702,10 @@ components:
         data:
           type: object
           properties:
-            base32_secret:
-              description: The base32 encoded secret for the TOTP configuration.
+            redirect:
               type: string
-            otpauth_url:
-              description: The TOTP scheme URL for the TOTP configuration used to generate the QR code.
-              type: string
-    webauthn.CredentialDescriptor:
-      allOf:
-      - $ref: '#/components/schemas/webauthn.Transports'
-      - type: object
-        required:
-        - id
-        - type
-        properties:
-          id:
-            type: string
-            contentEncoding: base64url
-          type:
-            type: string
-            examples:
-            - public-key
-            enum:
-            - public-key
+              examples:
+              - https://home.example.com
     handlers.TOTPConfiguration:
       type: object
       properties:
@@ -690,382 +746,14 @@ components:
               type: integer
               examples:
               - 6
-    webauthn.Transports:
-      type: object
-      properties:
-        transports:
-          type: array
-          examples:
-          - - usb
-            - nfc
-          items:
-            type: string
-            enum:
-            - usb
-            - nfc
-            - ble
-            - smart-card
-            - hybrid
-            - internal
-    webauthn.CredentialsResponse:
-      type: object
-      properties:
-        status:
-          type: string
-          examples:
-          - OK
-        data:
-          type: array
-          items:
-            $ref: '#/components/schemas/webauthn.Credential'
-    handlers.TOTPRegisterStartRequest:
-      type: object
-      properties:
-        algorithm:
-          default: SHA1
-          description: The algorithm for the generated configuration.
-          type: string
-          examples:
-          - SHA1
-        length:
-          default: 6
-          description: The length (number of digits) for the generated configuration.
-          type: integer
-          examples:
-          - 6
-        period:
-          default: 30
-          description: The period or length of time in seconds for the generated configuration.
-          type: integer
-          examples:
-          - 30
-    middlewares.Response.OK:
+    webauthn.AuthenticatorResponse:
       type: object
       required:
-      - status
+      - clientDataJSON
       properties:
-        status:
-          enum:
-          - OK
-          type: string
-          examples:
-          - OK
-        data:
-          type: object
-          description: The data content for the response.
-    webauthn.CredentialUserEntity:
-      type: object
-      required:
-      - user
-      properties:
-        user:
-          allOf:
-          - $ref: '#/components/schemas/webauthn.CredentialEntity'
-          - type: object
-            required:
-            - displayName
-            properties:
-              displayName:
-                type: string
-    webauthn.UserVerification:
-      type: object
-      properties:
-        userVerification:
-          type: string
-          examples:
-          - preferred
-          enum:
-          - required
-          - preferred
-          - discouraged
-    handlers.redirectResponse:
-      type: object
-      properties:
-        status:
-          type: string
-          examples:
-          - OK
-        data:
-          type: object
-          properties:
-            redirect:
-              type: string
-              examples:
-              - https://home.example.com
-    webauthn.CredentialRPEntity:
-      type: object
-      required:
-      - rp
-      properties:
-        rp:
-          allOf:
-          - $ref: '#/components/schemas/webauthn.CredentialEntity'
-    middlewares.Response.KO:
-      type: object
-      required:
-      - status
-      properties:
-        status:
-          enum:
-          - KO
-          type: string
-          examples:
-          - KO
-        message:
-          type: string
-          examples:
-          - Operation Failed.
-    webauthn.CredentialEntity:
-      type: object
-      required:
-      - id
-      - name
-      properties:
-        id:
-          type: string
-        name:
-          type: string
-        icon:
-          type: string
-    webauthn.PublicKeyCredential:
-      type: object
-      required:
-      - id
-      - rawId
-      - type
-      properties:
-        rawId:
+        clientDataJSON:
           type: string
           contentEncoding: base64url
-        id:
-          type: string
-        type:
-          type: string
-          examples:
-          - public-key
-          enum:
-          - public-key
-    webauthn.AuthenticationExtensionsClientOutputs:
-      type: object
-      properties:
-        clientExtensionResults:
-          type: object
-          properties:
-            appid:
-              type: boolean
-              examples:
-              - true
-            appidExclude:
-              type: boolean
-              examples:
-              - false
-            uvm:
-              type: array
-              items:
-                type: string
-                contentEncoding: base64url
-            credProps:
-              type: object
-              properties:
-                rk:
-                  type: boolean
-                  examples:
-                  - false
-            largeBlob:
-              type: object
-              properties:
-                supported:
-                  type: boolean
-                  examples:
-                  - false
-                blob:
-                  type: string
-                written:
-                  type: boolean
-                  examples:
-                  - false
-    handlers.DuoDevicesResponse:
-      type: object
-      properties:
-        status:
-          type: string
-          examples:
-          - OK
-        data:
-          type: object
-          properties:
-            result:
-              type: string
-              examples:
-              - auth
-            devices:
-              type: array
-              items:
-                type: object
-                properties:
-                  device:
-                    type: string
-                    examples:
-                    - ABCDE123456789FGHIJK
-                  display_name:
-                    type: string
-                    examples:
-                    - iOS (+XX XXX XXX 123)
-                  capabilities:
-                    type: array
-                    items:
-                      type: string
-                      examples:
-                      - push
-            enroll_url:
-              type: string
-            preferred_device:
-              type: string
-              examples:
-              - ABCDE123456789FGHIJK
-            preferred_method:
-              type: string
-              examples:
-              - push
-    webauthn.PublicKeyCredentialRequestOptions:
-      type: object
-      properties:
-        status:
-          type: string
-          examples:
-          - OK
-        data:
-          type: object
-          properties:
-            publicKey:
-              allOf:
-              - $ref: '#/components/schemas/webauthn.UserVerification'
-              - type: object
-                required:
-                - challenge
-                properties:
-                  challenge:
-                    type: string
-                    contentEncoding: base64url
-                  timeout:
-                    type: integer
-                    examples:
-                    - 60000
-                  rpId:
-                    type: string
-                    examples:
-                    - auth.example.com
-                  allowCredentials:
-                    type: array
-                    items:
-                      allOf:
-                      - $ref: '#/components/schemas/webauthn.CredentialDescriptor'
-                  extensions:
-                    type: object
-                    properties:
-                      appid:
-                        type: string
-                        examples:
-                        - https://auth.example.com/
-    webauthn.RegisterRequest:
-      type: object
-      properties:
-        description:
-          description: The description the registered credential will have.
-          type: string
-          examples:
-          - My Main Credential
-    webauthn.PublicKeyCredentialCreationOptions:
-      type: object
-      properties:
-        status:
-          type: string
-          examples:
-          - OK
-        data:
-          type: object
-          properties:
-            publicKey:
-              allOf:
-              - $ref: '#/components/schemas/webauthn.AttestationType'
-              - $ref: '#/components/schemas/webauthn.AuthenticatorSelectionCriteria'
-              - $ref: '#/components/schemas/webauthn.CredentialUserEntity'
-              - $ref: '#/components/schemas/webauthn.CredentialRPEntity'
-              - type: object
-                required:
-                - challenge
-                - pubKeyCredParams
-                properties:
-                  challenge:
-                    type: string
-                    contentEncoding: base64url
-                  pubKeyCredParams:
-                    type: array
-                    items:
-                      type: object
-                      required:
-                      - alg
-                      - type
-                      properties:
-                        alg:
-                          type: integer
-                        type:
-                          type: string
-                          examples:
-                          - public-key
-                          enum:
-                          - public-key
-                  timeout:
-                    type: integer
-                    examples:
-                    - 60000
-                  excludeCredentials:
-                    type: array
-                    items:
-                      allOf:
-                      - $ref: '#/components/schemas/webauthn.CredentialDescriptor'
-                  extensions:
-                    type: object
-                    properties:
-                      appidExclude:
-                        type: string
-                        examples:
-                        - https://auth.example.com/
-    handlers.bodySignTOTPRequest:
-      type: object
-      properties:
-        token:
-          type: string
-          examples:
-          - '123456'
-        targetURL:
-          type: string
-          examples:
-          - https://secure.example.com
-        flowID:
-          type: string
-          format: uuid
-          pattern: ^[0-9a-fA-F]{8}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{12}$
-          examples:
-          - 3ebcfbc5-b0fd-4ee0-9d3c-080ae1e7298c
-        flow:
-          type: string
-          examples:
-          - openid_connect
-          enum:
-          - openid_connect
-        subflow:
-          description: The name of the subflow if applicable.
-          type: string
-          examples:
-          - device_authorization
-          enum:
-          - device_authorization
-        userCode:
-          description: The user code from the Device Authorization Flow if applicable.
-          type: string
-          examples:
-          - XGQWWFMM
     handlers.TOTPOptions:
       type: object
       properties:
@@ -1122,6 +810,40 @@ components:
               type: array
               items:
                 type: integer
+    webauthn.AttestationType:
+      type: object
+      properties:
+        attestation:
+          type: string
+          examples:
+          - direct
+          enum:
+          - none
+          - indirect
+          - direct
+    webauthn.AuthenticatorSelectionCriteria:
+      type: object
+      properties:
+        authenticatorSelection:
+          type: object
+          properties:
+            authenticatorAttachment:
+              type: string
+              examples:
+              - cross-platform
+              enum:
+              - platform
+              - cross-platform
+            residentKey:
+              type: string
+              examples:
+              - discouraged
+              enum:
+              - discouraged
+              - preferred
+              - required
+            requireResidentKey:
+              type: boolean
     handlers.bodySignDuoRequest:
       type: object
       properties:
@@ -1250,6 +972,40 @@ components:
           description: The credential attestation information for auditing and validation.
           type: string
           contentEncoding: base64
+    webauthn.Transports:
+      type: object
+      properties:
+        transports:
+          type: array
+          examples:
+          - - usb
+            - nfc
+          items:
+            type: string
+            enum:
+            - usb
+            - nfc
+            - ble
+            - smart-card
+            - hybrid
+            - internal
+    webauthn.CredentialDescriptor:
+      allOf:
+      - $ref: '#/components/schemas/webauthn.Transports'
+      - type: object
+        required:
+        - id
+        - type
+        properties:
+          id:
+            type: string
+            contentEncoding: base64url
+          type:
+            type: string
+            examples:
+            - public-key
+            enum:
+            - public-key
     handlers.TOTPRegisterFinishRequest:
       type: object
       properties:
@@ -1258,41 +1014,192 @@ components:
           type: string
           examples:
           - '123456'
-    webauthn.CredentialAssertionResponse:
+    middlewares.Response.OK:
       type: object
       required:
-      - response
+      - status
       properties:
-        response:
-          $ref: '#/components/schemas/webauthn.PublicKeyCredentialAssertion'
-        targetURL:
-          type: string
-          examples:
-          - https://secure.example.com
-        flowID:
-          type: string
-          format: uuid
-          pattern: ^[0-9a-fA-F]{8}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{12}$
-          examples:
-          - 3ebcfbc5-b0fd-4ee0-9d3c-080ae1e7298c
-        flow:
-          type: string
-          examples:
-          - openid_connect
+        status:
           enum:
-          - openid_connect
-        subflow:
-          description: The name of the subflow if applicable.
+          - OK
           type: string
           examples:
-          - device_authorization
+          - OK
+        data:
+          type: object
+          description: The data content for the response.
+    webauthn.CredentialsResponse:
+      type: object
+      properties:
+        status:
+          type: string
+          examples:
+          - OK
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/webauthn.Credential'
+    webauthn.UserVerification:
+      type: object
+      properties:
+        userVerification:
+          type: string
+          examples:
+          - preferred
           enum:
-          - device_authorization
-        userCode:
-          description: The user code from the Device Authorization Flow if applicable.
+          - required
+          - preferred
+          - discouraged
+    middlewares.Response.KO:
+      type: object
+      required:
+      - status
+      properties:
+        status:
+          enum:
+          - KO
           type: string
           examples:
-          - XGQWWFMM
+          - KO
+        message:
+          type: string
+          examples:
+          - Operation Failed.
+    webauthn.CredentialUserEntity:
+      type: object
+      required:
+      - user
+      properties:
+        user:
+          allOf:
+          - $ref: '#/components/schemas/webauthn.CredentialEntity'
+          - type: object
+            required:
+            - displayName
+            properties:
+              displayName:
+                type: string
+    webauthn.RegisterRequest:
+      type: object
+      properties:
+        description:
+          description: The description the registered credential will have.
+          type: string
+          examples:
+          - My Main Credential
+    webauthn.CredentialRPEntity:
+      type: object
+      required:
+      - rp
+      properties:
+        rp:
+          allOf:
+          - $ref: '#/components/schemas/webauthn.CredentialEntity'
+    webauthn.AuthenticationExtensionsClientOutputs:
+      type: object
+      properties:
+        clientExtensionResults:
+          type: object
+          properties:
+            appid:
+              type: boolean
+              examples:
+              - true
+            appidExclude:
+              type: boolean
+              examples:
+              - false
+            uvm:
+              type: array
+              items:
+                type: string
+                contentEncoding: base64url
+            credProps:
+              type: object
+              properties:
+                rk:
+                  type: boolean
+                  examples:
+                  - false
+            largeBlob:
+              type: object
+              properties:
+                supported:
+                  type: boolean
+                  examples:
+                  - false
+                blob:
+                  type: string
+                written:
+                  type: boolean
+                  examples:
+                  - false
+    webauthn.PublicKeyCredential:
+      type: object
+      required:
+      - id
+      - rawId
+      - type
+      properties:
+        rawId:
+          type: string
+          contentEncoding: base64url
+        id:
+          type: string
+        type:
+          type: string
+          examples:
+          - public-key
+          enum:
+          - public-key
+    handlers.DuoDevicesResponse:
+      type: object
+      properties:
+        status:
+          type: string
+          examples:
+          - OK
+        data:
+          type: object
+          properties:
+            result:
+              type: string
+              examples:
+              - auth
+            devices:
+              type: array
+              items:
+                type: object
+                properties:
+                  device:
+                    type: string
+                    examples:
+                    - ABCDE123456789FGHIJK
+                  display_name:
+                    type: string
+                    examples:
+                    - iOS (+XX XXX XXX 123)
+                  capabilities:
+                    type: array
+                    items:
+                      type: string
+                      examples:
+                      - push
+            enroll_url:
+              type: string
+            preferred_device:
+              type: string
+              examples:
+              - ABCDE123456789FGHIJK
+            preferred_method:
+              type: string
+              examples:
+              - push
+    webauthn.CredentialUpdateRequest:
+      type: object
+      properties:
+        description:
+          type: string
     handlers.bodyPasswordRequest:
       required:
       - password
@@ -1330,81 +1237,174 @@ components:
           type: string
           examples:
           - XGQWWFMM
-    webauthn.CredentialUpdateRequest:
+    handlers.TOTPRegisterStartRequest:
       type: object
       properties:
-        description:
-          type: string
-    webauthn.AttestationType:
-      type: object
-      properties:
-        attestation:
+        algorithm:
+          default: SHA1
+          description: The algorithm for the generated configuration.
           type: string
           examples:
-          - direct
-          enum:
-          - none
-          - indirect
-          - direct
-    handlers.DuoDeviceBody:
+          - SHA1
+        length:
+          default: 6
+          description: The length (number of digits) for the generated configuration.
+          type: integer
+          examples:
+          - 6
+        period:
+          default: 30
+          description: The period or length of time in seconds for the generated configuration.
+          type: integer
+          examples:
+          - 30
+    webauthn.CredentialAssertionResponse:
+      type: object
       required:
-      - device
-      - method
-      type: object
+      - response
       properties:
-        device:
+        response:
+          $ref: '#/components/schemas/webauthn.PublicKeyCredentialAssertion'
+        targetURL:
           type: string
           examples:
-          - ABCDE123456789FGHIJK
-        method:
+          - https://secure.example.com
+        flowID:
+          type: string
+          format: uuid
+          pattern: ^[0-9a-fA-F]{8}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{12}$
+          examples:
+          - 3ebcfbc5-b0fd-4ee0-9d3c-080ae1e7298c
+        flow:
           type: string
           examples:
-          - push
-    webauthn.PublicKeyCredentialAttestation:
-      description: 'The FIDO2 WebAuthn credential creation response as produced by the browser.
-
-        '
-      allOf:
-      - $ref: '#/components/schemas/webauthn.PublicKeyCredential'
-      - $ref: '#/components/schemas/webauthn.AuthenticationExtensionsClientOutputs'
-      - type: object
-        required:
-        - response
-        properties:
-          response:
-            allOf:
-            - $ref: '#/components/schemas/webauthn.AuthenticatorResponse'
-            - $ref: '#/components/schemas/webauthn.Transports'
-            - type: object
-              required:
-              - attestationObject
-              properties:
-                attestationObject:
-                  type: string
-                  contentEncoding: base64url
-    webauthn.AuthenticatorSelectionCriteria:
+          - openid_connect
+          enum:
+          - openid_connect
+        subflow:
+          description: The name of the subflow if applicable.
+          type: string
+          examples:
+          - device_authorization
+          enum:
+          - device_authorization
+        userCode:
+          description: The user code from the Device Authorization Flow if applicable.
+          type: string
+          examples:
+          - XGQWWFMM
+    handlers.TOTPRegisterStartResponse:
       type: object
       properties:
-        authenticatorSelection:
+        status:
+          type: string
+          examples:
+          - OK
+        data:
           type: object
           properties:
-            authenticatorAttachment:
+            base32_secret:
+              description: The base32 encoded secret for the TOTP configuration.
               type: string
-              examples:
-              - cross-platform
-              enum:
-              - platform
-              - cross-platform
-            residentKey:
+            otpauth_url:
+              description: The TOTP scheme URL for the TOTP configuration used to generate the QR code.
               type: string
-              examples:
-              - discouraged
-              enum:
-              - discouraged
-              - preferred
-              - required
-            requireResidentKey:
-              type: boolean
+    webauthn.PublicKeyCredentialRequestOptions:
+      type: object
+      properties:
+        status:
+          type: string
+          examples:
+          - OK
+        data:
+          type: object
+          properties:
+            publicKey:
+              allOf:
+              - $ref: '#/components/schemas/webauthn.UserVerification'
+              - type: object
+                required:
+                - challenge
+                properties:
+                  challenge:
+                    type: string
+                    contentEncoding: base64url
+                  timeout:
+                    type: integer
+                    examples:
+                    - 60000
+                  rpId:
+                    type: string
+                    examples:
+                    - auth.example.com
+                  allowCredentials:
+                    type: array
+                    items:
+                      allOf:
+                      - $ref: '#/components/schemas/webauthn.CredentialDescriptor'
+                  extensions:
+                    type: object
+                    properties:
+                      appid:
+                        type: string
+                        examples:
+                        - https://auth.example.com/
+    webauthn.PublicKeyCredentialCreationOptions:
+      type: object
+      properties:
+        status:
+          type: string
+          examples:
+          - OK
+        data:
+          type: object
+          properties:
+            publicKey:
+              allOf:
+              - $ref: '#/components/schemas/webauthn.AttestationType'
+              - $ref: '#/components/schemas/webauthn.AuthenticatorSelectionCriteria'
+              - $ref: '#/components/schemas/webauthn.CredentialUserEntity'
+              - $ref: '#/components/schemas/webauthn.CredentialRPEntity'
+              - type: object
+                required:
+                - challenge
+                - pubKeyCredParams
+                properties:
+                  challenge:
+                    type: string
+                    contentEncoding: base64url
+                  pubKeyCredParams:
+                    type: array
+                    items:
+                      type: object
+                      required:
+                      - alg
+                      - type
+                      properties:
+                        alg:
+                          type: integer
+                        type:
+                          type: string
+                          examples:
+                          - public-key
+                          enum:
+                          - public-key
+                  timeout:
+                    type: integer
+                    examples:
+                    - 60000
+                  excludeCredentials:
+                    type: array
+                    items:
+                      allOf:
+                      - $ref: '#/components/schemas/webauthn.CredentialDescriptor'
+                  extensions:
+                    type: object
+                    properties:
+                      appidExclude:
+                        type: string
+                        examples:
+                        - https://auth.example.com/
   parameters:
     credentialID:
       in: path
