@@ -77,20 +77,6 @@ paths:
       - authelia_auth: []
 components:
   schemas:
-    middlewares.Response.OK:
-      type: object
-      required:
-      - status
-      properties:
-        status:
-          enum:
-          - OK
-          type: string
-          examples:
-          - OK
-        data:
-          type: object
-          description: The data content for the response.
     handlers.UserInfo:
       type: object
       properties:
@@ -145,6 +131,20 @@ components:
           - mobile_push
           examples:
           - totp
+    middlewares.Response.OK:
+      type: object
+      required:
+      - status
+      properties:
+        status:
+          enum:
+          - OK
+          type: string
+          examples:
+          - OK
+        data:
+          type: object
+          description: The data content for the response.
   securitySchemes:
     authelia_auth:
       type: apiKey

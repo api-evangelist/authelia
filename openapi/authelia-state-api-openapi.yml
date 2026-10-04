@@ -88,76 +88,6 @@ paths:
                 $ref: '#/components/schemas/handlers.StateResponse'
 components:
   schemas:
-    middlewares.Response.OK:
-      type: object
-      required:
-      - status
-      properties:
-        status:
-          enum:
-          - OK
-          type: string
-          examples:
-          - OK
-        data:
-          type: object
-          description: The data content for the response.
-    handlers.StateResponse:
-      type: object
-      properties:
-        status:
-          type: string
-          examples:
-          - OK
-        data:
-          type: object
-          properties:
-            username:
-              type: string
-              examples:
-              - john
-            authentication_level:
-              type: integer
-              examples:
-              - 1
-            factor_knowledge:
-              type: boolean
-              description: Indicates the knowledge factor has been satisfied.
-              examples:
-              - true
-            default_redirection_url:
-              type: string
-              examples:
-              - https://home.example.com
-    handlers.configuration.ConfigurationBody:
-      type: object
-      properties:
-        status:
-          type: string
-          examples:
-          - OK
-        data:
-          type: object
-          properties:
-            available_methods:
-              type: array
-              description: List of available 2FA methods. If no methods exist 2FA is disabled.
-              items:
-                type: string
-                enum:
-                - totp
-                - webauthn
-                - mobile_push
-              examples:
-              - - totp
-                - webauthn
-                - mobile_push
-            password_change_disabled:
-              type: boolean
-              description: Value which indicates if users are allowed to change their password from account settings.
-            password_reset_disabled:
-              type: boolean
-              description: Value which indicates if users are allowed to reset their password.
     handlers.configuration.PasswordPolicyConfigurationBody:
       type: object
       properties:
@@ -196,6 +126,76 @@ components:
             require_special:
               type: boolean
               description: If special characters are required when using the standard mode.
+    handlers.configuration.ConfigurationBody:
+      type: object
+      properties:
+        status:
+          type: string
+          examples:
+          - OK
+        data:
+          type: object
+          properties:
+            available_methods:
+              type: array
+              description: List of available 2FA methods. If no methods exist 2FA is disabled.
+              items:
+                type: string
+                enum:
+                - totp
+                - webauthn
+                - mobile_push
+              examples:
+              - - totp
+                - webauthn
+                - mobile_push
+            password_change_disabled:
+              type: boolean
+              description: Value which indicates if users are allowed to change their password from account settings.
+            password_reset_disabled:
+              type: boolean
+              description: Value which indicates if users are allowed to reset their password.
+    handlers.StateResponse:
+      type: object
+      properties:
+        status:
+          type: string
+          examples:
+          - OK
+        data:
+          type: object
+          properties:
+            username:
+              type: string
+              examples:
+              - john
+            authentication_level:
+              type: integer
+              examples:
+              - 1
+            factor_knowledge:
+              type: boolean
+              description: Indicates the knowledge factor has been satisfied.
+              examples:
+              - true
+            default_redirection_url:
+              type: string
+              examples:
+              - https://home.example.com
+    middlewares.Response.OK:
+      type: object
+      required:
+      - status
+      properties:
+        status:
+          enum:
+          - OK
+          type: string
+          examples:
+          - OK
+        data:
+          type: object
+          description: The data content for the response.
   securitySchemes:
     authelia_auth:
       type: apiKey

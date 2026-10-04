@@ -1851,51 +1851,15 @@ paths:
       - authelia_auth: []
 components:
   parameters:
-    forwardedMethodParam:
-      name: X-Forwarded-Method
-      in: header
-      description: Request Method
+    authParam:
+      name: auth
+      in: query
+      description: Switch authorization header and prompt for basic auth
       required: false
-      style: simple
-      explode: true
       schema:
         type: string
         enum:
-        - GET
-        - HEAD
-        - POST
-        - PUT
-        - PATCH
-        - DELETE
-        - TRACE
-        - CONNECT
-        - OPTIONS
-        - COPY
-        - LOCK
-        - MKCOL
-        - MOVE
-        - PROPFIND
-        - PROPPATCH
-        - UNLOCK
-    originalURLParam:
-      name: X-Original-URL
-      in: header
-      description: Redirection URL
-      required: true
-      style: simple
-      explode: true
-      schema:
-        type: string
-    forwardedProtoParam:
-      name: X-Forwarded-Proto
-      in: header
-      description: Redirection URL (Scheme / Protocol)
-      required: true
-      style: simple
-      explode: true
-      example: https
-      schema:
-        type: string
+        - basic
     forwardedURIParam:
       name: X-Forwarded-URI
       in: header
@@ -1942,25 +1906,51 @@ components:
         - PROPFIND
         - PROPPATCH
         - UNLOCK
-    forwardedForParam:
-      name: X-Forwarded-For
+    originalURLParam:
+      name: X-Original-URL
       in: header
-      description: Clients IP address or IP address chain
+      description: Redirection URL
+      required: true
+      style: simple
+      explode: true
+      schema:
+        type: string
+    forwardedMethodParam:
+      name: X-Forwarded-Method
+      in: header
+      description: Request Method
       required: false
       style: simple
       explode: true
-      example: 192.168.0.55,192.168.0.20
-      schema:
-        type: string
-    authParam:
-      name: auth
-      in: query
-      description: Switch authorization header and prompt for basic auth
-      required: false
       schema:
         type: string
         enum:
-        - basic
+        - GET
+        - HEAD
+        - POST
+        - PUT
+        - PATCH
+        - DELETE
+        - TRACE
+        - CONNECT
+        - OPTIONS
+        - COPY
+        - LOCK
+        - MKCOL
+        - MOVE
+        - PROPFIND
+        - PROPPATCH
+        - UNLOCK
+    forwardedProtoParam:
+      name: X-Forwarded-Proto
+      in: header
+      description: Redirection URL (Scheme / Protocol)
+      required: true
+      style: simple
+      explode: true
+      example: https
+      schema:
+        type: string
     autheliaURLParam:
       name: X-Authelia-URL
       in: header
@@ -1969,6 +1959,16 @@ components:
       style: simple
       explode: true
       example: https://auth.example.com/
+      schema:
+        type: string
+    forwardedForParam:
+      name: X-Forwarded-For
+      in: header
+      description: Clients IP address or IP address chain
+      required: false
+      style: simple
+      explode: true
+      example: 192.168.0.55,192.168.0.20
       schema:
         type: string
   securitySchemes:
