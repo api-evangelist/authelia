@@ -251,6 +251,9 @@ apis:
   - type: GitHubRepository
     url: https://github.com/authelia/authelia
 common:
+- type: CapabilityMap
+  url: capabilities/authelia-capability-edges.yml
+  name: Authelia Business Capability Map
 - type: Overlay
   url: overlays/authelia-api-overlay.yaml
 - type: IssueTracker

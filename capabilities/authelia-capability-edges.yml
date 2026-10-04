@@ -1,0 +1,116 @@
+slug: authelia
+provider: Authelia
+generated_by: planning/capability-mapping/scripts/classify_capabilities.py
+model: claude-opus-5
+frame:
+- Software & Technology
+min_confidence: 0.7
+capability_model:
+  source: https://github.com/vincentmakes/turbo-ea-capabilities
+  license: CC-BY-4.0
+  attribution: Turbo EA Capabilities by Vincent Verdet — Turbo EA, https://github.com/vincentmakes/turbo-ea-capabilities,
+    CC BY 4.0
+  notice: NOTICE
+edge_count: 10
+edges:
+- tag: Authentication
+  spec_file: authelia-authentication-api-openapi.yml
+  capability_id: BC-620.20
+  capability_id_l1: BC-620
+  capability_name: Identity & Access Management
+  confidence: 0.95
+  evidence: POST /api/firstfactor  Login; POST /api/secondfactor/totp  Second Factor Authentication -
+    TOTP; 'fulfilling the identity and access management (IAM) role of information security in providing
+    multi-factor authentication and single sign-on (SSO)'
+  reason: Login, logout, TOTP/WebAuthn/Duo second-factor registration and verification — unambiguously
+    Identity & Access Management.
+- tag: First Factor
+  spec_file: authelia-first-factor-api-openapi.yml
+  capability_id: BC-620.20
+  capability_id_l1: BC-620
+  capability_name: Identity & Access Management
+  confidence: 0.95
+  evidence: POST /api/firstfactor  Login; POST /api/firstfactor/passkey  First Factor Authentication -
+    Passkey; schema handlers.bodyFirstFactorRequest
+  reason: Primary credential and passkey login flows — core authentication, a direct realisation of Identity
+    & Access Management.
+- tag: OpenID Connect 1.0
+  spec_file: authelia-openid-connect-1-0-api-openapi.yml
+  capability_id: BC-620.20
+  capability_id_l1: BC-620
+  capability_name: Identity & Access Management
+  confidence: 0.92
+  evidence: '"OpenID Connect 1.0 Authorization Endpoint", "OpenID Connect 1.0 Token Endpoint", "OAuth
+    2.0 Token Introspection Endpoint" — "fulfilling the identity and access management (IAM) role"'
+  reason: Operations implement an OIDC/OAuth 2.0 provider (authorization, token, introspection, userinfo)
+    for SSO — federation and access management, i.e. Identity & Access Management.
+- tag: Second Factor
+  spec_file: authelia-second-factor-api-openapi.yml
+  capability_id: BC-620.20
+  capability_id_l1: BC-620
+  capability_name: Identity & Access Management
+  confidence: 0.92
+  evidence: '"Second Factor Authentication - TOTP", "WebAuthn Credential Registration (Attestation)",
+    schema webauthn.Credential'
+  reason: Registration and verification of MFA authenticators (TOTP, WebAuthn, Duo) — multi-factor authentication
+    is core Identity & Access Management.
+- tag: Authorization
+  spec_file: authelia-authorization-api-openapi.yml
+  capability_id: BC-620.20
+  capability_id_l1: BC-620
+  capability_name: Identity & Access Management
+  confidence: 0.9
+  evidence: GET /api/authz/forward-auth  Authorization Verification (ForwardAuth); GET /api/authz/ext-authz  Authorization
+    Verification (ExtAuthz)
+  reason: Access-decision endpoints used by reverse proxies to authorize requests — access management
+    within IAM. Not subscription entitlement enforcement, since this is infrastructure access control
+    rather than commercial entitlement.
+- tag: OAuth 2.0
+  spec_file: authelia-oauth-2-0-api-openapi.yml
+  capability_id: BC-620.20
+  capability_id_l1: BC-620
+  capability_name: Identity & Access Management
+  confidence: 0.85
+  evidence: POST /api/oidc/token  OpenID Connect 1.0 Token Endpoint; POST /api/oidc/introspection  OAuth
+    2.0 Token Introspection Endpoint; GET /api/oidc/consent  OpenID Connect 1.0 Consent Information
+  reason: OAuth 2.0 / OIDC provider endpoints (authorization, token, revocation, introspection, JWKS)
+    implementing federated identity — IAM federation. BC-4270.40 Developer Credential Management is a
+    plausible alternative reading but these are end-user SSO flows, not developer credential issuance.
+- tag: Password Reset
+  spec_file: authelia-password-reset-api-openapi.yml
+  capability_id: BC-620.20
+  capability_id_l1: BC-620
+  capability_name: Identity & Access Management
+  confidence: 0.85
+  evidence: '"Identity Verification Token Creation", "Identity Verification Token Validation", "Password
+    Reset"'
+  reason: Credential recovery with identity verification on an identity provider — classic IAM account/credential
+    lifecycle operation.
+- tag: Password Change
+  spec_file: authelia-password-change-api-openapi.yml
+  capability_id: BC-620.20
+  capability_id_l1: BC-620
+  capability_name: Identity & Access Management
+  confidence: 0.82
+  evidence: POST /api/change-password  postChangePassword  "Password Change"; schema handlers.PasswordChangeRequestBody
+  reason: Credential management for user accounts on an IAM/SSO server — identity and access administration,
+    not a business-domain capability.
+- tag: User Elevation
+  spec_file: authelia-user-elevation-api-openapi.yml
+  capability_id: BC-620.20
+  capability_id_l1: BC-620
+  capability_name: Identity & Access Management
+  confidence: 0.78
+  evidence: GET/POST/PUT /api/user/session/elevation  "User Session Elevation"; handlers.ElevationVerify.Request
+  reason: Session elevation (step-up authentication for privileged operations) on an IAM server maps to
+    Identity & Access Management, though it is a narrow runtime mechanism.
+- tag: User Information
+  spec_file: authelia-user-information-api-openapi.yml
+  capability_id: BC-620.20
+  capability_id_l1: BC-620
+  capability_name: Identity & Access Management
+  confidence: 0.75
+  evidence: POST /api/user/info/2fa_method  postUserInfoSecondFactorMethod  "User Configuration"; schema
+    handlers.UserInfo
+  reason: Retrieval and update of authenticated user account configuration including preferred 2FA method
+    on an identity provider — IAM account administration.
