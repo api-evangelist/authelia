@@ -251,6 +251,8 @@ apis:
   - type: GitHubRepository
     url: https://github.com/authelia/authelia
 common:
+- type: FinOps
+  url: finops/authelia-finops.yml
 - type: CapabilityMap
   url: capabilities/authelia-capability-edges.yml
   name: Authelia Business Capability Map
