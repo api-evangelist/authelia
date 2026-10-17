@@ -130,6 +130,19 @@ paths:
       - authelia_auth: []
 components:
   schemas:
+    handlers.ElevationStart.Response:
+      type: object
+      properties:
+        status:
+          type: string
+          examples:
+          - OK
+        data:
+          type: object
+          properties:
+            delete_id:
+              description: The value required to delete the pending elevation.
+              type: string
     middlewares.Response.API:
       oneOf:
       - $ref: '#/components/schemas/middlewares.Response.OK'
@@ -140,6 +153,20 @@ components:
         otc:
           description: The One-Time Code sent to the users email address.
           type: string
+    middlewares.Response.OK:
+      type: object
+      required:
+      - status
+      properties:
+        status:
+          enum:
+          - OK
+          type: string
+          examples:
+          - OK
+        data:
+          type: object
+          description: The data content for the response.
     handlers.ElevationStatus.Response:
       type: object
       properties:
@@ -170,19 +197,6 @@ components:
               type: integer
               examples:
               - 300
-    handlers.ElevationStart.Response:
-      type: object
-      properties:
-        status:
-          type: string
-          examples:
-          - OK
-        data:
-          type: object
-          properties:
-            delete_id:
-              description: The value required to delete the pending elevation.
-              type: string
     middlewares.Response.KO:
       type: object
       required:
@@ -198,20 +212,6 @@ components:
           type: string
           examples:
           - Operation Failed.
-    middlewares.Response.OK:
-      type: object
-      required:
-      - status
-      properties:
-        status:
-          enum:
-          - OK
-          type: string
-          examples:
-          - OK
-        data:
-          type: object
-          description: The data content for the response.
   securitySchemes:
     authelia_auth:
       type: apiKey
