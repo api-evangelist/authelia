@@ -68,7 +68,6 @@ apis:
   baseURL: https://auth.example.com
   tags:
   - Authentication
-  - OIDC
   - OpenID Connect
   tags_raw:
   - Authentication
