@@ -1,0 +1,112 @@
+edges:
+- partner_name: Go module proxy
+  partner: null
+  partner_match: null
+  type: register
+  direction: provider-built
+  category: official SDK (Go)
+  evidence: https://pkg.go.dev/github.com/authelia/ac
+  channel: package-registry
+  relationship: distribution-channel
+  contract_reference:
+    register: Go module proxy (public registry JSON)
+    spec_file: null
+    language: Go
+    packages:
+    - name: github.com/authelia/ac
+      version: v0.0.0-20250405071522-28aa56124fc9
+      released: '2025-04-05'
+      released_field: Time
+      lapsed: false
+      page: https://pkg.go.dev/github.com/authelia/ac
+      repo_leg: github-org:authelia
+      publisher_leg: org:authelia
+      matched_by: github-org
+    - name: github.com/authelia/authelia/v4
+      version: v4.39.28
+      released: '2026-09-17'
+      released_field: Time
+      lapsed: false
+      page: https://pkg.go.dev/github.com/authelia/authelia/v4
+      repo_leg: github-org:authelia
+      publisher_leg: org:authelia
+      matched_by: github-org
+    - name: github.com/authelia/jsonschema
+      version: v0.1.7
+      released: '2023-09-03'
+      released_field: Time
+      lapsed: true
+      page: https://pkg.go.dev/github.com/authelia/jsonschema
+      repo_leg: github-org:authelia
+      publisher_leg: org:authelia
+      matched_by: github-org
+    - name: github.com/authelia/oauth2-client
+      version: v0.0.0-20250405043315-6378a9b2a190
+      released: '2025-04-05'
+      released_field: Time
+      lapsed: false
+      page: https://pkg.go.dev/github.com/authelia/oauth2-client
+      repo_leg: github-org:authelia
+      publisher_leg: org:authelia
+      matched_by: github-org
+    - name: github.com/authelia/oauth2-provider
+      version: v0.3.3
+      released: '2026-09-19'
+      released_field: Time
+      lapsed: false
+      page: https://pkg.go.dev/github.com/authelia/oauth2-provider
+      repo_leg: github-org:authelia
+      publisher_leg: org:authelia
+      matched_by: github-org
+    - name: github.com/authelia/otp
+      version: v1.0.4
+      released: '2026-02-15'
+      released_field: Time
+      lapsed: false
+      page: https://pkg.go.dev/github.com/authelia/otp
+      repo_leg: github-org:authelia
+      publisher_leg: org:authelia
+      matched_by: github-org
+    - name: github.com/authelia/pam
+      version: v0.1.2
+      released: '2026-05-12'
+      released_field: Time
+      lapsed: false
+      page: https://pkg.go.dev/github.com/authelia/pam
+      repo_leg: github-org:authelia
+      publisher_leg: org:authelia
+      matched_by: github-org
+    - name: github.com/authelia/session
+      version: v1.1.8
+      released: '2020-04-14'
+      released_field: Time
+      lapsed: true
+      page: https://pkg.go.dev/github.com/authelia/session
+      repo_leg: github-org:authelia
+      publisher_leg: org:authelia
+      matched_by: github-org
+    current: true
+    signal_note: 'an official package on the registry: distribution, not an integration; lapsed = no release in
+      24 months'
+    detected_by: sweep-official-sdks.py
+    detected: '2026-10-18'
+  detected_by: sweep-official-sdks.py
+  first_seen: '2026-10-18'
+generated: '2026-10-18'
+method: searched
+source:
+- https://api.nuget.org/v3
+- https://crates.io/api/v1
+- https://proxy.golang.org
+- https://pypi.org/pypi
+- https://registry.npmjs.org
+- https://repo1.maven.org/maven2
+- https://rubygems.org/api/v1
+checked:
+- https://api.nuget.org/v3
+- https://crates.io/api/v1
+- https://proxy.golang.org
+- https://pypi.org/pypi
+- https://registry.npmjs.org
+- https://repo1.maven.org/maven2
+- https://rubygems.org/api/v1
