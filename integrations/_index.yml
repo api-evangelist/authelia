@@ -96,44 +96,6 @@
     detected: '2026-10-18'
   status: not-a-workflow
   arazzo: null
-- slug: authelia-openssf-best-practices-badge
-  label: OpenSSF Best Practices Badge
-  partner_name: OpenSSF Best Practices Badge
-  category: OpenSSF Best Practices badge (open-source project security conformance)
-  type: register
-  channel: standard-directory
-  evidence: https://www.bestpractices.dev/en/projects/7128
-  source: edge
-  relationship: standard-participant
-  contract_reference:
-    register: OpenSSF Best Practices badge projects (bestpractices.dev/en/projects.json, paged)
-    standard: OpenSSF Best Practices Badge criteria (formerly CII Best Practices; bestpractices.dev)
-    spec_file: null
-    role: badge-holder
-    registered_name: Authelia
-    matched_by: github-org
-    matched_on: authelia
-    certified_products:
-    - product: open-source project
-      product_type: open-source project
-      standard: OpenSSF Best Practices Badge criteria (formerly CII Best Practices; bestpractices.dev)
-      lapsed: false
-      partner_tier: gold
-      projects:
-      - name: Authelia
-        id: 7128
-        url: https://www.bestpractices.dev/en/projects/7128
-        badge_level: gold
-      baseline_levels:
-      - baseline-2
-    signal_note: 'certified_products = ONE entry (product type: open-source project) with the highest CURRENT badge
-      level in partner_tier; a provider whose projects only lost the badge is lapsed: true; project names are context,
-      never counted; in_progress entries are not conformance'
-    detected_by: sweep-openssf-best-practices-badges.py
-    detected: '2026-10-22'
-    identity_source: apis.yml GitHubOrganization pointer (provider's own declaration)
-  status: not-a-workflow
-  arazzo: null
 - slug: authelia-artifact-hub-artifact-hub
   label: Artifact Hub (artifact-hub)
   partner: artifact-hub
@@ -145,5 +107,41 @@
   evidence: https://artifacthub.io/packages/search?repo=authelia
   source: edge
   relationship: platform-app
+  status: not-a-workflow
+  arazzo: null
+- slug: authelia-openssf-best-practices-badge-bestpractices-dev
+  label: OpenSSF Best Practices Badge (bestpractices.dev)
+  partner_name: OpenSSF Best Practices Badge (bestpractices.dev)
+  category: OpenSSF Best Practices badge (open-source project security practices)
+  type: register
+  channel: standard-directory
+  evidence: https://www.bestpractices.dev/en/projects/7128
+  source: edge
+  relationship: standard-participant
+  contract_reference:
+    register: OpenSSF Best Practices Badge projects (www.bestpractices.dev/en/projects.json)
+    standard: OpenSSF Best Practices Badge criteria (passing / silver / gold)
+    spec_file: null
+    role: badged-project-owner
+    registered_name: Authelia
+    matched_domain: authelia.com
+    matched_by: domain
+    certified_products:
+    - product: open-source project
+      product_type: open-source project
+      standard: OpenSSF Best Practices Badge criteria (passing / silver / gold)
+      partner_tier: gold
+      lapsed: false
+      badge_date: '2026-09-09'
+    badged_projects:
+    - name: Authelia
+      id: 7128
+      badge: gold
+      url: https://www.bestpractices.dev/en/projects/7128
+    signal_note: 'certified_products = ONE entry per provider (product type open-source project): highest current
+      OpenSSF Best Practices badge level in partner_tier, earliest date at that level; lapsed: true when every linked
+      project lost its badge. badged_projects is context, never counted'
+    detected_by: sweep-openssf-best-practices-badges.py
+    detected: '2026-10-22'
   status: not-a-workflow
   arazzo: null
