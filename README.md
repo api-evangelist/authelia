@@ -1,4 +1,4 @@
-# Authelia (authelia)
+# Authelia
 
 <!-- API-EVANGELIST-PROVENANCE:BEGIN -->
 > ### About this repository
@@ -66,88 +66,165 @@
 
 Authelia is an open source authentication and authorization server providing multi-factor authentication and single sign-on for applications behind a reverse proxy. It supports OpenID Connect 1.0, OAuth 2.0, TOTP, WebAuthn, and Duo Push as authentication methods. Authelia exposes a REST API documented with an OpenAPI specification and integrates with nginx, Traefik, Caddy, and other reverse proxies.
 
-**APIs.json:** [https://raw.githubusercontent.com/api-evangelist/authelia/refs/heads/main/apis.yml](https://raw.githubusercontent.com/api-evangelist/authelia/refs/heads/main/apis.yml)
+**Areas:** Authentication · Authorization · LDAP · MFA · Open Source · OpenID Connect · Self-Hosted · SSO · Identity Federation
 
-## Scope
+## Authelia on APIs.io
 
-- **Type:** Index
+Everything profiled for Authelia is published on APIs.io rather than in this repository. Start at the provider page — **[apis.io/providers/authelia/](https://apis.io/providers/authelia/)** — or go straight to one of the APIs or properties below.
 
-## Tags
+### APIs (13)
 
-- Authentication
-- Authorization
-- LDAP
-- MFA
-- Open Source
-- OpenID Connect
-- Self-Hosted
-- SSO
+- [Authelia OpenID Connect 1.0 Provider](https://apis.io/apis/authelia/authelia-oidc-provider/) — Authelia acts as an OpenID Certified OpenID Connect 1.0 Provider supporting Authorization Code, Implicit, and Hybrid flows with PKCE, PAR, and various token…
+- [Authelia Authentication API](https://apis.io/apis/authelia/authelia-authentication-api/) — Authentication endpoints
+- [Authelia Authorization API](https://apis.io/apis/authelia/authelia-authorization-api/) — Authorization endpoints
+- [Authelia First Factor API](https://apis.io/apis/authelia/authelia-first-factor-api/) — First Factor Authentication
+- [Authelia OAuth 2.0 API](https://apis.io/apis/authelia/authelia-oauth-2-0-api/) — OAuth 2.0 Endpoints
+- [Authelia OpenID Connect 1.0 API](https://apis.io/apis/authelia/authelia-openid-connect-1-0-api/) — OpenID Connect 1.0 Endpoints
+- [Authelia Password Change API](https://apis.io/apis/authelia/authelia-password-change-api/) — Password change endpoint
+- [Authelia Password Reset API](https://apis.io/apis/authelia/authelia-password-reset-api/) — Password reset endpoints
+- [Authelia Second Factor API](https://apis.io/apis/authelia/authelia-second-factor-api/) — TOTP, WebAuthn and Duo endpoints
+- [Authelia State API](https://apis.io/apis/authelia/authelia-state-api/) — Configuration, health and state endpoints
+- [Authelia User Elevation API](https://apis.io/apis/authelia/authelia-user-elevation-api/) — User session elevation endpoints
+- [Authelia User Information API](https://apis.io/apis/authelia/authelia-user-information-api/) — User configuration endpoints
+- [Authelia Utilities API](https://apis.io/apis/authelia/authelia-utilities-api/) — General utilities used in several operations
 
-## Timestamps
+### Published properties
 
-- **Created:** 2026-03-25
-- **Modified:** 2026-04-19
+Each property below is a page on APIs.io carrying the machine-readable artifact and what it says.
 
-## APIs
+#### MCP servers (1)
 
-### Authelia REST API
+Model Context Protocol servers that expose the API to agents.
 
-The Authelia REST API provides endpoints for authentication flows including first-factor login, MFA challenges, password reset, session management, and authorization verification for reverse proxy integration.
+- [authelia-mcp.yml](https://apis.io/servers/authelia/authelia-mcp-yml/)
 
-- **Human URL:** [https://www.authelia.com/reference/](https://www.authelia.com/reference/)
-- **Base URL:** `https://your-authelia-instance.example.com/api`
+#### Agentic access (1)
 
-#### Tags
+Which operations an agent can call, which act, and which need a human in the loop.
 
-- Authentication
-- Authorization
-- MFA
-- REST
-- SSO
+- [Authelia Agentic Access](https://apis.io/agentic-access/authelia/authelia-agentic-access/)
 
-#### Properties
+#### JSON Schema (5)
 
-- [Documentation](https://www.authelia.com/reference/)
-- [OpenAPI](https://raw.githubusercontent.com/authelia/authelia/master/api/openapi.yml) — [OpenAPI Specification](https://spec.openapis.org/oas/latest.html)
-- [GitHub Repository](https://github.com/authelia/authelia)
-- [Postman Collection](collections/authelia.postman_collection.json) — [Postman Collection 2.1](https://schema.getpostman.com/json/collection/v2.1.0/collection.json)
-- [Open Collection](collections/authelia.opencollection.json) — [Open Collection 1.0](https://schema.opencollection.com/opencollection/v1.0.0.json)
+The data models the API reads and writes.
 
-### Authelia OpenID Connect 1.0 Provider
+- [Authelia Configuration.Schema](https://apis.io/schemas/authelia/authelia-configuration.schema/)
+- [Authelia Exports.Identifiers.Schema](https://apis.io/schemas/authelia/authelia-exports.identifiers.schema/)
+- [Authelia Exports.Totp.Schema](https://apis.io/schemas/authelia/authelia-exports.totp.schema/)
+- [Authelia Exports.Webauthn.Schema](https://apis.io/schemas/authelia/authelia-exports.webauthn.schema/)
+- [Authelia User Database.Schema](https://apis.io/schemas/authelia/authelia-user-database.schema/)
 
-Authelia acts as an OpenID Certified OpenID Connect 1.0 Provider supporting Authorization Code, Implicit, and Hybrid flows with PKCE, PAR, and various token endpoint authentication methods.
+#### Collections (3)
 
-- **Human URL:** [https://www.authelia.com/configuration/identity-providers/openid-connect/provider/](https://www.authelia.com/configuration/identity-providers/openid-connect/provider/)
-- **Base URL:** `https://your-authelia-instance.example.com`
+Postman and Open Collection request collections.
 
-#### Tags
+- [Authelia OpenID Connect 1.0 Endpoints](https://apis.io/collections/authelia/open-authelia/)
+- [Authelia OpenID Connect 1.0 Endpoints Discovery API](https://apis.io/collections/authelia/open-authelia-discovery-api/)
+- [Authelia OpenID Connect 1.0 Endpoints Discovery OIDC API](https://apis.io/collections/authelia/open-authelia-oidc-api/)
 
-- Authentication
-- OAuth
-- OIDC
-- OpenID Connect
+#### Overlays (1)
 
-#### Properties
+OpenAPI overlays, including conversational phrasing for each operation.
 
-- [Documentation](https://www.authelia.com/configuration/identity-providers/openid-connect/provider/)
-- [Postman Collection](collections/authelia.postman_collection.json) — [Postman Collection 2.1](https://schema.getpostman.com/json/collection/v2.1.0/collection.json)
-- [Open Collection](collections/authelia.opencollection.json) — [Open Collection 1.0](https://schema.opencollection.com/opencollection/v1.0.0.json)
+- [Authelia Api Overlay](https://apis.io/overlays/authelia/authelia-api-overlay/)
 
-## Common Properties
+#### Security (3)
+
+Authentication, trust centre, and vulnerability disclosure.
+
+- [Authelia Authentication](https://apis.io/security/authelia/authelia-authentication/)
+- [Authelia Domain Security](https://apis.io/security/authelia/authelia-domain-security/)
+- [Authelia Vulnerability Disclosure](https://apis.io/security/authelia/authelia-vulnerability-disclosure/)
+
+#### OAuth scopes (1)
+
+The permissions the API asks for.
+
+- [Authelia Scopes](https://apis.io/scopes/authelia/authelia-scopes/)
+
+#### Plans and pricing (1)
+
+Published plans, tiers and prices.
+
+- [Authelia Plans Pricing](https://apis.io/plans/authelia/authelia-plans-pricing/)
+
+#### Rate limits (1)
+
+Published request limits.
+
+- [Authelia Rate Limits](https://apis.io/rate-limits/authelia/authelia-rate-limits/)
+
+#### FinOps (1)
+
+What the API costs to run, by operation.
+
+- [Authelia Finops](https://apis.io/finops/authelia/authelia-finops/)
+
+## Where to find this API
+
+Links to the company's own pages. This repository publishes no copy of their specifications — the canonical document is theirs and lives at the URLs below.
 
 - [Website](https://www.authelia.com)
 - [Documentation](https://www.authelia.com/configuration/prologue/introduction/)
-- [GitHub Organization](https://github.com/authelia)
-- [GitHub Repository](https://github.com/authelia/authelia)
-- [Changelog](https://github.com/authelia/authelia/releases)
+- [Getting started](https://www.authelia.com/integration/prologue/get-started/)
+- [API reference](https://www.authelia.com/reference/)
 - [Support](https://github.com/authelia/authelia/discussions)
-- [Community](https://discord.gg/authelia)
-- [Features](undefined)
-- [Use Cases](undefined)
-- [Integrations](undefined)
-- [Solutions](undefined)
+- [Changelog](https://github.com/authelia/authelia/releases)
+- [Blog](https://www.authelia.com/blog/)
+- [Privacy policy](https://www.authelia.com/policies/privacy/)
+- [GitHub](https://github.com/authelia)
 
-## Maintainers
+## API Evangelist rating
 
-**FN:** Kin Lane
-**Email:** kin@apievangelist.com
+**Kin Score 53.1** — developing · rubric 0.25.0 · scored 2026-10-23
+
+| Facet | Score |
+|---|---|
+| Discoverability | 73.2 |
+| Contract quality | 50.8 |
+| Contract governance | 18.2 |
+| Operational transparency | 73.7 |
+| Developer ergonomics | 56.5 |
+| Access clarity | 10.5 |
+
+**Agent readiness 31.8** — agent-ready
+
+| Agent-readiness dimension | Result |
+|---|---|
+| Spec Presence | yes |
+| Agentic Access | derived (partial credit) |
+| Reversibility Documented | — |
+| MCP Server | — |
+| Auth Clarity | bearer (partial credit) |
+| Idempotency | — |
+| Error Semantics | verified |
+| OpenAPI Examples | partial |
+| Rate Limit Signal | verified |
+| Event Surface Described | — |
+| Agent Skills | derived (partial credit) |
+| Well Known Catalog | — |
+| Consent Identity | — |
+| Agent Card | — |
+| Dry Run Mode | — |
+| Delegated Identity | documented (partial credit) |
+| Protected Resource Metadata | — |
+| Dynamic Client Registration | — |
+| Agentic Commerce | — |
+| Pagination Ratio | — |
+| Operation Distinctiveness | — |
+
+**Regulatory alignment 36.3** — Horizontal (data, software, accessibility, platform)
+
+The rubric is published at [github.com/api-evangelist/kin-score](https://github.com/api-evangelist/kin-score). The per-check breakdown behind these numbers — which checks were earned, partial or missed — along with score history and how this provider compares to its peers, is available at [apis.io/providers/authelia/](https://apis.io/providers/authelia/).
+
+## How this profile is made
+
+API Evangelist profiles a company's public API surface the way a developer would find it: the website, developer portal and documentation, the specifications it publishes, its public repositories, and its pricing, status and changelog pages. From that it derives the properties above — contracts split per API, workflows, schemas, collections, governance rules, plans and rate limits — and scores them against the published [Kin Score rubric](https://github.com/api-evangelist/kin-score).
+
+The artifacts are published on [APIs.io](https://apis.io), not in this repository. This repository is the public record for Authelia: the place to say something is wrong, missing or out of date, and to ask for a re-score or a removal.
+
+## Open an issue
+
+- **Something about this listing** — a wrong description, a missing API, a stale artifact or a question about the rating: [open an issue on this repository](https://github.com/api-evangelist/authelia/issues/new).
+- **A new API, or one that is not in the catalog yet** — [submit it on APIs.io](https://apis.io/add/).
+- **Anything else** — [the APIs.io inbox](https://github.com/api-search/inbox/issues/new) or [info@apievangelist.com](mailto:info@apievangelist.com).
