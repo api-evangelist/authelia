@@ -1,0 +1,409 @@
+aid: authelia
+name: Authelia
+description: |
+  Authelia is an open source authentication and authorization server providing multi-factor authentication and single sign-on for applications behind a reverse proxy. It supports OpenID Connect 1.0, OAuth 2.0, TOTP, WebAuthn, and Duo Push as authentication methods. Authelia exposes a REST API documented with an OpenAPI specification and integrates with nginx, Traefik, Caddy, and other reverse proxies.
+type: Index
+deliveryModel:
+  model: self-hosted
+  license: Apache-2.0
+  open_source: true
+  commercial: false
+  callable_host: false
+  label: Self-hosted open source · you run it yourself
+  confidence: high
+  source:
+  - license
+  - openapi
+  generated: '2026-08-28'
+  method: derived
+accessModel:
+  pricing: freemium
+  onboarding: self-serve
+  trial: false
+  try_now: false
+  public: false
+  label: Freemium · Self-serve signup
+  confidence: medium
+  try_now_blocked_by: example-domain
+  source:
+  - plans
+  - authentication
+  - security
+  generated: '2026-08-26'
+  method: derived
+image: https://kinlane-images.s3.amazonaws.com/shared/apis-json/icons/authelia.png
+tags:
+- Authentication
+- Authorization
+- LDAP
+- MFA
+- Open Source
+- OpenID Connect
+- Self-Hosted
+- SSO
+- Identity Federation
+tags_raw:
+- Authentication
+- Authorization
+- LDAP
+- MFA
+- Open Source
+- OpenID Connect
+- Self-Hosted
+- SSO
+- Identity Federation
+- Open-Source
+url: >-
+  https://raw.githubusercontent.com/api-evangelist/authelia/refs/heads/main/apis.yml
+created: '2026-03-25'
+modified: '2026-09-06'
+specificationVersion: '0.23'
+apis:
+- aid: authelia:authelia-oidc-provider
+  name: Authelia OpenID Connect 1.0 Provider
+  description: >
+    Authelia acts as an OpenID Certified OpenID Connect 1.0 Provider supporting Authorization Code, Implicit,
+    and Hybrid flows with PKCE, PAR, and various token endpoint authentication methods.
+  humanURL: https://www.authelia.com/configuration/identity-providers/openid-connect/provider/
+  baseURL: https://auth.example.com
+  tags:
+  - Authentication
+  - OAuth
+  - OpenID Connect
+  tags_raw:
+  - Authentication
+  - OAuth
+  - OIDC
+  - OpenID Connect
+  properties:
+  - type: Documentation
+    url: https://www.authelia.com/configuration/identity-providers/openid-connect/provider/
+- aid: authelia:authelia-authentication-api
+  name: Authelia Authentication API
+  description: Authentication endpoints
+  humanURL: https://www.authelia.com/configuration/identity-providers/openid-connect/provider/
+  baseURL: https://auth.example.com
+  tags:
+  - Authentication
+  properties:
+  - type: OpenAPI
+    url: openapi/authelia-authentication-api-openapi.yml
+  - type: Documentation
+    url: https://www.authelia.com/reference/
+  - type: GitHubRepository
+    url: https://github.com/authelia/authelia
+- aid: authelia:authelia-authorization-api
+  name: Authelia Authorization API
+  description: Authorization endpoints
+  humanURL: https://www.authelia.com/configuration/identity-providers/openid-connect/provider/
+  baseURL: https://auth.example.com
+  tags:
+  - Authorization
+  properties:
+  - type: OpenAPI
+    url: openapi/authelia-authorization-api-openapi.yml
+  - type: Documentation
+    url: https://www.authelia.com/reference/
+  - type: GitHubRepository
+    url: https://github.com/authelia/authelia
+- aid: authelia:authelia-first-factor-api
+  name: Authelia First Factor API
+  description: First Factor Authentication
+  humanURL: https://www.authelia.com/configuration/identity-providers/openid-connect/provider/
+  baseURL: https://auth.example.com
+  tags:
+  - First Factor
+  properties:
+  - type: OpenAPI
+    url: openapi/authelia-first-factor-api-openapi.yml
+  - type: Documentation
+    url: https://www.authelia.com/reference/
+  - type: GitHubRepository
+    url: https://github.com/authelia/authelia
+- aid: authelia:authelia-oauth-2-0-api
+  name: Authelia OAuth 2.0 API
+  description: OAuth 2.0 Endpoints
+  humanURL: https://www.authelia.com/configuration/identity-providers/openid-connect/provider/
+  baseURL: https://auth.example.com
+  tags:
+  - OAuth
+  - Authentication
+  tags_raw:
+  - OAuth 2.0
+  - Authentication
+  properties:
+  - type: OpenAPI
+    url: openapi/authelia-oauth-2-0-api-openapi.yml
+  - type: Documentation
+    url: https://www.authelia.com/reference/
+  - type: GitHubRepository
+    url: https://github.com/authelia/authelia
+- aid: authelia:authelia-openid-connect-1-0-api
+  name: Authelia OpenID Connect 1.0 API
+  description: OpenID Connect 1.0 Endpoints
+  humanURL: https://www.authelia.com/configuration/identity-providers/openid-connect/provider/
+  baseURL: https://auth.example.com
+  tags:
+  - OpenID Connect 1.0
+  properties:
+  - type: OpenAPI
+    url: openapi/authelia-openid-connect-1-0-api-openapi.yml
+  - type: Documentation
+    url: https://www.authelia.com/reference/
+  - type: GitHubRepository
+    url: https://github.com/authelia/authelia
+- aid: authelia:authelia-password-change-api
+  name: Authelia Password Change API
+  description: Password change endpoint
+  humanURL: https://www.authelia.com/configuration/identity-providers/openid-connect/provider/
+  baseURL: https://auth.example.com
+  tags:
+  - Password Change
+  properties:
+  - type: OpenAPI
+    url: openapi/authelia-password-change-api-openapi.yml
+  - type: Documentation
+    url: https://www.authelia.com/reference/
+  - type: GitHubRepository
+    url: https://github.com/authelia/authelia
+- aid: authelia:authelia-password-reset-api
+  name: Authelia Password Reset API
+  description: Password reset endpoints
+  humanURL: https://www.authelia.com/configuration/identity-providers/openid-connect/provider/
+  baseURL: https://auth.example.com
+  tags:
+  - Password Reset
+  properties:
+  - type: OpenAPI
+    url: openapi/authelia-password-reset-api-openapi.yml
+  - type: Documentation
+    url: https://www.authelia.com/reference/
+  - type: GitHubRepository
+    url: https://github.com/authelia/authelia
+- aid: authelia:authelia-second-factor-api
+  name: Authelia Second Factor API
+  description: TOTP, WebAuthn and Duo endpoints
+  humanURL: https://www.authelia.com/configuration/identity-providers/openid-connect/provider/
+  baseURL: https://auth.example.com
+  tags:
+  - Second Factor
+  properties:
+  - type: OpenAPI
+    url: openapi/authelia-second-factor-api-openapi.yml
+  - type: Documentation
+    url: https://www.authelia.com/reference/
+  - type: GitHubRepository
+    url: https://github.com/authelia/authelia
+- aid: authelia:authelia-state-api
+  name: Authelia State API
+  description: Configuration, health and state endpoints
+  humanURL: https://www.authelia.com/configuration/identity-providers/openid-connect/provider/
+  baseURL: https://auth.example.com
+  tags:
+  - States
+  tags_raw:
+  - State
+  properties:
+  - type: OpenAPI
+    url: openapi/authelia-state-api-openapi.yml
+  - type: Documentation
+    url: https://www.authelia.com/reference/
+  - type: GitHubRepository
+    url: https://github.com/authelia/authelia
+- aid: authelia:authelia-user-elevation-api
+  name: Authelia User Elevation API
+  description: User session elevation endpoints
+  humanURL: https://www.authelia.com/configuration/identity-providers/openid-connect/provider/
+  baseURL: https://auth.example.com
+  tags:
+  - User Elevation
+  properties:
+  - type: OpenAPI
+    url: openapi/authelia-user-elevation-api-openapi.yml
+  - type: Documentation
+    url: https://www.authelia.com/reference/
+  - type: GitHubRepository
+    url: https://github.com/authelia/authelia
+- aid: authelia:authelia-user-information-api
+  name: Authelia User Information API
+  description: User configuration endpoints
+  humanURL: https://www.authelia.com/configuration/identity-providers/openid-connect/provider/
+  baseURL: https://auth.example.com
+  tags:
+  - User Information
+  properties:
+  - type: OpenAPI
+    url: openapi/authelia-user-information-api-openapi.yml
+  - type: Documentation
+    url: https://www.authelia.com/reference/
+  - type: GitHubRepository
+    url: https://github.com/authelia/authelia
+- aid: authelia:authelia-utilities-api
+  name: Authelia Utilities API
+  description: General utilities used in several operations
+  humanURL: https://www.authelia.com/configuration/identity-providers/openid-connect/provider/
+  baseURL: https://auth.example.com
+  tags:
+  - Utilities
+  properties:
+  - type: OpenAPI
+    url: openapi/authelia-utilities-api-openapi.yml
+  - type: Documentation
+    url: https://www.authelia.com/reference/
+  - type: GitHubRepository
+    url: https://github.com/authelia/authelia
+common:
+- type: FinOps
+  url: finops/authelia-finops.yml
+- type: CapabilityMap
+  url: capabilities/authelia-capability-edges.yml
+  name: Authelia Business Capability Map
+- type: Overlay
+  url: overlays/authelia-api-overlay.yaml
+- type: IssueTracker
+  url: https://github.com/authelia/authelia/issues
+- type: SecurityPolicy
+  url: https://github.com/authelia/authelia/blob/master/SECURITY.md
+- type: CodeOfConduct
+  url: https://github.com/authelia/authelia/blob/master/CODE_OF_CONDUCT.md
+- type: ContributionGuide
+  url: https://github.com/authelia/authelia/blob/master/CONTRIBUTING.md
+- type: License
+  name: Apache-2.0
+  url: https://github.com/authelia/authelia/blob/master/LICENSE
+- type: AgenticAccess
+  url: agentic-access/authelia-agentic-access.yml
+- type: DomainSecurity
+  url: security/authelia-domain-security.yml
+- type: Authentication
+  url: authentication/authelia-authentication.yml
+- type: OAuthScopes
+  url: scopes/authelia-scopes.yml
+- type: Website
+  url: https://www.authelia.com
+- type: Documentation
+  url: https://www.authelia.com/configuration/prologue/introduction/
+- type: GitHubOrganization
+  url: https://github.com/authelia
+- type: GitHubRepository
+  url: https://github.com/authelia/authelia
+- type: ChangeLog
+  url: https://github.com/authelia/authelia/releases
+- type: Support
+  url: https://github.com/authelia/authelia/discussions
+- type: Community
+  url: https://discord.gg/authelia
+- type: Features
+  data:
+  - name: Multi-Factor Authentication
+    description: Supports TOTP, WebAuthn/FIDO2, Duo Push, and mobile authenticator apps as second factors.
+  - name: OpenID Connect 1.0 Provider
+    description: OpenID Certified identity provider supporting Authorization Code, Implicit, and Hybrid flows.
+  - name: Single Sign-On
+    description: Session-based SSO across all applications behind the reverse proxy with configurable session lifetime.
+  - name: LDAP/Active Directory Integration
+    description: User authentication against LDAP, Active Directory, and OpenLDAP directories with group-based access control.
+  - name: Access Control Rules
+    description: Fine-grained access control policies based on domain, path, user, group, and network for precise authorization.
+  - name: Reverse Proxy Integration
+    description: Native integration with nginx, Traefik, Caddy, HAProxy, Envoy, and Skipper via forward-auth and ExtAuthz endpoints.
+  - name: Passwordless Authentication
+    description: Support for WebAuthn/FIDO2 passwordless login using hardware security keys and platform authenticators.
+- type: UseCases
+  data:
+  - name: Self-Hosted SSO
+    description: Deploy a self-hosted SSO solution for internal web applications and services without relying on cloud identity providers.
+  - name: Homelab Security
+    description: Protect self-hosted homelab applications with MFA and access control without exposing them to the internet unprotected.
+  - name: Small Business Identity
+    description: Provide centralized authentication for small business web applications using LDAP and access control policies.
+  - name: OIDC Provider
+    description: Act as an OpenID Connect provider for applications requiring OAuth 2.0 and OIDC-based authentication flows.
+- type: Integrations
+  data:
+  - name: Nginx
+    description: Integration with nginx-based proxies including nginx, nginx-proxy-manager, and Swag via auth_request module.
+  - name: Traefik
+    description: Native Traefik middleware integration via ForwardAuth for seamless authentication in Docker and Kubernetes environments.
+  - name: Caddy
+    description: Caddy forward-auth integration for protecting applications behind the Caddy web server.
+  - name: LDAP/Active Directory
+    description: User directory integration with LDAP, Active Directory, and FreeIPA for enterprise user management.
+  - name: Helm
+    description: Official Helm chart available at the authelia/chartrepo GitHub repository for Kubernetes deployment.
+- type: Solutions
+  data:
+  - name: Self-Hosted Identity
+    description: Complete self-hosted identity and access management solution for privacy-conscious deployments.
+  - name: Zero Trust Security
+    description: Enforce zero trust network access policies for internal applications with per-request authentication verification.
+- type: Packages
+  url: packages/authelia-packages.yml
+- type: LLMsTxt
+  url: llms/authelia-llms.txt
+- type: X-MCPServerCandidate
+  url: mcp/authelia-mcp.yml
+- type: Conformance
+  url: conformance/authelia-conformance.yml
+- type: ErrorCatalog
+  url: errors/authelia-problem-types.yml
+- type: Lifecycle
+  url: lifecycle/authelia-lifecycle.yml
+- type: Deprecation
+  url: lifecycle/authelia-lifecycle.yml
+- type: Conventions
+  url: conventions/authelia-conventions.yml
+- type: ChangeLog
+  url: changelog/authelia-changelog.yml
+- type: CLI
+  url: cli/authelia-cli.yml
+- type: DataModel
+  url: data-model/authelia-data-model.yml
+- type: AgentSkill
+  url: skills/_index.yml
+- type: Plans
+  url: plans/authelia-plans-pricing.yml
+- type: RateLimits
+  url: rate-limits/authelia-rate-limits.yml
+- type: VulnerabilityDisclosure
+  url: security/authelia-vulnerability-disclosure.yml
+- type: Security
+  url: security/authelia-vulnerability-disclosure.yml
+- type: JSONSchema
+  name: Authelia Configuration
+  url: json-schema/authelia-configuration.schema.json
+- type: JSONSchema
+  name: Authelia User Database
+  url: json-schema/authelia-user-database.schema.json
+- type: JSONSchema
+  name: Authelia Identifiers Export
+  url: json-schema/authelia-exports.identifiers.schema.json
+- type: JSONSchema
+  name: Authelia TOTP Export
+  url: json-schema/authelia-exports.totp.schema.json
+- type: JSONSchema
+  name: Authelia WebAuthn Export
+  url: json-schema/authelia-exports.webauthn.schema.json
+- type: APIReference
+  url: https://www.authelia.com/reference/
+- type: GettingStarted
+  url: https://www.authelia.com/integration/prologue/get-started/
+- type: Blog
+  url: https://www.authelia.com/blog/
+- type: Roadmap
+  url: https://www.authelia.com/roadmap/
+- type: PrivacyPolicy
+  url: https://www.authelia.com/policies/privacy/
+- type: SecurityPolicy
+  name: Authelia Security Policy
+  url: https://www.authelia.com/policies/security/
+- type: Versioning
+  url: https://www.authelia.com/policies/versioning/
+maintainers:
+- FN: Kin Lane
+  email: kin@apievangelist.com
+x-enrichment:
+  date: '2026-09-06'
+  status: enriched
+  artifacts_added: 25
+  pass: local-v3
